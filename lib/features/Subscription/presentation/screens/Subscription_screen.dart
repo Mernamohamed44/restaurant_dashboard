@@ -20,7 +20,7 @@ class SubscriptionScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => SubscriptionCubit(),
-      child: SubscriptionBody(),
+      child: const SubscriptionBody(),
     );
   }
 }
@@ -99,7 +99,7 @@ class SubscriptionBody extends StatelessWidget {
                 const SizedBox(height: 15),
                 BlocBuilder<SubscriptionCubit, SubscriptionState>(
                   builder: (context, state) {
-                    return AvailablePlans();
+                    return const AvailablePlans();
                   },
                 ),
               ],

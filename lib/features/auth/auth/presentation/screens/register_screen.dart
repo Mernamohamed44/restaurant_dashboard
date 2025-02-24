@@ -38,7 +38,9 @@ class RegisterBody extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: AppColors.white,
-      body: context.screenWidth >= 600 ? RegisterRow() : RegisterColumn(),
+      body: context.screenWidth >= 600
+          ? const RegisterRow()
+          : const RegisterColumn(),
     );
   }
 }
@@ -57,10 +59,8 @@ class RegisterRow extends StatelessWidget {
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(
-                    height: context.screenHeight * .2,
-                  ),
                   const CustomText(
                     text: 'Create New Account',
                     color: AppColors.textColor,
@@ -78,16 +78,14 @@ class RegisterRow extends StatelessWidget {
                     color: Color.fromRGBO(115, 129, 141, 0.16),
                   ),
                   10.verticalSpace,
-                  RegisterTextFields(),
+                  const RegisterTextFields(),
                   20.verticalSpace,
                   const Divider(
                     color: Color.fromRGBO(115, 129, 141, 0.16),
                   ),
                   25.verticalSpace,
-                  RegisterButtons(),
-                  SizedBox(
-                    height: 40,
-                  )
+                  const RegisterButtons(),
+                  const SizedBox(height: 10)
                 ],
               ),
             ),
@@ -124,8 +122,8 @@ class RegisterColumn extends StatelessWidget {
                 const SizedBox(
                   height: 20,
                 ),
-                FittedBox(
-                  child: const CustomText(
+                const FittedBox(
+                  child: CustomText(
                     text: 'Create New Account',
                     color: AppColors.textColor,
                     fontWeight: FontWeight.w700,
@@ -144,9 +142,9 @@ class RegisterColumn extends StatelessWidget {
                   color: Color.fromRGBO(115, 129, 141, 0.16),
                 ),
                 10.verticalSpace,
-                RegisterTextFields(),
+                const RegisterTextFields(),
                 25.verticalSpace,
-                RegisterButtons(),
+                const RegisterButtons(),
                 const SizedBox(height: 40)
               ],
             ),
@@ -281,6 +279,7 @@ class RegisterButtons extends StatelessWidget {
           borderColor: AppColors.primary,
           borderRadius: 50,
           fontWeight: FontWeight.w400,
+          isBorderButton: true,
         ),
       ],
     );

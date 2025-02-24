@@ -51,56 +51,56 @@ class AppRouter {
         return PageRouteBuilder(
           settings: settings,
           pageBuilder: (context, animation, secondaryAnimation) {
-            return MenuItemScreen();
+            return const MenuItemScreen();
           },
         );
       case Routes.reviews:
         return PageRouteBuilder(
           settings: settings,
           pageBuilder: (context, animation, secondaryAnimation) {
-            return ReviewsScreen();
+            return const ReviewsScreen();
           },
         );
       case Routes.subscribe:
         return PageRouteBuilder(
           settings: settings,
           pageBuilder: (context, animation, secondaryAnimation) {
-            return SubscriptionScreen();
+            return const SubscriptionScreen();
           },
         );
       case Routes.store:
         return PageRouteBuilder(
           settings: settings,
           pageBuilder: (context, animation, secondaryAnimation) {
-            return ThemeScreen();
+            return const ThemeScreen();
           },
         );
       case Routes.generalSetting:
         return PageRouteBuilder(
           settings: settings,
           pageBuilder: (context, animation, secondaryAnimation) {
-            return GeneralSettingScreen();
+            return const GeneralSettingScreen();
           },
         );
       case Routes.brandSetting:
         return PageRouteBuilder(
           settings: settings,
           pageBuilder: (context, animation, secondaryAnimation) {
-            return BrandSettingScreen();
+            return const BrandSettingScreen();
           },
         );
       case Routes.themeSetting:
         return PageRouteBuilder(
           settings: settings,
           pageBuilder: (context, animation, secondaryAnimation) {
-            return ThemeSettingScreen();
+            return const ThemeSettingScreen();
           },
         );
       case Routes.account:
         return PageRouteBuilder(
           settings: settings,
           pageBuilder: (context, animation, secondaryAnimation) {
-            return AccountScreen();
+            return const AccountScreen();
           },
         );
       default:

@@ -111,7 +111,7 @@ class AddCategories extends StatelessWidget {
           ],
           leadingWidth: 20,
           leading: IconButton(
-            icon: Icon(
+            icon: const Icon(
               Icons.arrow_back_outlined,
               size: 20,
               color: AppColors.textColor,
@@ -131,7 +131,7 @@ class AddCategories extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Column(
             children: [
-              AddImageContainer(),
+              const AddImageContainer(),
               const SizedBox(
                 height: 10,
               ),

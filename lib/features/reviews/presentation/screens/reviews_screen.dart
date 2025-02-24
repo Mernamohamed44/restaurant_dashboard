@@ -28,23 +28,26 @@ class ReviewsScreen extends StatelessWidget {
           appBar: AppBar(
             toolbarHeight: 68,
             backgroundColor: AppColors.white,
-            leadingWidth: 20,
+            leadingWidth: 30,
             leading: context.screenWidth < 377
-                ? InkWell(
-                    child: const SvgIcon(
-                      height: 100,
-                      color: AppColors.textColor,
-                      icon: ImageManager.drawerIcon,
+                ? Center(
+                    child: InkWell(
+                      onTap: () {
+                        adminScaffoldKey.currentState!.toggleSidebar();
+                      },
+                      splashColor: Colors.transparent,
+                      hoverColor: Colors.transparent,
+                      focusColor: Colors.transparent,
+                      highlightColor: Colors.transparent,
+                      child: const SvgIcon(
+                        height: 20,
+                        color: AppColors.textColor,
+                        icon: ImageManager.drawerIcon,
+                      ),
                     ),
-                    onTap: () {
-                      adminScaffoldKey.currentState!.toggleSidebar();
-                    },
-                    splashColor: Colors.transparent,
-                    hoverColor: Colors.transparent,
-                    focusColor: Colors.transparent,
-                    highlightColor: Colors.transparent,
                   )
                 : const SizedBox(),
+            titleSpacing: 5,
             title: const CustomText(
               text: 'Customer Reviews',
               color: AppColors.textColor,
@@ -181,7 +184,7 @@ class ReviewsScreen extends StatelessWidget {
             child: Column(
               children: [
                 const ReviewsContainer(),
-                SizedBox(
+                const SizedBox(
                   height: 15,
                 ),
                 Row(
@@ -201,10 +204,10 @@ class ReviewsScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 15,
                 ),
-                ReviewList(),
+                const ReviewList(),
               ],
             ),
           ),

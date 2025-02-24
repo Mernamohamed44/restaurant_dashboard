@@ -24,7 +24,7 @@ class _DrinksCategoriesState extends State<DrinksCategories> {
         children: [
           Row(
             children: [
-              CustomText(
+              const CustomText(
                 text: 'Drinks Categorie',
                 color: AppColors.textColor,
                 fontWeight: FontWeight.w600,

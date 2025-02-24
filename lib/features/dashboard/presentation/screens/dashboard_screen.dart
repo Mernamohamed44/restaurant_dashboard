@@ -37,23 +37,26 @@ class DashboardScreen extends StatelessWidget {
         backgroundColor: AppColors.white,
         appBar: AppBar(
           backgroundColor: AppColors.white,
-          leadingWidth: 20,
+          leadingWidth: 30,
           leading: context.screenWidth < 377
-              ? InkWell(
-                  onTap: () {
-                    adminScaffoldKey.currentState!.toggleSidebar();
-                  },
-                  splashColor: Colors.transparent,
-                  hoverColor: Colors.transparent,
-                  focusColor: Colors.transparent,
-                  highlightColor: Colors.transparent,
-                  child: const SvgIcon(
-                    height: 40,
-                    color: AppColors.textColor,
-                    icon: ImageManager.drawerIcon,
+              ? Center(
+                  child: InkWell(
+                    onTap: () {
+                      adminScaffoldKey.currentState!.toggleSidebar();
+                    },
+                    splashColor: Colors.transparent,
+                    hoverColor: Colors.transparent,
+                    focusColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                    child: const SvgIcon(
+                      height: 20,
+                      color: AppColors.textColor,
+                      icon: ImageManager.drawerIcon,
+                    ),
                   ),
                 )
               : const SizedBox(),
+          titleSpacing: 5,
           title: const CustomText(
             text: 'Dashboard',
             color: AppColors.textColor,

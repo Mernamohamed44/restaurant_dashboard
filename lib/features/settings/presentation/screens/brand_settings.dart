@@ -27,31 +27,25 @@ class BrandSettingScreen extends StatelessWidget {
   }
 }
 
-class BrandSettingBody extends StatefulWidget {
+class BrandSettingBody extends StatelessWidget {
   const BrandSettingBody({super.key});
-
-  @override
-  State<BrandSettingBody> createState() => _BrandSettingBodyState();
-}
-
-class _BrandSettingBodyState extends State<BrandSettingBody> {
-  bool isTypographyClicked = false;
-  bool isAssetsClicked = false;
-  bool isColorClicked = false;
 
   @override
   Widget build(BuildContext context) {
     SideBarWidget sideBar = SideBarWidget();
     final adminScaffoldKey = GlobalKey<AdminScaffoldState>();
+
     return AdminScaffold(
-        sideBar: sideBar.sideBarMenus(context, Routes.brandSetting),
-        body: Scaffold(
+      key: adminScaffoldKey,
+      sideBar: sideBar.sideBarMenus(context, Routes.brandSetting),
+      body: Scaffold(
+        backgroundColor: AppColors.white,
+        appBar: AppBar(
           backgroundColor: AppColors.white,
-          appBar: AppBar(
-            backgroundColor: AppColors.white,
-            leadingWidth: 20,
-            leading: context.screenWidth < 377
-                ? InkWell(
+          leadingWidth: 30,
+          leading: context.screenWidth < 377
+              ? Center(
+                  child: InkWell(
                     onTap: () {
                       adminScaffoldKey.currentState!.toggleSidebar();
                     },
@@ -60,89 +54,122 @@ class _BrandSettingBodyState extends State<BrandSettingBody> {
                     focusColor: Colors.transparent,
                     highlightColor: Colors.transparent,
                     child: const SvgIcon(
-                      height: 100,
+                      height: 20,
                       color: AppColors.textColor,
                       icon: ImageManager.drawerIcon,
                     ),
-                  )
-                : const SizedBox(),
-            title: const CustomText(
-              text: 'Brand  Settings',
-              color: AppColors.textColor,
-              fontWeight: FontWeight.w700,
-              fontSize: 20,
-            ),
-            bottom: PreferredSize(
-              preferredSize: const Size.fromHeight(1),
-              child: Container(
-                color: const Color.fromRGBO(115, 129, 141, 0.16),
-                height: 1,
-              ),
+                  ),
+                )
+              : const SizedBox(),
+          titleSpacing: 5,
+          title: const CustomText(
+            text: 'Brand  Settings',
+            color: AppColors.textColor,
+            fontWeight: FontWeight.w700,
+            fontSize: 20,
+          ),
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(1),
+            child: Container(
+              color: const Color.fromRGBO(115, 129, 141, 0.16),
+              height: 1,
             ),
           ),
-          body: SingleChildScrollView(
-            child: Column(
-              children: [
-                context.screenWidth < 800
-                    ? Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 15, horizontal: 20),
-                        child: Container(
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            color: AppColors.red.withOpacity(.05),
-                          ),
+        ),
+        body: const BrandSettingBodyData(),
+      ),
+    );
+  }
+}
+
+class BrandSettingBodyData extends StatefulWidget {
+  const BrandSettingBodyData({super.key});
+
+  @override
+  State<BrandSettingBodyData> createState() => _BrandSettingBodyDataState();
+}
+
+class _BrandSettingBodyDataState extends State<BrandSettingBodyData> {
+  @override
+  void initState() {
+    context.read<SettingsCubit>().blackController.text = '#131313';
+    context.read<SettingsCubit>().whiteController.text = '#FFFFFF';
+    context.read<SettingsCubit>().primaryController.text = '#FFC600';
+    context.read<SettingsCubit>().secondaryController.text = '#131313';
+    context.read<SettingsCubit>().focusTextOnLightController.text = '#131313';
+    context.read<SettingsCubit>().defaultTextOnLightController.text = '#131313';
+    context.read<SettingsCubit>().disabledTextOnLightController.text =
+        '#131313';
+    context.read<SettingsCubit>().focusTextOnDarkController.text = '#FFFFFF';
+    context.read<SettingsCubit>().defaultTextOnDarkController.text = '#FFFFFF';
+    context.read<SettingsCubit>().disabledTextOnDarkController.text = '#FFFFFF';
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          context.screenWidth < 800
+              ? Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+                  child: Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      color: AppColors.red.withOpacity(.05),
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Flexible(
                           child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Flexible(
-                                child: Row(
-                                  children: [
-                                    SvgPicture.asset(
-                                      ImageManager.warning,
-                                      height: 20,
-                                    ),
-                                    const SizedBox(
-                                      width: 8,
-                                    ),
-                                    const Flexible(
-                                      child: CustomText(
-                                        maxLines: 3,
-                                        text:
-                                            'Please note that Realtime preview only available in large screens',
-                                        color: Color(0xffC04027),
-                                        fontWeight: FontWeight.w400,
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                  ],
+                              SvgPicture.asset(
+                                ImageManager.warning,
+                                height: 20,
+                              ),
+                              const SizedBox(
+                                width: 8,
+                              ),
+                              const Flexible(
+                                child: CustomText(
+                                  maxLines: 3,
+                                  text:
+                                      'Please note that Realtime preview only available in large screens',
+                                  color: Color(0xffC04027),
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 14,
                                 ),
                               ),
-                              const CircleAvatar(
-                                  radius: 8,
-                                  backgroundColor: Color(0xffC04027),
-                                  child: Icon(
-                                    Icons.clear,
-                                    color: AppColors.white,
-                                    size: 10,
-                                  ))
                             ],
                           ),
                         ),
-                      )
-                    : SizedBox(),
-                BrandSettingRow(),
-              ],
-            ),
-          ),
-        ));
+                        const CircleAvatar(
+                            radius: 8,
+                            backgroundColor: Color(0xffC04027),
+                            child: Icon(
+                              Icons.clear,
+                              color: AppColors.white,
+                              size: 10,
+                            ))
+                      ],
+                    ),
+                  ),
+                )
+              : const SizedBox(),
+          const BrandSettingRow(),
+        ],
+      ),
+    );
   }
 }
 
 class BrandSettingRow extends StatefulWidget {
-  BrandSettingRow({super.key});
+  const BrandSettingRow({super.key});
 
   @override
   State<BrandSettingRow> createState() => _BrandSettingRowState();
@@ -160,9 +187,9 @@ class _BrandSettingRowState extends State<BrandSettingRow> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(
+        Flexible(
           child: Padding(
-            padding: const EdgeInsets.only(top: 10, left: 20),
+            padding: const EdgeInsets.only(top: 10, left: 20, right: 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
@@ -183,20 +210,21 @@ class _BrandSettingRowState extends State<BrandSettingRow> {
                       ),
                     ),
                     GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            isTypographyClicked = !isTypographyClicked;
-                          });
-                        },
-                        child: isTypographyClicked
-                            ? const Icon(
-                                Icons.keyboard_arrow_up,
-                                color: AppColors.textColor,
-                              )
-                            : const Icon(
-                                Icons.keyboard_arrow_down,
-                                color: AppColors.textColor,
-                              ))
+                      onTap: () {
+                        setState(() {
+                          isTypographyClicked = !isTypographyClicked;
+                        });
+                      },
+                      child: isTypographyClicked
+                          ? const Icon(
+                              Icons.keyboard_arrow_up,
+                              color: AppColors.textColor,
+                            )
+                          : const Icon(
+                              Icons.keyboard_arrow_down,
+                              color: AppColors.textColor,
+                            ),
+                    )
                   ],
                 ),
                 isTypographyClicked
@@ -285,11 +313,11 @@ class _BrandSettingRowState extends State<BrandSettingRow> {
             ? Flexible(
                 flex: 2,
                 child: Container(
-                    padding: EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(10),
                     color: AppColors.boldContainerColor,
-                    child: Preview()),
+                    child: const Preview()),
               )
-            : SizedBox()
+            : const SizedBox()
       ],
     );
   }

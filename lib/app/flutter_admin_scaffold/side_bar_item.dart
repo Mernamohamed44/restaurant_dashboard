@@ -62,89 +62,102 @@ class SideBarItem extends StatelessWidget {
 
     if (item.children.isEmpty) {
       return AnimatedContainer(
-        duration: const Duration(milliseconds: 500),
-        decoration: BoxDecoration(
-            color: selected ? AppColors.primary : AppColors.transparent,
-            borderRadius:
-                selected ? BorderRadius.circular(12) : BorderRadius.zero),
-        child: ListTile(
-          minLeadingWidth: 20,
-          //contentPadding: _getTilePadding(depth),
-          leading:
-              _buildIcon(item.selectedWidget, item.unSelectedWidget, selected),
-          title: _buildTitle(item.title, context, selected),
-          selected: selected,
-          onTap: () {
-            if (onSelected != null) {
-              onSelected!(item);
-            }
-          },
-          // onTap: () {
-          //     if (widget.onSelected != null) {
-          //       if (item.route == Routes.invoices &&
-          //           context.screenWidth < 900) {
-          //         showPopover(
-          //           context: context,
-          //           direction: PopoverDirection.bottom,
-          //           width: 220,
-          //           height: 120,
-          //           arrowHeight: 10,
-          //           arrowWidth: 15,
-          //           bodyBuilder: (context) => Center(
-          //             child: Padding(
-          //               padding: const EdgeInsets.all(20),
-          //               child: Column(
-          //                 crossAxisAlignment: CrossAxisAlignment.center,
-          //                 children: [
-          //                   GestureDetector(
-          //                     onTap: () {
-          //                       context.pushReplacementNamed(Routes.addInvoice);
-          //                     },
-          //                     child: Row(
-          //                       children: [
-          //                         SvgPicture.asset(ImageManager.expense,
-          //                             height: 20),
-          //                         15.horizontalSpace,
-          //                         const Flexible(
-          //                           child: CustomText(
-          //                               text: 'Go to Add Invoices',
-          //                               color: AppColors.primary),
-          //                         )
-          //                       ],
-          //                     ),
-          //                   ),
-          //                   30.verticalSpace,
-          //                   GestureDetector(
-          //                     onTap: () {
-          //                       context.pushReplacementNamed(Routes.getInvoice);
-          //                     },
-          //                     child: Row(
-          //                       children: [
-          //                         SvgPicture.asset(ImageManager.income,
-          //                             height: 20),
-          //                         15.horizontalSpace,
-          //                         const Flexible(
-          //                           child: CustomText(
-          //                             text: 'Go to Get Invoices',
-          //                             color: AppColors.primary,
-          //                           ),
-          //                         )
-          //                       ],
-          //                     ),
-          //                   ),
-          //                 ],
-          //               ),
-          //             ),
-          //           ),
-          //         );
-          //       } else {
-          //         widget.onSelected!(item);
-          //       }
-          //     }
-          //
-          // },
-        ),
-      );
+          duration: const Duration(milliseconds: 500),
+          decoration: BoxDecoration(
+              color: selected ? AppColors.primary : AppColors.transparent,
+              borderRadius:
+                  selected ? BorderRadius.circular(12) : BorderRadius.zero),
+          child: InkWell(
+            hoverColor: Colors.transparent,
+            splashColor: Colors.transparent,
+            focusColor: Colors.transparent,
+            highlightColor: Colors.transparent,
+            onTap: () {
+              if (onSelected != null) {
+                onSelected!(item);
+              }
+            },
+            // onTap: () {
+            //     if (widget.onSelected != null) {
+            //       if (item.route == Routes.invoices &&
+            //           context.screenWidth < 900) {
+            //         showPopover(
+            //           context: context,
+            //           direction: PopoverDirection.bottom,
+            //           width: 220,
+            //           height: 120,
+            //           arrowHeight: 10,
+            //           arrowWidth: 15,
+            //           bodyBuilder: (context) => Center(
+            //             child: Padding(
+            //               padding: const EdgeInsets.all(20),
+            //               child: Column(
+            //                 crossAxisAlignment: CrossAxisAlignment.center,
+            //                 children: [
+            //                   GestureDetector(
+            //                     onTap: () {
+            //                       context.pushReplacementNamed(Routes.addInvoice);
+            //                     },
+            //                     child: Row(
+            //                       children: [
+            //                         SvgPicture.asset(ImageManager.expense,
+            //                             height: 20),
+            //                         15.horizontalSpace,
+            //                         const Flexible(
+            //                           child: CustomText(
+            //                               text: 'Go to Add Invoices',
+            //                               color: AppColors.primary),
+            //                         )
+            //                       ],
+            //                     ),
+            //                   ),
+            //                   30.verticalSpace,
+            //                   GestureDetector(
+            //                     onTap: () {
+            //                       context.pushReplacementNamed(Routes.getInvoice);
+            //                     },
+            //                     child: Row(
+            //                       children: [
+            //                         SvgPicture.asset(ImageManager.income,
+            //                             height: 20),
+            //                         15.horizontalSpace,
+            //                         const Flexible(
+            //                           child: CustomText(
+            //                             text: 'Go to Get Invoices',
+            //                             color: AppColors.primary,
+            //                           ),
+            //                         )
+            //                       ],
+            //                     ),
+            //                   ),
+            //                 ],
+            //               ),
+            //             ),
+            //           ),
+            //         );
+            //       } else {
+            //         widget.onSelected!(item);
+            //       }
+            //     }
+            //
+            // },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+              child: Row(
+                mainAxisAlignment: context.screenWidth > 900
+                    ? MainAxisAlignment.start
+                    : MainAxisAlignment.center,
+                children: [
+                  _buildIcon(
+                      item.selectedWidget, item.unSelectedWidget, selected),
+                  context.screenWidth > 900
+                      ? const SizedBox(width: 15)
+                      : const SizedBox(),
+                  Flexible(child: _buildTitle(item.title, context, selected)),
+                ],
+              ),
+            ),
+          ));
     }
 
     int index = 0;
@@ -166,15 +179,30 @@ class SideBarItem extends StatelessWidget {
     }).toList();
 
     return Theme(
-      data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+      data: Theme.of(context).copyWith(
+        dividerColor: Colors.transparent,
+        listTileTheme: ListTileTheme.of(context).copyWith(
+          dense: true,
+        ),
+        hoverColor: Colors.transparent,
+        splashColor: Colors.transparent,
+        focusColor: Colors.transparent,
+        highlightColor: Colors.transparent,
+      ),
       child: ExpansionTile(
+        backgroundColor: const Color.fromRGBO(254, 145, 29, 0.05),
+        tilePadding: context.screenWidth > 900
+            ? const EdgeInsetsDirectional.only(start: 8)
+            : const EdgeInsetsDirectional.only(start: 22),
+        childrenPadding: EdgeInsets.zero,
         trailing: const SizedBox(),
-        // tilePadding: _getTilePadding(depth),
         leading:
             _buildIcon(item.selectedWidget, item.unSelectedWidget, selected),
         title: _buildTitle(
           item.title,
           context,
+          selected,
+          true,
         ),
         initiallyExpanded: selected,
         // children: context.screenWidth > 900 ? childrenTiles : [],
@@ -205,12 +233,14 @@ class SideBarItem extends StatelessWidget {
   }
 
   Widget _buildTitle(String title, BuildContext context,
-      [bool selected = false]) {
+      [bool selected = false, bool fromExpansionTile = false]) {
     return context.screenWidth > 900
         ? Text(
             title,
             style: selected
-                ? const TextStyle(color: AppColors.white)
+                ? TextStyle(
+                    color:
+                        fromExpansionTile ? AppColors.primary : AppColors.white)
                 : const TextStyle(color: AppColors.textColor),
           )
         : const SizedBox();

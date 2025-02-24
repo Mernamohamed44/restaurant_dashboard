@@ -96,4 +96,8 @@ class SettingsCubit extends Cubit<SettingsState> {
   TextEditingController focusTextOnDarkController = TextEditingController();
   TextEditingController defaultTextOnDarkController = TextEditingController();
   TextEditingController disabledTextOnDarkController = TextEditingController();
+
+  void onChangePrimary() {
+    emit(OnColorChangedState());
+  }
 }

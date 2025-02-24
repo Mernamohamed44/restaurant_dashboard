@@ -53,9 +53,9 @@ class LatestActivities extends StatelessWidget {
               fontWeight: FontWeight.w700,
               fontSize: 16,
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 5),
-              child: const Divider(
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 5),
+              child: Divider(
                 color: Color.fromRGBO(115, 129, 141, 0.16),
               ),
             ),

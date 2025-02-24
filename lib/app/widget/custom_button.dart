@@ -60,9 +60,11 @@ class CustomButton extends StatelessWidget {
               )
             : null,
         borderRadius: BorderRadius.circular(borderRadius ?? 12),
-        border: Border.all(
-          color: borderColor ?? Colors.black38,
-        ),
+        border: isBorderButton
+            ? Border.all(
+                color: borderColor ?? Colors.black38,
+              )
+            : null,
       ),
       child: MaterialButton(
         onPressed: onTap,

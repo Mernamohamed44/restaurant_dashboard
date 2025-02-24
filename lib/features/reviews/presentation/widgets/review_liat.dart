@@ -109,8 +109,8 @@ class ReviewListContainer extends StatelessWidget {
                   print(rating);
                 },
               ),
-              Flexible(
-                child: const CustomText(
+              const Flexible(
+                child: CustomText(
                   maxLines: 1,
                   text: 'islamsayedr@gmail.com',
                   color: AppColors.textColor,

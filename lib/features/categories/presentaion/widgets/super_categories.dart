@@ -8,7 +8,7 @@ import 'package:restaurant_dashboard/app/widget/custom_text_form_field.dart';
 import 'package:restaurant_dashboard/app/widget/svg_icons.dart';
 
 class SuperCategories extends StatefulWidget {
-  SuperCategories({super.key});
+  const SuperCategories({super.key});
 
   @override
   State<SuperCategories> createState() => _SuperCategoriesState();

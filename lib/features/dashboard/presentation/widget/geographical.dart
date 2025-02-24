@@ -27,7 +27,7 @@ class GeographicalAccess extends StatelessWidget {
               color: AppColors.textColor,
               fontWeight: FontWeight.w700,
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             SizedBox(
@@ -59,7 +59,7 @@ class GeographicalAccess extends StatelessWidget {
                               children: [
                                 Image.asset(ImageManager.eye,
                                     fit: BoxFit.cover),
-                                Flexible(
+                                const Flexible(
                                     child: FittedBox(
                                         child: CustomText(
                                             text: 'Upgrade To View',

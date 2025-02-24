@@ -12,22 +12,6 @@ class ColorBrand extends StatefulWidget {
 
 class _ColorBrandState extends State<ColorBrand> {
   @override
-  void initState() {
-    context.read<SettingsCubit>().blackController.text = '#131313';
-    context.read<SettingsCubit>().whiteController.text = '#FFFFFF';
-    context.read<SettingsCubit>().primaryController.text = '#FFC600';
-    context.read<SettingsCubit>().secondaryController.text = '#131313';
-    context.read<SettingsCubit>().focusTextOnLightController.text = '#131313';
-    context.read<SettingsCubit>().defaultTextOnLightController.text = '#131313';
-    context.read<SettingsCubit>().disabledTextOnLightController.text =
-        '#131313';
-    context.read<SettingsCubit>().focusTextOnDarkController.text = '#FFFFFF';
-    context.read<SettingsCubit>().defaultTextOnDarkController.text = '#FFFFFF';
-    context.read<SettingsCubit>().disabledTextOnDarkController.text = '#FFFFFF';
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return BlocBuilder<SettingsCubit, SettingsState>(
       builder: (context, state) {
@@ -40,7 +24,7 @@ class _ColorBrandState extends State<ColorBrand> {
                 children: [
                   Flexible(
                     child: CustomTextFormField(
-                      controller: context.read<SettingsCubit>().blackController,
+                      controller: cubit.blackController,
                       title: 'Black',
                       titleFontSize: 14,
                     ),
@@ -50,7 +34,7 @@ class _ColorBrandState extends State<ColorBrand> {
                   ),
                   Flexible(
                     child: CustomTextFormField(
-                      controller: context.read<SettingsCubit>().whiteController,
+                      controller: cubit.whiteController,
                       title: 'White',
                       titleFontSize: 14,
                     ),
@@ -65,20 +49,19 @@ class _ColorBrandState extends State<ColorBrand> {
                   Flexible(
                     flex: 1,
                     child: CustomTextFormField(
-                      controller:
-                          context.read<SettingsCubit>().primaryController,
+                      controller: cubit.primaryController,
                       title: 'Primary',
                       titleFontSize: 14,
+                      onChanged: (value) {
+                        cubit.onChangePrimary();
+                      },
                     ),
                   ),
-                  SizedBox(
-                    width: 10,
-                  ),
+                  const SizedBox(width: 10),
                   Flexible(
                     flex: 1,
                     child: CustomTextFormField(
-                      controller:
-                          context.read<SettingsCubit>().secondaryController,
+                      controller: cubit.secondaryController,
                       title: 'Secondary',
                       titleFontSize: 14,
                     ),
@@ -89,8 +72,7 @@ class _ColorBrandState extends State<ColorBrand> {
                 height: 10,
               ),
               CustomTextFormField(
-                controller:
-                    context.read<SettingsCubit>().focusTextOnLightController,
+                controller: cubit.focusTextOnLightController,
                 title: 'Focus Text  on Light',
                 titleFontSize: 14,
               ),
@@ -98,8 +80,7 @@ class _ColorBrandState extends State<ColorBrand> {
                 height: 10,
               ),
               CustomTextFormField(
-                controller:
-                    context.read<SettingsCubit>().defaultTextOnLightController,
+                controller: cubit.defaultTextOnLightController,
                 title: 'Default Text  on Light',
                 titleFontSize: 14,
               ),
@@ -107,8 +88,7 @@ class _ColorBrandState extends State<ColorBrand> {
                 height: 10,
               ),
               CustomTextFormField(
-                controller:
-                    context.read<SettingsCubit>().disabledTextOnLightController,
+                controller: cubit.disabledTextOnLightController,
                 title: 'Diabled Text  on Light',
                 titleFontSize: 14,
               ),
@@ -116,8 +96,7 @@ class _ColorBrandState extends State<ColorBrand> {
                 height: 10,
               ),
               CustomTextFormField(
-                controller:
-                    context.read<SettingsCubit>().focusTextOnDarkController,
+                controller: cubit.focusTextOnDarkController,
                 title: 'Focus Text  on Dark',
                 titleFontSize: 14,
               ),
@@ -125,8 +104,7 @@ class _ColorBrandState extends State<ColorBrand> {
                 height: 10,
               ),
               CustomTextFormField(
-                controller:
-                    context.read<SettingsCubit>().defaultTextOnDarkController,
+                controller: cubit.defaultTextOnDarkController,
                 title: 'Default Text  on Dark',
                 titleFontSize: 14,
               ),
@@ -134,8 +112,7 @@ class _ColorBrandState extends State<ColorBrand> {
                 height: 10,
               ),
               CustomTextFormField(
-                controller:
-                    context.read<SettingsCubit>().disabledTextOnDarkController,
+                controller: cubit.disabledTextOnDarkController,
                 title: 'Diabled Text  on Dark',
                 titleFontSize: 14,
               ),

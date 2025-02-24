@@ -41,23 +41,26 @@ class AccountBody extends StatelessWidget {
           backgroundColor: AppColors.white,
           appBar: AppBar(
             backgroundColor: AppColors.white,
-            leadingWidth: 20,
+            leadingWidth: 30,
             leading: context.screenWidth < 377
-                ? InkWell(
-                    onTap: () {
-                      adminScaffoldKey.currentState!.toggleSidebar();
-                    },
-                    splashColor: Colors.transparent,
-                    hoverColor: Colors.transparent,
-                    focusColor: Colors.transparent,
-                    highlightColor: Colors.transparent,
-                    child: const SvgIcon(
-                      height: 100,
-                      color: AppColors.textColor,
-                      icon: ImageManager.drawerIcon,
+                ? Center(
+                    child: InkWell(
+                      onTap: () {
+                        adminScaffoldKey.currentState!.toggleSidebar();
+                      },
+                      splashColor: Colors.transparent,
+                      hoverColor: Colors.transparent,
+                      focusColor: Colors.transparent,
+                      highlightColor: Colors.transparent,
+                      child: const SvgIcon(
+                        height: 20,
+                        color: AppColors.textColor,
+                        icon: ImageManager.drawerIcon,
+                      ),
                     ),
                   )
                 : const SizedBox(),
+            titleSpacing: 5,
             title: const CustomText(
               text: 'Account',
               color: AppColors.textColor,
@@ -70,6 +73,7 @@ class AccountBody extends StatelessWidget {
                   right: 10,
                 ),
                 child: CustomButton(
+                  height: 20,
                   onTap: () {},
                   width: 150,
                   borderRadius: 25,
@@ -106,137 +110,336 @@ class AccountBody extends StatelessWidget {
             ),
           ),
           body: SingleChildScrollView(
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.all(15),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    CircleAvatar(
-                        radius: 40,
-                        child: Image.asset(
-                          ImageManager.logo,
-                          height: 55,
-                        )),
-                    const SizedBox(
-                      height: 40,
-                    ),
-                    CustomTextFormField(
-                      title: 'Full Name',
-                      titleFontSize: 14,
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Please enter  Full Name ';
-                        }
-                        return null;
-                      },
-                    ),
-                    10.verticalSpace,
-                    CustomTextFormField(
-                      title: ' Email Address',
-                      titleFontSize: 14,
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Please enter Email Address or Phone Number ';
-                        }
-                        return null;
-                      },
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    BlocBuilder<AccountCubit, AccountState>(
-                      builder: (context, state) {
-                        final cubit = context.read<AccountCubit>();
-                        return PhoneNumberInput(
-                          title: 'Phone Number',
-                          onInputChanged: (PhoneNumber number) {
-                            cubit.onInputChanged(number);
-                          },
-                        );
-                      },
-                    ),
-                    10.verticalSpace,
-                    BlocBuilder<AccountCubit, AccountState>(
-                      builder: (context, state) {
-                        final cubit = context.read<AccountCubit>();
-                        return CustomTextFormField(
-                          maxLines: 1,
-                          title: 'New Password',
-                          titleFontSize: 14,
-                          suffixIcon: SizedBox(
-                            height: 0.02.sh,
-                            child: GestureDetector(
-                              onTap: () {
-                                cubit.changeVisibility();
-                              },
-                              child: Icon(
-                                cubit.isObscure
-                                    ? Icons.visibility_off_outlined
-                                    : Icons.visibility_outlined,
-                                color: AppColors.grey73818D99,
-                              ),
-                            ),
-                          ),
-                          obscureText: cubit.isObscure,
-                          validator: (value) {
-                            if (value!.isEmpty) {
-                              return 'Please enter Password';
-                            }
-                            return null;
-                          },
-                        );
-                      },
-                    ),
-                    10.verticalSpace,
-                    BlocBuilder<AccountCubit, AccountState>(
-                      builder: (context, state) {
-                        final cubit = context.read<AccountCubit>();
+            child: context.screenWidth > 600
+                ? const AccountWeb()
+                : const AccountMobile(),
+          ),
+        ));
+  }
+}
 
-                        return CustomTextFormField(
-                          maxLines: 1,
-                          title: 'Enter New Password Again',
-                          titleFontSize: 14,
-                          suffixIcon: SizedBox(
-                            height: 0.02.sh,
-                            child: GestureDetector(
-                              onTap: () {
-                                cubit.changeConfirmVisibility();
-                              },
-                              child: Icon(
-                                cubit.isObscure1
-                                    ? Icons.visibility_off_outlined
-                                    : Icons.visibility_outlined,
-                                color: AppColors.grey73818D99,
-                              ),
-                            ),
-                          ),
-                          obscureText: cubit.isObscure1,
-                          validator: (value) {
-                            if (value!.isEmpty) {
-                              return 'Please enter Password';
-                            }
-                            return null;
-                          },
-                        );
-                      },
+class AccountWeb extends StatelessWidget {
+  const AccountWeb({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Stack(
+            children: [
+              Image.asset(
+                ImageManager.account,
+                fit: BoxFit.cover,
+                height: 200,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 140),
+                child: Align(
+                  alignment: Alignment.center,
+                  child: CircleAvatar(
+                    backgroundColor: AppColors.white,
+                    radius: 50,
+                    child: Image.asset(
+                      height: 35,
+                      ImageManager.logo,
+                      fit: BoxFit.contain,
                     ),
-                    25.verticalSpace,
-                    CustomButton(
-                      onTap: () {},
-                      text: 'save',
-                      fontColor: Colors.white,
-                      fontSize: 16,
-                      isGradient: true,
-                      borderColor: AppColors.transparent,
-                      borderRadius: 50,
-                    )
-                  ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(
+            height: 40,
+          ),
+          Padding(
+            padding: const EdgeInsets.only(right: 100, left: 100),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CustomTextFormField(
+                  title: 'Full Name',
+                  titleFontSize: 14,
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Please enter  Full Name ';
+                    }
+                    return null;
+                  },
+                ),
+                10.verticalSpace,
+                CustomTextFormField(
+                  title: ' Email Address',
+                  titleFontSize: 14,
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Please enter Email Address or Phone Number ';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                BlocBuilder<AccountCubit, AccountState>(
+                  builder: (context, state) {
+                    final cubit = context.read<AccountCubit>();
+                    return PhoneNumberInput(
+                      title: 'Phone Number',
+                      onInputChanged: (PhoneNumber number) {
+                        cubit.onInputChanged(number);
+                      },
+                    );
+                  },
+                ),
+                10.verticalSpace,
+                BlocBuilder<AccountCubit, AccountState>(
+                  builder: (context, state) {
+                    final cubit = context.read<AccountCubit>();
+                    return CustomTextFormField(
+                      maxLines: 1,
+                      title: 'New Password',
+                      titleFontSize: 14,
+                      suffixIcon: SizedBox(
+                        height: 0.02.sh,
+                        child: GestureDetector(
+                          onTap: () {
+                            cubit.changeVisibility();
+                          },
+                          child: Icon(
+                            cubit.isObscure
+                                ? Icons.visibility_off_outlined
+                                : Icons.visibility_outlined,
+                            color: AppColors.grey73818D99,
+                          ),
+                        ),
+                      ),
+                      obscureText: cubit.isObscure,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Please enter Password';
+                        }
+                        return null;
+                      },
+                    );
+                  },
+                ),
+                10.verticalSpace,
+                BlocBuilder<AccountCubit, AccountState>(
+                  builder: (context, state) {
+                    final cubit = context.read<AccountCubit>();
+
+                    return CustomTextFormField(
+                      maxLines: 1,
+                      title: 'Enter New Password Again',
+                      titleFontSize: 14,
+                      suffixIcon: SizedBox(
+                        height: 0.02.sh,
+                        child: GestureDetector(
+                          onTap: () {
+                            cubit.changeConfirmVisibility();
+                          },
+                          child: Icon(
+                            cubit.isObscure1
+                                ? Icons.visibility_off_outlined
+                                : Icons.visibility_outlined,
+                            color: AppColors.grey73818D99,
+                          ),
+                        ),
+                      ),
+                      obscureText: cubit.isObscure1,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Please enter Password';
+                        }
+                        return null;
+                      },
+                    );
+                  },
+                ),
+                25.verticalSpace,
+                CustomButton(
+                  onTap: () {},
+                  text: 'save',
+                  fontColor: Colors.white,
+                  fontSize: 16,
+                  isGradient: true,
+                  borderColor: AppColors.transparent,
+                  borderRadius: 50,
+                ),
+                const SizedBox(
+                  height: 40,
+                ),
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class AccountMobile extends StatelessWidget {
+  const AccountMobile({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Stack(
+          children: [
+            Image.asset(
+              ImageManager.account,
+              fit: BoxFit.cover,
+              height: 200,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 130, left: 10),
+              child: Align(
+                alignment: context.screenWidth > 500
+                    ? Alignment.center
+                    : Alignment.bottomLeft,
+                child: CircleAvatar(
+                  backgroundColor: AppColors.white,
+                  radius: 55,
+                  child: Image.asset(
+                    height: 35,
+                    ImageManager.logo,
+                    fit: BoxFit.contain,
+                  ),
                 ),
               ),
             ),
+          ],
+        ),
+        const SizedBox(
+          height: 40,
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CustomTextFormField(
+                title: 'Full Name',
+                titleFontSize: 14,
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'Please enter  Full Name ';
+                  }
+                  return null;
+                },
+              ),
+              10.verticalSpace,
+              CustomTextFormField(
+                title: ' Email Address',
+                titleFontSize: 14,
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'Please enter Email Address or Phone Number ';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              BlocBuilder<AccountCubit, AccountState>(
+                builder: (context, state) {
+                  final cubit = context.read<AccountCubit>();
+                  return PhoneNumberInput(
+                    title: 'Phone Number',
+                    onInputChanged: (PhoneNumber number) {
+                      cubit.onInputChanged(number);
+                    },
+                  );
+                },
+              ),
+              10.verticalSpace,
+              BlocBuilder<AccountCubit, AccountState>(
+                builder: (context, state) {
+                  final cubit = context.read<AccountCubit>();
+                  return CustomTextFormField(
+                    maxLines: 1,
+                    title: 'New Password',
+                    titleFontSize: 14,
+                    suffixIcon: SizedBox(
+                      height: 0.02.sh,
+                      child: GestureDetector(
+                        onTap: () {
+                          cubit.changeVisibility();
+                        },
+                        child: Icon(
+                          cubit.isObscure
+                              ? Icons.visibility_off_outlined
+                              : Icons.visibility_outlined,
+                          color: AppColors.grey73818D99,
+                        ),
+                      ),
+                    ),
+                    obscureText: cubit.isObscure,
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Please enter Password';
+                      }
+                      return null;
+                    },
+                  );
+                },
+              ),
+              10.verticalSpace,
+              BlocBuilder<AccountCubit, AccountState>(
+                builder: (context, state) {
+                  final cubit = context.read<AccountCubit>();
+
+                  return CustomTextFormField(
+                    maxLines: 1,
+                    title: 'Enter New Password Again',
+                    titleFontSize: 14,
+                    suffixIcon: SizedBox(
+                      height: 0.02.sh,
+                      child: GestureDetector(
+                        onTap: () {
+                          cubit.changeConfirmVisibility();
+                        },
+                        child: Icon(
+                          cubit.isObscure1
+                              ? Icons.visibility_off_outlined
+                              : Icons.visibility_outlined,
+                          color: AppColors.grey73818D99,
+                        ),
+                      ),
+                    ),
+                    obscureText: cubit.isObscure1,
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Please enter Password';
+                      }
+                      return null;
+                    },
+                  );
+                },
+              ),
+              25.verticalSpace,
+              CustomButton(
+                onTap: () {},
+                text: 'save',
+                fontColor: Colors.white,
+                fontSize: 16,
+                isGradient: true,
+                borderColor: AppColors.transparent,
+                borderRadius: 50,
+              ),
+              const SizedBox(
+                height: 40,
+              ),
+            ],
           ),
-        ));
+        )
+      ],
+    );
   }
 }

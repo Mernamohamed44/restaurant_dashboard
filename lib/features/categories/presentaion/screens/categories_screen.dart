@@ -51,23 +51,26 @@ class CategoriesBody extends StatelessWidget {
         backgroundColor: AppColors.white,
         appBar: AppBar(
           backgroundColor: AppColors.white,
-          leadingWidth: 20,
+          leadingWidth: 30,
           leading: context.screenWidth < 377
-              ? InkWell(
-                  child: const SvgIcon(
-                    height: 100,
-                    color: AppColors.textColor,
-                    icon: ImageManager.drawerIcon,
+              ? Center(
+                  child: InkWell(
+                    onTap: () {
+                      adminScaffoldKey.currentState!.toggleSidebar();
+                    },
+                    splashColor: Colors.transparent,
+                    hoverColor: Colors.transparent,
+                    focusColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                    child: const SvgIcon(
+                      height: 20,
+                      color: AppColors.textColor,
+                      icon: ImageManager.drawerIcon,
+                    ),
                   ),
-                  onTap: () {
-                    adminScaffoldKey.currentState!.toggleSidebar();
-                  },
-                  splashColor: Colors.transparent,
-                  hoverColor: Colors.transparent,
-                  focusColor: Colors.transparent,
-                  highlightColor: Colors.transparent,
                 )
               : const SizedBox(),
+          titleSpacing: 5,
           title: const CustomText(
             text: 'Category List',
             color: AppColors.textColor,
@@ -302,22 +305,22 @@ class CategoriesRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return const Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SuperCategories(),
-        const SizedBox(
+        SizedBox(
           height: 10,
         ),
-        const FoodCategories(),
-        const SizedBox(
+        FoodCategories(),
+        SizedBox(
           height: 10,
         ),
-        const DrinksCategories(),
-        const SizedBox(
+        DrinksCategories(),
+        SizedBox(
           height: 10,
         ),
-        const SweetsCategories()
+        SweetsCategories()
       ],
     );
   }
@@ -328,24 +331,24 @@ class CategoriesColumn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return const Column(
       children: [
-        const Divider(
+        Divider(
           color: Color.fromRGBO(115, 129, 141, 0.16),
         ),
         SuperCategories(),
-        const SizedBox(
+        SizedBox(
           height: 10,
         ),
-        const FoodCategories(),
-        const SizedBox(
+        FoodCategories(),
+        SizedBox(
           height: 10,
         ),
-        const DrinksCategories(),
-        const SizedBox(
+        DrinksCategories(),
+        SizedBox(
           height: 10,
         ),
-        const SweetsCategories(),
+        SweetsCategories(),
       ],
     );
   }

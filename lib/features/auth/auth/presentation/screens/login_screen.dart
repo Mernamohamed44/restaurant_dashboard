@@ -178,6 +178,7 @@ class LoginButtons extends StatelessWidget {
           borderColor: AppColors.primary,
           borderRadius: 50,
           fontWeight: FontWeight.w400,
+          isBorderButton: true,
         )
       ],
     );

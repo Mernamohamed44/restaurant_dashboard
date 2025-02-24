@@ -44,8 +44,8 @@ class ImageContainer extends StatelessWidget {
             const SizedBox(
               width: 5,
             ),
-            Flexible(
-              child: const Column(
+            const Flexible(
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CustomText(

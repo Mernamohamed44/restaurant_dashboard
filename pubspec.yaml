@@ -59,7 +59,7 @@ dependencies:
   smooth_page_indicator:
   popover:
   fl_chart: ^0.66.1
-  syncfusion_flutter_charts: ^25.1.35
+  syncfusion_flutter_charts: ^24.2.3
   percent_indicator:
   speedometer_chart:
   flutter_rating_bar:

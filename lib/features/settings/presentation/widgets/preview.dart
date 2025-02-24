@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:restaurant_dashboard/app/helper/color_extention.dart';
 import 'package:restaurant_dashboard/app/utils/image_manager.dart';
 import 'package:restaurant_dashboard/app/widget/custom_text.dart';
 import 'package:restaurant_dashboard/app/widget/custom_text_form_field.dart';
 import 'package:restaurant_dashboard/app/widget/svg_icons.dart';
+import 'package:restaurant_dashboard/features/settings/presentation/cubit/settings_cubit.dart';
 
 import '../../../../app/utils/colors.dart';
 
@@ -67,7 +70,7 @@ class Preview extends StatelessWidget {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
+            Flexible(
               child: Column(
                 children: [
                   Container(
@@ -105,106 +108,110 @@ class Preview extends StatelessWidget {
                   const SizedBox(
                     height: 10,
                   ),
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                        color: const Color(0xffFFC600),
-                        borderRadius: BorderRadius.circular(12)),
-                    child: const Row(
-                      children: [
-                        SvgIcon(
-                          icon: ImageManager.menu,
-                          color: Color.fromRGBO(19, 19, 19, 0.32),
-                          height: 15,
+                  BlocBuilder<SettingsCubit, SettingsState>(
+                    builder: (context, state) {
+                      return Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                            color: context
+                                .read<SettingsCubit>()
+                                .primaryController
+                                .text
+                                .toColor(),
+                            borderRadius: BorderRadius.circular(12)),
+                        child: const Row(
+                          children: [
+                            SvgIcon(
+                              icon: ImageManager.menu,
+                              color: Color.fromRGBO(19, 19, 19, 0.32),
+                              height: 15,
+                            ),
+                            SizedBox(
+                              width: 5,
+                            ),
+                            CustomText(
+                              text: 'Our Menu',
+                              color: AppColors.white,
+                              fontWeight: FontWeight.w400,
+                              fontSize: 14,
+                            ),
+                          ],
                         ),
-                        SizedBox(
-                          width: 5,
-                        ),
-                        CustomText(
-                          text: 'Our Menu',
-                          color: AppColors.white,
-                          fontWeight: FontWeight.w400,
-                          fontSize: 14,
-                        ),
-                      ],
-                    ),
+                      );
+                    },
                   ),
                   const SizedBox(
                     height: 10,
                   ),
                   const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 10),
-                    child: Expanded(
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              SvgIcon(
-                                icon: ImageManager.warning,
-                                color: Color.fromRGBO(19, 19, 19, 0.32),
-                                height: 15,
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            SvgIcon(
+                              icon: ImageManager.warning,
+                              color: Color.fromRGBO(19, 19, 19, 0.32),
+                              height: 15,
+                            ),
+                            SizedBox(
+                              width: 5,
+                            ),
+                            Flexible(
+                              child: CustomText(
+                                text: 'About Us',
+                                color: AppColors.textColor,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 14,
                               ),
-                              SizedBox(
-                                width: 5,
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 10),
+                        Row(
+                          children: [
+                            SvgIcon(
+                              icon: ImageManager.headphone,
+                              color: Color.fromRGBO(19, 19, 19, 0.32),
+                              height: 15,
+                            ),
+                            SizedBox(
+                              width: 5,
+                            ),
+                            Flexible(
+                              child: CustomText(
+                                text: 'contact Us',
+                                color: AppColors.textColor,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 14,
                               ),
-                              Flexible(
-                                child: CustomText(
-                                  text: 'About Us',
-                                  color: AppColors.textColor,
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 14,
-                                ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                          children: [
+                            SvgIcon(
+                              icon: ImageManager.reviews,
+                              color: Color.fromRGBO(19, 19, 19, 0.32),
+                              height: 15,
+                            ),
+                            SizedBox(
+                              width: 5,
+                            ),
+                            Flexible(
+                              child: CustomText(
+                                text: 'Review Service',
+                                color: AppColors.textColor,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 14,
                               ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Row(
-                            children: [
-                              SvgIcon(
-                                icon: ImageManager.headphone,
-                                color: Color.fromRGBO(19, 19, 19, 0.32),
-                                height: 15,
-                              ),
-                              SizedBox(
-                                width: 5,
-                              ),
-                              Flexible(
-                                child: CustomText(
-                                  text: 'contact Us',
-                                  color: AppColors.textColor,
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Row(
-                            children: [
-                              SvgIcon(
-                                icon: ImageManager.reviews,
-                                color: Color.fromRGBO(19, 19, 19, 0.32),
-                                height: 15,
-                              ),
-                              SizedBox(
-                                width: 5,
-                              ),
-                              Flexible(
-                                child: CustomText(
-                                  text: 'Review Service',
-                                  color: AppColors.textColor,
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -338,7 +345,11 @@ class Preview extends StatelessWidget {
                                         decoration: BoxDecoration(
                                           borderRadius:
                                               BorderRadius.circular(15),
-                                          color: const Color(0xffFFC600),
+                                          color: context
+                                              .read<SettingsCubit>()
+                                              .primaryController
+                                              .text
+                                              .toColor(),
                                         ),
                                         child: const Row(
                                           children: [
@@ -417,8 +428,8 @@ class Preview extends StatelessWidget {
                                 Column(
                                   children: [
                                     CircleAvatar(
-                                        child: Image.asset(ImageManager.salad),
-                                        radius: 30),
+                                        radius: 30,
+                                        child: Image.asset(ImageManager.salad)),
                                     const CustomText(
                                       text: 'Salad',
                                       color: AppColors.textColor,
@@ -439,8 +450,8 @@ class Preview extends StatelessWidget {
                                 Column(
                                   children: [
                                     CircleAvatar(
-                                        child: Image.asset(ImageManager.salad),
-                                        radius: 30),
+                                        radius: 30,
+                                        child: Image.asset(ImageManager.salad)),
                                     const CustomText(
                                       text: 'Salad',
                                       color: AppColors.textColor,

@@ -15,6 +15,7 @@ class ImageManager {
   static const String logo = '$imagesPath/logo.png';
   static const String salad = '$imagesPath/salad.png';
   static const String simpleTheme = '$imagesPath/simple_theme.png';
+  static const String account = '$imagesPath/account.png';
 
   /// svg
 

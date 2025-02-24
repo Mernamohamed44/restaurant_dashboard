@@ -51,18 +51,17 @@ class ReminderSubscription extends StatelessWidget {
                     child: CustomButton(
                       borderRadius: 25,
                       width: 300,
+                      height: 38,
                       color: AppColors.white,
-                      borderColor: AppColors.white,
-                      isGradient: true,
+                      isBorderButton: false,
+                      isGradient: false,
                       widget: const Row(
                         children: [
                           SvgIcon(
                               icon: ImageManager.extend,
                               height: 20,
                               color: AppColors.primary),
-                          SizedBox(
-                            width: 5,
-                          ),
+                          SizedBox(width: 8),
                           CustomText(
                             text: 'Extend your subscription for more time!',
                             color: AppColors.primary,
@@ -98,21 +97,21 @@ class ReminderSubscription extends StatelessWidget {
                     ),
                   ],
                 ),
+                const SizedBox(height: 10),
                 CustomButton(
                   borderRadius: 25,
                   width: 300,
+                  height: 38,
                   color: AppColors.white,
-                  borderColor: AppColors.white,
-                  isGradient: true,
+                  isBorderButton: false,
+                  isGradient: false,
                   widget: const Row(
                     children: [
                       SvgIcon(
                           icon: ImageManager.extend,
                           height: 20,
                           color: AppColors.primary),
-                      SizedBox(
-                        width: 5,
-                      ),
+                      SizedBox(width: 8),
                       Flexible(
                         child: CustomText(
                           text: 'Extend your subscription for more time!',

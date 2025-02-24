@@ -9,7 +9,7 @@ class CategoriesTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomTextFormField(
+    return const CustomTextFormField(
       title: 'Name ( local: English )',
       titleFontSize: 14,
       borderColor: AppColors.primary,

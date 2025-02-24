@@ -20,32 +20,28 @@ class CustomTabBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Container(
-          decoration: const BoxDecoration(),
-          child: TabBar(
-            controller: controller,
-            labelColor: AppColors.white,
-            indicatorSize: TabBarIndicatorSize.tab,
-            labelStyle: const TextStyle(
-                fontWeight: FontWeight.w700,
-                fontSize: 16,
-                fontFamily: AppConstance.appFontName),
-            unselectedLabelColor: const Color(0xff7C7C80),
-            indicator: BoxDecoration(
-              borderRadius: BorderRadius.circular(24),
-              color: AppColors.primary,
-            ),
-            dividerColor: Colors.transparent,
-            isScrollable: isScrollable,
-            labelPadding:
-                const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-            unselectedLabelStyle: const TextStyle(
-              fontFamily: AppConstance.appFontName,
-              fontWeight: FontWeight.w400,
-            ),
-            tabAlignment: TabAlignment.start,
-            tabs: tabs,
+        TabBar(
+          controller: controller,
+          labelColor: AppColors.white,
+          indicatorSize: TabBarIndicatorSize.tab,
+          labelStyle: const TextStyle(
+              fontWeight: FontWeight.w700,
+              fontSize: 16,
+              fontFamily: AppConstance.appFontName),
+          unselectedLabelColor: const Color(0xff7C7C80),
+          indicator: BoxDecoration(
+            borderRadius: BorderRadius.circular(24),
+            color: AppColors.primary,
           ),
+          dividerColor: Colors.transparent,
+          isScrollable: isScrollable,
+          labelPadding: const EdgeInsets.symmetric(horizontal: 4),
+          unselectedLabelStyle: const TextStyle(
+            fontFamily: AppConstance.appFontName,
+            fontWeight: FontWeight.w400,
+          ),
+          tabAlignment: TabAlignment.start,
+          tabs: tabs,
         ),
         if (pages != null)
           Expanded(

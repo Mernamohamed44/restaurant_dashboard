@@ -141,44 +141,57 @@ class SideBarWidget {
         ),
       ],
       footer: Container(
-        color: const Color.fromRGBO(115, 129, 141, 0.09),
+        color: context.screenWidth > 377
+            ? const Color.fromRGBO(115, 129, 141, 0.09)
+            : AppColors.white,
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 26,vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
               child: Row(
+                mainAxisAlignment: context.screenWidth > 900
+                    ? MainAxisAlignment.start
+                    : MainAxisAlignment.center,
                 children: [
                   SvgPicture.asset(
                     ImageManager.headphone,
                     height: 22,
                     color: AppColors.grey73818D,
                   ),
-                  context.screenWidth > 900? const SizedBox(
-                    width: 20,
-                  ):SizedBox(),
-                  context.screenWidth > 900?
-                  const CustomText(
-                    text: "Support",
-                    color: AppColors.textColor,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w400,
-                  ):
-                      const SizedBox()
+                  context.screenWidth > 900
+                      ? const SizedBox(
+                          width: 15,
+                        )
+                      : const SizedBox(),
+                  context.screenWidth > 900
+                      ? const CustomText(
+                          text: "Support",
+                          color: AppColors.textColor,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                        )
+                      : const SizedBox()
                 ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Container(
-                decoration: BoxDecoration(
-                    color: AppColors.white,
-                    borderRadius: BorderRadius.circular(15)),
-                child: ListTile(
-                  leading: SizedBox(
-                      height: 18,
-                      width: 18,
-                      child: SvgPicture.asset(ImageManager.language)),
-                  title: context.screenWidth > 900
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 10),
+              decoration: BoxDecoration(
+                  color: AppColors.white,
+                  borderRadius: BorderRadius.circular(15)),
+              child: Row(
+                mainAxisAlignment: context.screenWidth > 900
+                    ? MainAxisAlignment.start
+                    : MainAxisAlignment.center,
+                children: [
+                  SvgPicture.asset(ImageManager.language),
+                  context.screenWidth > 900
+                      ? const SizedBox(
+                          width: 15,
+                        )
+                      : const SizedBox(),
+                  context.screenWidth > 900
                       ? const CustomText(
                           text: "English",
                           color: AppColors.textColor,
@@ -186,30 +199,59 @@ class SideBarWidget {
                           fontWeight: FontWeight.w400,
                         )
                       : const SizedBox(),
-                ),
+                ],
               ),
+              // child: ListTile(
+              //   leading: SvgPicture.asset(ImageManager.language),
+              //   title: context.screenWidth > 900
+              //       ? const CustomText(
+              //           text: "English",
+              //           color: AppColors.textColor,
+              //           fontSize: 14,
+              //           fontWeight: FontWeight.w400,
+              //         )
+              //       : const SizedBox(),
+              // ),
+            ),
+            const SizedBox(
+              height: 10,
             ),
             InkWell(
+              hoverColor: Colors.transparent,
+              splashColor: Colors.transparent,
+              focusColor: Colors.transparent,
+              highlightColor: Colors.transparent,
               onTap: () {
                 context.pushNamed(Routes.account);
               },
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                child: Container(
-                  padding: const EdgeInsets.all(7),
-                  decoration: context.screenWidth > 900
-                      ? BoxDecoration(
-                          color: const Color.fromRGBO(115, 129, 141, 0.07),
-                          borderRadius: BorderRadius.circular(12))
-                      : const BoxDecoration(),
+              child: Container(
+                margin: const EdgeInsets.symmetric(horizontal: 10),
+                padding: const EdgeInsets.all(7),
+                decoration: context.screenWidth > 900
+                    ? BoxDecoration(
+                        color: const Color.fromRGBO(115, 129, 141, 0.07),
+                        borderRadius: BorderRadius.circular(12))
+                    : const BoxDecoration(),
+                child: InkWell(
+                  hoverColor: Colors.transparent,
+                  splashColor: Colors.transparent,
+                  focusColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                  onTap: () {
+                    context.pushNamed(Routes.account);
+                  },
                   child: Row(
+                    mainAxisAlignment: context.screenWidth > 900
+                        ? MainAxisAlignment.start
+                        : MainAxisAlignment.center,
                     children: [
                       CircleAvatar(
                           radius: 15, child: Image.asset(ImageManager.logo)),
-                      context.screenWidth > 900? const SizedBox(
-                        width: 10,
-                      ):SizedBox(),
+                      context.screenWidth > 900
+                          ? const SizedBox(
+                              width: 15,
+                            )
+                          : const SizedBox(),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -238,7 +280,11 @@ class SideBarWidget {
                   ),
                 ),
               ),
-            )
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+
             // InkWell(
             //   onTap: () {
             //     context.pushNamed(Routes.account);

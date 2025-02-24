@@ -25,23 +25,26 @@ class ThemeScreen extends StatelessWidget {
         appBar: AppBar(
           toolbarHeight: 68,
           backgroundColor: AppColors.white,
-          leadingWidth: 20,
+          leadingWidth: 30,
           leading: context.screenWidth < 377
-              ? InkWell(
-                  onTap: () {
-                    adminScaffoldKey.currentState!.toggleSidebar();
-                  },
-                  splashColor: Colors.transparent,
-                  hoverColor: Colors.transparent,
-                  focusColor: Colors.transparent,
-                  highlightColor: Colors.transparent,
-                  child: const SvgIcon(
-                    height: 100,
-                    color: AppColors.textColor,
-                    icon: ImageManager.drawerIcon,
+              ? Center(
+                  child: InkWell(
+                    onTap: () {
+                      adminScaffoldKey.currentState!.toggleSidebar();
+                    },
+                    splashColor: Colors.transparent,
+                    hoverColor: Colors.transparent,
+                    focusColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                    child: const SvgIcon(
+                      height: 20,
+                      color: AppColors.textColor,
+                      icon: ImageManager.drawerIcon,
+                    ),
                   ),
                 )
               : const SizedBox(),
+          titleSpacing: 5,
           title: const CustomText(
             text: 'Theme Store',
             color: AppColors.textColor,

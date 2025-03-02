@@ -39,7 +39,7 @@ class CustomText extends StatelessWidget {
       style: TextStyle(
         height: height,
         color: color,
-        fontSize: fontSize - 2,
+        fontSize: fontSize,
         fontWeight: fontWeight,
         decoration: textDecoration,
         fontFamily: fontFamily,

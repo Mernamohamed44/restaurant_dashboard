@@ -19,6 +19,7 @@ class CustomTabBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         TabBar(
           controller: controller,
@@ -41,6 +42,7 @@ class CustomTabBar extends StatelessWidget {
             fontWeight: FontWeight.w400,
           ),
           tabAlignment: TabAlignment.start,
+          overlayColor: MaterialStateProperty.all(Colors.transparent),
           tabs: tabs,
         ),
         if (pages != null)

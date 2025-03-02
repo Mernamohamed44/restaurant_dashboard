@@ -8,6 +8,7 @@ import 'package:restaurant_dashboard/app/routing/routes.dart';
 import 'package:restaurant_dashboard/app/utils/colors.dart';
 import 'package:restaurant_dashboard/app/utils/image_manager.dart';
 import 'package:restaurant_dashboard/app/widget/custom_button.dart';
+import 'package:restaurant_dashboard/app/widget/custom_cached_image.dart';
 import 'package:restaurant_dashboard/app/widget/custom_text.dart';
 import 'package:restaurant_dashboard/app/widget/custom_text_form_field.dart';
 import 'package:restaurant_dashboard/app/widget/phone_number_input.dart';
@@ -73,9 +74,9 @@ class AccountBody extends StatelessWidget {
                   right: 10,
                 ),
                 child: CustomButton(
-                  height: 20,
+                  height: 40,
                   onTap: () {},
-                  width: 150,
+                  width: 110,
                   borderRadius: 25,
                   borderColor: AppColors.white,
                   color: const Color(0xffC04027),
@@ -110,9 +111,7 @@ class AccountBody extends StatelessWidget {
             ),
           ),
           body: SingleChildScrollView(
-            child: context.screenWidth > 600
-                ? const AccountWeb()
-                : const AccountMobile(),
+            child: context.screenWidth > 600 ? const AccountWeb() : const AccountMobile(),
           ),
         ));
   }
@@ -128,35 +127,47 @@ class AccountWeb extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Stack(
-            children: [
-              Image.asset(
-                ImageManager.account,
-                fit: BoxFit.cover,
-                height: 200,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 140),
-                child: Align(
-                  alignment: Alignment.center,
-                  child: CircleAvatar(
-                    backgroundColor: AppColors.white,
-                    radius: 50,
-                    child: Image.asset(
-                      height: 35,
-                      ImageManager.logo,
-                      fit: BoxFit.contain,
+          SizedBox(
+            height: 240,
+            child: Stack(
+              alignment: Alignment.topCenter,
+              children: [
+                Image.asset(
+                  ImageManager.account,
+                  fit: BoxFit.cover,
+                  height: 200,
+                  width: double.infinity,
+                ),
+                Positioned(
+                  bottom: 0,
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(3),
+                      child: ClipOval(
+                        child: SizedBox.fromSize(
+                          size: const Size.fromRadius(40),
+                          child: const CustomCachedImage(
+                            image:
+                                "https://s3-alpha-sig.figma.com/img/be72/a765/08472652a0debe5195a33455348efc14?Expires=1741564800&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=V6szh0oYawpU5seosn3l3MNqxfSfCRbGPkQfKbD7kAxi5-j53BYPBVrhuSTVlnoeKnTgDlsw~PiIVoAoC3JHkUQaBAxPsfTr~vCEeNj31BJXseueZZB-JkZ1YTwC2k1BvYWL~ibC1vRHcWhBTzfHCQcN8EhsN0vOffAj-Jh6Gibc~xhaqGqp7Vzj4MDfY~mgNyDKhPLw6S9yOzRJD9ap0fbE-E0~iLQUakBrDwM6g8y8U~SVdnWj-NWgYecGo7PKUnIzgL3vMTwNiJbs4ku0RY4OlrijEsE0D0qOsZsRcCxYvfcO2ydB7RRdL9lDLGoMZIukRidr6IVHTQ0CN9S7Sw__",
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ),
-            ],
+                )
+              ],
+            ),
           ),
           const SizedBox(
             height: 40,
           ),
           Padding(
-            padding: const EdgeInsets.only(right: 100, left: 100),
+            padding:  EdgeInsets.symmetric(horizontal: 0.25.sw),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -210,9 +221,7 @@ class AccountWeb extends StatelessWidget {
                             cubit.changeVisibility();
                           },
                           child: Icon(
-                            cubit.isObscure
-                                ? Icons.visibility_off_outlined
-                                : Icons.visibility_outlined,
+                            cubit.isObscure ? Icons.visibility_off_outlined : Icons.visibility_outlined,
                             color: AppColors.grey73818D99,
                           ),
                         ),
@@ -243,9 +252,7 @@ class AccountWeb extends StatelessWidget {
                             cubit.changeConfirmVisibility();
                           },
                           child: Icon(
-                            cubit.isObscure1
-                                ? Icons.visibility_off_outlined
-                                : Icons.visibility_outlined,
+                            cubit.isObscure1 ? Icons.visibility_off_outlined : Icons.visibility_outlined,
                             color: AppColors.grey73818D99,
                           ),
                         ),
@@ -299,16 +306,24 @@ class AccountMobile extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(top: 130, left: 10),
               child: Align(
-                alignment: context.screenWidth > 500
-                    ? Alignment.center
-                    : Alignment.bottomLeft,
-                child: CircleAvatar(
-                  backgroundColor: AppColors.white,
-                  radius: 55,
-                  child: Image.asset(
-                    height: 35,
-                    ImageManager.logo,
-                    fit: BoxFit.contain,
+                alignment: context.screenWidth > 500 ? Alignment.center : Alignment.bottomLeft,
+                child: Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(3),
+                    child: ClipOval(
+                      child: SizedBox.fromSize(
+                        size: const Size.fromRadius(40),
+                        child: const CustomCachedImage(
+                          image:
+                          "https://s3-alpha-sig.figma.com/img/be72/a765/08472652a0debe5195a33455348efc14?Expires=1741564800&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=V6szh0oYawpU5seosn3l3MNqxfSfCRbGPkQfKbD7kAxi5-j53BYPBVrhuSTVlnoeKnTgDlsw~PiIVoAoC3JHkUQaBAxPsfTr~vCEeNj31BJXseueZZB-JkZ1YTwC2k1BvYWL~ibC1vRHcWhBTzfHCQcN8EhsN0vOffAj-Jh6Gibc~xhaqGqp7Vzj4MDfY~mgNyDKhPLw6S9yOzRJD9ap0fbE-E0~iLQUakBrDwM6g8y8U~SVdnWj-NWgYecGo7PKUnIzgL3vMTwNiJbs4ku0RY4OlrijEsE0D0qOsZsRcCxYvfcO2ydB7RRdL9lDLGoMZIukRidr6IVHTQ0CN9S7Sw__",
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -373,9 +388,7 @@ class AccountMobile extends StatelessWidget {
                           cubit.changeVisibility();
                         },
                         child: Icon(
-                          cubit.isObscure
-                              ? Icons.visibility_off_outlined
-                              : Icons.visibility_outlined,
+                          cubit.isObscure ? Icons.visibility_off_outlined : Icons.visibility_outlined,
                           color: AppColors.grey73818D99,
                         ),
                       ),
@@ -406,9 +419,7 @@ class AccountMobile extends StatelessWidget {
                           cubit.changeConfirmVisibility();
                         },
                         child: Icon(
-                          cubit.isObscure1
-                              ? Icons.visibility_off_outlined
-                              : Icons.visibility_outlined,
+                          cubit.isObscure1 ? Icons.visibility_off_outlined : Icons.visibility_outlined,
                           color: AppColors.grey73818D99,
                         ),
                       ),

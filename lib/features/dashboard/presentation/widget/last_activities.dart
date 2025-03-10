@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:restaurant_dashboard/app/utils/colors.dart';
@@ -14,27 +15,27 @@ class LatestActivities extends StatelessWidget {
     Categories(
         category: 'Category Update',
         rank:
-            'Category “ Salad “ has been renamed “ Fresh Salad “ click Here to view Categories.'),
+            'Category “ Salad “ has been renamed “ Fresh Salad “to view Categories.'),
     Categories(
         category: 'Category Update',
         rank:
-            'Category “ Salad “ has been renamed “ Fresh Salad “ click Here to view Categories.'),
+            'Category “ Salad “ has been renamed “ Fresh Salad “to view Categories.'),
     Categories(
         category: 'Category Update',
         rank:
-            'Category “ Salad “ has been renamed “ Fresh Salad “ click Here to view Categories.'),
+            'Category “ Salad “ has been renamed “ Fresh Salad “to view Categories.'),
     Categories(
         category: 'Customer Review',
         rank:
-            'Category “ Salad “ has been renamed “ Fresh Salad “ click Here to view Categories.'),
+            'Category “ Salad “ has been renamed “ Fresh Salad “to view Categories.'),
     Categories(
         category: 'Customer Review',
         rank:
-            'Category “ Salad “ has been renamed “ Fresh Salad “ click Here to view Categories.'),
+            'Category “ Salad “ has been renamed “ Fresh Salad “to view Categories.'),
     Categories(
         category: 'Customer Review',
         rank:
-            'Category “ Salad “ has been renamed “ Fresh Salad “ click Here to view Categories.'),
+            'Category “ Salad “ has been renamed “ Fresh Salad “to view Categories.'),
   ];
 
   @override
@@ -99,13 +100,43 @@ class LatestActivitiesRow extends StatelessWidget {
                 fontSize: 14,
               ),
               5.verticalSpace,
-              CustomText(
-                text: update,
+              RichText(
                 maxLines: 4,
-                color: AppColors.accentContainerColor,
-                fontWeight: FontWeight.w400,
-                fontSize: 12,
+                text: TextSpan(children: [
+                  TextSpan(
+                    text: update,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color:
+                          AppColors.accentContainerColor, // Normal text color
+                    ),
+                  ),
+                  TextSpan(
+                    text: 'click Here',
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () {
+                        // context.read<CategoriesCubit>().chooseImage(
+                        //     source: ImageSource.gallery, context: context);
+                        print("Clicked!");
+                      },
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      // Make it bold
+                      color: AppColors.palePrimary,
+                      // Make it look like a link
+                      decoration: TextDecoration
+                          .underline, // Optional: underline effect
+                    ),
+                  ),
+                ]),
               ),
+              // CustomText(
+              //   text: update,
+              //   maxLines: 4,
+              //   color: AppColors.accentContainerColor,
+              //   fontWeight: FontWeight.w400,
+              //   fontSize: 12,
+              // ),
               const Divider(
                 color: Color.fromRGBO(115, 129, 141, 0.16),
               ),

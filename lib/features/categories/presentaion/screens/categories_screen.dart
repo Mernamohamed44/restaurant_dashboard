@@ -13,10 +13,11 @@ import 'package:restaurant_dashboard/app/widget/custom_text.dart';
 import 'package:restaurant_dashboard/app/widget/svg_icons.dart';
 import 'package:restaurant_dashboard/features/categories/presentaion/cubit/categories_cubit.dart';
 import 'package:restaurant_dashboard/features/categories/presentaion/widgets/add_categories.dart';
+import 'package:restaurant_dashboard/features/categories/presentaion/widgets/add_category_dialog.dart';
 import 'package:restaurant_dashboard/features/categories/presentaion/widgets/categories_text_feild.dart';
 import 'package:restaurant_dashboard/features/categories/presentaion/widgets/drinks_categories.dart';
 import 'package:restaurant_dashboard/features/categories/presentaion/widgets/food_categories.dart';
-import 'package:restaurant_dashboard/features/categories/presentaion/widgets/save_button.dart';
+import 'package:restaurant_dashboard/features/categories/presentaion/widgets/categories_save_button.dart';
 import 'package:restaurant_dashboard/features/categories/presentaion/widgets/super_categories.dart';
 import 'package:restaurant_dashboard/features/categories/presentaion/widgets/sweets_categories.dart';
 import 'package:restaurant_dashboard/features/side_bar.dart';
@@ -107,174 +108,9 @@ class CategoriesBody extends StatelessWidget {
                         showDialog(
                             context: context,
                             builder: (c) {
-                              return BlocProvider.value(
-                                value: context.read<CategoriesCubit>(),
-                                child: Dialog(
-                                  backgroundColor: AppColors.white,
-                                  child: Container(
-                                    width: 500,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(15),
-                                      color: AppColors.white,
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(20.0),
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        // Prevents taking full screen height
-                                        children: [
-                                          Row(
-                                            children: [
-                                              const CustomText(
-                                                text: 'New Category',
-                                                color: AppColors.textColor,
-                                                fontWeight: FontWeight.w700,
-                                                fontSize: 20,
-                                              ),
-                                              const Spacer(),
-                                              SizedBox(
-                                                width: 200,
-                                                height: 40,
-                                                child: DropDownTextField(
-                                                  dropDownIconProperty:
-                                                      IconProperty(
-                                                    icon: Icons
-                                                        .keyboard_arrow_down,
-                                                    size: 24,
-                                                    color: AppColors.textColor,
-                                                  ),
-                                                  textFieldDecoration:
-                                                      InputDecoration(
-                                                    // fillColor: AppColors.boldContainerColor,
-                                                    // filled: true,
-                                                    prefixIcon: const Padding(
-                                                      padding:
-                                                          EdgeInsets.all(10),
-                                                      child: SvgIcon(
-                                                        icon: ImageManager
-                                                            .language,
-                                                        color: AppColors
-                                                            .accentContainerColor,
-                                                      ),
-                                                    ),
-                                                    contentPadding:
-                                                        const EdgeInsets
-                                                            .symmetric(
-                                                      horizontal: 15,
-                                                    ),
-                                                    enabledBorder:
-                                                        OutlineInputBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10),
-                                                      borderSide:
-                                                          const BorderSide(
-                                                        width: 1,
-                                                        color: AppColors
-                                                            .transparent,
-                                                      ),
-                                                    ),
-                                                    border: OutlineInputBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10),
-                                                      borderSide:
-                                                          const BorderSide(
-                                                        width: 1,
-                                                        color: AppColors
-                                                            .transparent,
-                                                      ),
-                                                    ),
-                                                    focusedBorder:
-                                                        OutlineInputBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10),
-                                                      borderSide:
-                                                          const BorderSide(
-                                                        width: 1,
-                                                        color: AppColors
-                                                            .palePrimary,
-                                                      ),
-                                                    ),
-                                                    focusedErrorBorder:
-                                                        OutlineInputBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10),
-                                                      borderSide:
-                                                          const BorderSide(
-                                                        width: 1,
-                                                        color: AppColors.red,
-                                                      ),
-                                                    ),
-                                                    errorBorder:
-                                                        OutlineInputBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10),
-                                                      borderSide:
-                                                          const BorderSide(
-                                                        width: 1,
-                                                        color: AppColors.red,
-                                                      ),
-                                                    ),
-                                                    hintText: 'English',
-                                                    hintStyle: const TextStyle(
-                                                      color:
-                                                          AppColors.textColor,
-                                                      fontWeight:
-                                                          FontWeight.w700,
-                                                      fontSize: 14,
-                                                      fontFamily: AppConstance
-                                                          .appFontName,
-                                                    ),
-                                                    errorStyle: const TextStyle(
-                                                      color: AppColors.red,
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                      fontSize: 12,
-                                                      fontFamily: AppConstance
-                                                          .appFontName,
-                                                    ),
-                                                  ),
-                                                  clearOption: true,
-                                                  clearIconProperty:
-                                                      IconProperty(
-                                                          color: Colors.green),
-                                                  dropDownList: const [
-                                                    DropDownValueModel(
-                                                        name: 'English',
-                                                        value: "value1"),
-                                                    DropDownValueModel(
-                                                        name: 'Arabic',
-                                                        value: "value2"),
-                                                  ],
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          const Divider(
-                                            color: Color.fromRGBO(
-                                                115, 129, 141, 0.16),
-                                          ),
-                                          const SizedBox(
-                                            height: 10,
-                                          ),
-                                          const AddImageContainer(),
-                                          const SizedBox(
-                                            height: 10,
-                                          ),
-                                          CategoriesTextField(),
-                                          const SizedBox(
-                                            height: 10,
-                                          ),
-                                          const ButtonSave()
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
+                              return AddCategoryDialog(
+                                categoriesCubit:
+                                    context.read<CategoriesCubit>(),
                               );
                             });
                       }
@@ -354,73 +190,4 @@ class CategoriesColumn extends StatelessWidget {
   }
 }
 
-class AddImageContainer extends StatelessWidget {
-  const AddImageContainer({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          color: AppColors.primary.withOpacity(.05),
-          border: Border.all(color: AppColors.primary)),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Image.asset(ImageManager.addImage),
-          const SizedBox(
-            width: 5,
-          ),
-          Flexible(
-            flex: 2,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const CustomText(
-                  text: 'Category Image',
-                  color: AppColors.textColor,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 14,
-                ),
-                RichText(
-                  maxLines: 4,
-                  text: TextSpan(
-                    children: [
-                      TextSpan(
-                        text: 'Click here',
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = () {
-                            context.read<CategoriesCubit>().chooseImage(
-                                source: ImageSource.gallery, context: context);
-                            print("Clicked!");
-                          },
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          // Make it bold
-                          color: AppColors.primary,
-                          // Make it look like a link
-                          decoration: TextDecoration
-                              .underline, // Optional: underline effect
-                        ),
-                      ),
-                      const TextSpan(
-                        text:
-                            ' to upload an image, min height 100px, these extensions are acceptable .svg, .png, .jpeg',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: AppColors
-                              .accentContainerColor, // Normal text color
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          )
-        ],
-      ),
-    );
-  }
-}

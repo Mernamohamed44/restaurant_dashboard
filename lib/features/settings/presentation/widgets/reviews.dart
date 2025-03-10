@@ -40,15 +40,58 @@ class Reviews extends StatelessWidget {
                     ),
                   ],
                 ),
-                ...List.generate(5, (index) => const ReviewsRow()),
+                ReviewsRow(
+                    rate: 'Star Rating',
+                    value: cubit.starRatingValue,
+                    onChange: (value) {
+                      cubit.changeStarRatingValue(value);
+                    }),
                 const SizedBox(
                   height: 8,
                 ),
-                const CustomTextFormField(
-                  maxLines: 3,
-                  hintText: 'Type your message here...',
-                  titleFontSize: 14,
+                ReviewsRow(
+                    rate: 'General Comment',
+                    value: cubit.generalCommentValue,
+                    onChange: (value) {
+                      cubit.changeGeneralCommentValue(value);
+                    }),
+                const SizedBox(
+                  height: 8,
                 ),
+                ReviewsRow(
+                    rate: 'Customer Name Required',
+                    value: cubit.customerNameValue,
+                    onChange: (value) {
+                      cubit.changeCustomerNameValue(value);
+                    }),
+                const SizedBox(
+                  height: 8,
+                ),
+                ReviewsRow(
+                    rate: 'Customer Email Required',
+                    value: cubit.customerEmailValue,
+                    onChange: (value) {
+                      cubit.changeCustomerEmailValue(value);
+                    }),
+                const SizedBox(
+                  height: 8,
+                ),
+                ReviewsRow(
+                    rate: 'Add Thank You Message',
+                    value: cubit.thankValue,
+                    onChange: (value) {
+                      cubit.changeThankValue(value);
+                    }),
+                const SizedBox(
+                  height: 8,
+                ),
+                cubit.thankValue
+                    ? const CustomTextFormField(
+                        maxLines: 3,
+                        hintText: 'Type your message here...',
+                        titleFontSize: 14,
+                      )
+                    : const SizedBox(),
                 const SizedBox(
                   height: 15,
                 ),
@@ -106,6 +149,10 @@ class Reviews extends StatelessWidget {
                     (index) => AddInputTypeRow(
                           text: cubit.customerInput[index],
                           index: index,
+                          value: cubit.customerInputValue[index] == 'Required'
+                              ? true
+                              : false,
+                          switchText: cubit.customerInputValue[index],
                         ))
               ],
             ),
@@ -142,8 +189,15 @@ class AddButton extends StatelessWidget {
 }
 
 class ReviewsRow extends StatelessWidget {
-  const ReviewsRow({super.key});
-
+  const ReviewsRow({
+    super.key,
+    required this.rate,
+    required this.value,
+    required this.onChange,
+  });
+  final String rate;
+  final bool value;
+  final Function(bool) onChange;
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<SettingsCubit, SettingsState>(
@@ -162,16 +216,15 @@ class ReviewsRow extends StatelessWidget {
                   scale: .7,
                   child: Switch(
                       activeColor: AppColors.primary,
-                      value: cubit.starRatingValue,
+                      value: value,
                       onChanged: (value) {
-                        cubit.changeStarRatingValue(value);
+                        onChange(value);
                       }),
                 ),
                 const SizedBox(
                   width: 10,
                 ),
-                const CustomText(
-                    text: 'Star Rating', color: AppColors.textColor)
+                CustomText(text: rate, color: AppColors.textColor)
               ],
             ),
           ),
@@ -182,10 +235,17 @@ class ReviewsRow extends StatelessWidget {
 }
 
 class AddInputTypeRow extends StatelessWidget {
-  const AddInputTypeRow({super.key, required this.text, required this.index});
+  const AddInputTypeRow(
+      {super.key,
+      required this.text,
+      required this.index,
+      required this.value,
+      required this.switchText});
 
   final String text;
+  final String switchText;
   final int index;
+  final bool value;
 
   @override
   Widget build(BuildContext context) {
@@ -240,17 +300,16 @@ class AddInputTypeRow extends StatelessWidget {
         Transform.scale(
           scale: .7,
           child: Switch(
-              activeColor: AppColors.primary,
-              value: context.read<SettingsCubit>().starRatingValue,
-              onChanged: (value) {
-                context.read<SettingsCubit>().changeStarRatingValue(value);
-              }),
+            activeColor: AppColors.primary,
+            value: value,
+            onChanged: (bool value) {},
+          ),
         ),
         const SizedBox(
           width: 5,
         ),
-        const CustomText(
-          text: 'Required',
+        CustomText(
+          text: switchText,
           color: AppColors.textColor,
           fontSize: 14,
         )
@@ -279,6 +338,7 @@ class InputTypeSelection extends StatelessWidget {
     return SizedBox(
       width: context.screenWidth > 500 ? 150 : double.infinity,
       child: DropDownTextField(
+        controller: context.read<SettingsCubit>().inputTypeController,
         dropDownIconProperty: IconProperty(
           icon: Icons.keyboard_arrow_down,
           size: 24,
@@ -342,12 +402,8 @@ class InputTypeSelection extends StatelessWidget {
         clearOption: true,
         clearIconProperty: IconProperty(color: Colors.green),
         dropDownList: const [
-          DropDownValueModel(name: 'Facebook', value: "value1"),
-          DropDownValueModel(name: 'Instagram', value: "value2"),
-          DropDownValueModel(
-            name: 'X',
-            value: "value3",
-          ),
+          DropDownValueModel(name: 'Not Required', value: "value1"),
+          DropDownValueModel(name: 'Required', value: "value2"),
         ],
       ),
     );

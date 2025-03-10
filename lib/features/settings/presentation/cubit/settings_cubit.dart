@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:bloc/bloc.dart';
+import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl_phone_field/phone_number.dart';
@@ -21,9 +22,12 @@ class SettingsCubit extends Cubit<SettingsState> {
   TextEditingController keyWordsController = TextEditingController();
   TextEditingController linksController = TextEditingController();
   TextEditingController customInputController = TextEditingController();
+  final SingleValueDropDownController inputTypeController =
+  SingleValueDropDownController();
   List<String> words = [];
   List<String> links = [];
   List<String> customerInput = [];
+  List<String> customerInputValue = [];
 
   void addKeyWords() {
     words.add(keyWordsController.text);
@@ -53,7 +57,9 @@ class SettingsCubit extends Cubit<SettingsState> {
 
   void addCustomInput() {
     customerInput.add(customInputController.text);
+    customerInputValue.add(inputTypeController.dropDownValue!.name);
     print(customerInput);
+    print(customerInputValue);
     customInputController.clear();
     emit(AddWordsState());
   }
@@ -65,9 +71,33 @@ class SettingsCubit extends Cubit<SettingsState> {
   }
 
   bool starRatingValue = false;
+  bool generalCommentValue = false;
+  bool customerNameValue = false;
+  bool customerEmailValue = false;
+  bool thankValue = false;
 
   changeStarRatingValue(value) {
     starRatingValue = value;
+    emit(ChangeStarRatingValueState());
+  }
+
+  changeGeneralCommentValue(value) {
+    generalCommentValue = value;
+    emit(ChangeStarRatingValueState());
+  }
+
+  changeCustomerNameValue(value) {
+    customerNameValue = value;
+    emit(ChangeStarRatingValueState());
+  }
+
+  changeCustomerEmailValue(value) {
+    customerEmailValue = value;
+    emit(ChangeStarRatingValueState());
+  }
+
+  changeThankValue(value) {
+    thankValue = value;
     emit(ChangeStarRatingValueState());
   }
 

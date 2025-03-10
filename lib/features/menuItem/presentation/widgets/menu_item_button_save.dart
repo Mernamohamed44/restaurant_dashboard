@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:restaurant_dashboard/app/utils/colors.dart';
 import 'package:restaurant_dashboard/app/widget/custom_button.dart';
 
-class ButtonSave extends StatelessWidget {
-  const ButtonSave({super.key});
+class MenuItemButtonSave extends StatelessWidget {
+  const MenuItemButtonSave({super.key});
 
   @override
   Widget build(BuildContext context) {

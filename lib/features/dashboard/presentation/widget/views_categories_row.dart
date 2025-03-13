@@ -9,13 +9,14 @@ class ViewsCategories extends StatelessWidget {
   const ViewsCategories(
       {super.key,
       required this.category,
-      /* required this.views*/ required this.rank,
+      required this.views,
+      required this.rank,
       this.isItem = false});
 
   final String category;
 
-// final String views;
-  final String rank;
+  final double views;
+  final int rank;
   final bool isItem;
 
   @override
@@ -50,7 +51,7 @@ class ViewsCategories extends StatelessWidget {
                 LinearPercentIndicator(
                   barRadius: const Radius.circular(12),
                   lineHeight: 7,
-                  percent: 0.6,
+                  percent: views*.1,
                   padding: EdgeInsets.zero,
                   backgroundColor: AppColors.boldContainerColor,
                   progressColor: AppColors.primary,

@@ -47,7 +47,7 @@ class ItemViews extends StatelessWidget {
             (index) => ViewsCategories(
               isItem: true,
               category: categories[index].category,
-              rank: categories[index].rank,
+              rank: 1, views: 3,
             ),
           )
         ],

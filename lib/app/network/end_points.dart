@@ -11,4 +11,5 @@ class ApiConstants {
   static String resend = "auth/resend";
   static String checkUsername = "auth/is-available";
   static String changePassword = "auth/change-password";
+  static String categories = "categories";
 }

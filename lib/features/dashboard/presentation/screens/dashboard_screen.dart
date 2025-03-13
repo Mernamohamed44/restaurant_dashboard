@@ -1,7 +1,9 @@
 import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:restaurant_dashboard/app/caching/shared_prefs.dart';
+import 'package:restaurant_dashboard/app/dependancy_injection/dependancy_injection.dart';
 import 'package:restaurant_dashboard/app/flutter_admin_scaffold/admin_scaffold.dart';
 import 'package:restaurant_dashboard/app/helper/extension.dart';
 import 'package:restaurant_dashboard/app/routing/routes.dart';
@@ -10,6 +12,7 @@ import 'package:restaurant_dashboard/app/utils/constance.dart';
 import 'package:restaurant_dashboard/app/utils/image_manager.dart';
 import 'package:restaurant_dashboard/app/widget/custom_text.dart';
 import 'package:restaurant_dashboard/app/widget/svg_icons.dart';
+import 'package:restaurant_dashboard/features/dashboard/presentation/cubit/dashboard_cubit.dart';
 import 'package:restaurant_dashboard/features/dashboard/presentation/widget/category_views.dart';
 import 'package:restaurant_dashboard/features/dashboard/presentation/widget/column_chart.dart';
 import 'package:restaurant_dashboard/features/dashboard/presentation/widget/device_platforms.dart';
@@ -27,9 +30,21 @@ class DashboardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => getIt<DashboardCubit>()..getCategoriesData(),
+      child: const DashboardBody(),
+    );
+  }
+}
+
+class DashboardBody extends StatelessWidget {
+  const DashboardBody({super.key});
+
+  @override
+  Widget build(BuildContext context) {
     final adminScaffoldKey = GlobalKey<AdminScaffoldState>();
     SideBarWidget sideBar = SideBarWidget();
-     print(Caching.get(key: 'access_token'));
+    print(Caching.get(key: 'access_token'));
     return AdminScaffold(
       key: adminScaffoldKey,
       backgroundColor: AppColors.white,
@@ -158,13 +173,23 @@ class DashboardScreen extends StatelessWidget {
             ),
           ),
         ),
-        body: Padding(
-          padding: const EdgeInsets.only(top: 15),
-          child: SingleChildScrollView(
-            child: context.screenWidth < 700
-                ? const DashboardColumn()
-                : const DashboardRow(),
-          ),
+        body: BlocBuilder<DashboardCubit, DashboardState>(
+          builder: (context, state) {
+            if (state is CategoriesDataLoadingState) {
+              return const Center(
+                  child: CircularProgressIndicator(
+                color: AppColors.primary,
+              ));
+            }
+            return Padding(
+              padding: const EdgeInsets.only(top: 15),
+              child: SingleChildScrollView(
+                child: context.screenWidth < 700
+                    ? const DashboardColumn()
+                    : const DashboardRow(),
+              ),
+            );
+          },
         ),
       ),
     );
@@ -206,12 +231,22 @@ class DashboardRow extends StatelessWidget {
                       ],
                     ),
                     10.verticalSpace,
-                    Row(
-                      children: [
-                        Flexible(flex: 1, child: CategoryViews()),
-                        10.horizontalSpace,
-                        Flexible(flex: 1, child: ItemViews())
-                      ],
+                    BlocBuilder<DashboardCubit, DashboardState>(
+                      builder: (context, state) {
+                        final categories =
+                            context.read<DashboardCubit>().categories;
+                        return Row(
+                          children: [
+                            Flexible(
+                                flex: 1,
+                                child: CategoryViews(
+                                  categories: categories,
+                                )),
+                            10.horizontalSpace,
+                            Flexible(flex: 1, child: ItemViews())
+                          ],
+                        );
+                      },
                     )
                   ],
                 ),
@@ -278,7 +313,15 @@ class DashboardColumn extends StatelessWidget {
           const MinutesSession(),
           const SizedBox(height: 10),
           DevicesAndPlatform(),
-          CategoryViews(),
+          BlocBuilder<DashboardCubit, DashboardState>(
+            builder: (context, state) {
+              final categories = context.read<DashboardCubit>().categories;
+
+              return CategoryViews(
+                categories: categories,
+              );
+            },
+          ),
           ItemViews(),
           LatestActivities(),
           const GeographicalAccess(

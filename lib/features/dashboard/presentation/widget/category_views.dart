@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:restaurant_dashboard/app/utils/colors.dart';
 import 'package:restaurant_dashboard/app/widget/custom_text.dart';
+import 'package:restaurant_dashboard/features/dashboard/domain/entities/categories_entities.dart';
 import 'package:restaurant_dashboard/features/dashboard/presentation/widget/views_categories_row.dart';
 
 class Categories {
@@ -14,17 +15,8 @@ class Categories {
 }
 
 class CategoryViews extends StatelessWidget {
-  CategoryViews({super.key});
-
-  List<Categories> categories = [
-    Categories(category: 'Soup', rank: '1'),
-    Categories(category: 'Cold Appetizers', rank: '2'),
-    Categories(category: 'Stroganoff', rank: '3'),
-    Categories(category: 'Appetizers', rank: '4'),
-    Categories(category: 'Kurdish Food', rank: '5'),
-    Categories(category: ' Fast Food', rank: '6'),
-  ];
-
+  const CategoryViews({super.key, required this.categories});
+  final List <CategoriesEntities> categories;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -45,8 +37,9 @@ class CategoryViews extends StatelessWidget {
           ...List.generate(
             categories.length,
             (index) => ViewsCategories(
-              category: categories[index].category,
-              rank: categories[index].rank,
+              category: categories[index].name,
+              rank: index+1, views:  categories[index].views,
+              
             ),
           )
         ],

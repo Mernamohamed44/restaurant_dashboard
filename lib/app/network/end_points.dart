@@ -1,6 +1,6 @@
 class ApiConstants {
   static String baseUrl = "http://209.250.237.58:1209/api/";
-  static String baseImagesUrl = "https://todo.iraqsapp.com/images/";
+  static String baseImagesUrl = "http://209.250.237.58:1209/images/";
 
   static String refreshTokenUrl = "/auth/refresh-token";
 
@@ -11,5 +11,7 @@ class ApiConstants {
   static String resend = "auth/resend";
   static String checkUsername = "auth/is-available";
   static String changePassword = "auth/change-password";
-  static String categories = "categories";
+  static String allCategories = "categories";
+  static String allItems = "items";
+  static String reviews = "reviews/count";
 }

@@ -33,63 +33,65 @@ class AddMenuItemDialog extends StatelessWidget {
           ),
           child: Padding(
             padding: const EdgeInsets.all(20.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              // Prevents taking full screen height
-              children: [
-                const Row(
-                  children: [
-                    FittedBox(
-                      child: CustomText(
-                        text: 'New Menu Item',
-                        color: AppColors.textColor,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 20,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                // Prevents taking full screen height
+                children: [
+                  const Row(
+                    children: [
+                      FittedBox(
+                        child: CustomText(
+                          text: 'New Menu Item',
+                          color: AppColors.textColor,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 20,
+                        ),
                       ),
-                    ),
-                    Spacer(),
-                    Flexible(
-                      child: LanguageDropDown(),
-                    ),
-                  ],
-                ),
-                const Divider(
-                  color: Color.fromRGBO(115, 129, 141, 0.16),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                const DeleteImageContainer(),
-                const SizedBox(
-                  height: 5,
-                ),
-                MenuItemTextField(),
-                const SizedBox(
-                  height: 10,
-                ),
-                const Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    ItemDropDown(),
-                    SizedBox(
-                      width: 50,
-                    ),
-                    CategoryDropDown()
-                  ],
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                const ItemDescriptionTextField(),
-                const SizedBox(
-                  height: 12,
-                ),
-                const ItemPriceTextField(),
-                const SizedBox(
-                  height: 10,
-                ),
-                const MenuItemButtonSave()
-              ],
+                      Spacer(),
+                      Flexible(
+                        child: LanguageDropDown(),
+                      ),
+                    ],
+                  ),
+                  const Divider(
+                    color: Color.fromRGBO(115, 129, 141, 0.16),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  const DeleteImageContainer(),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  MenuItemTextField(),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  const Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      ItemDropDown(),
+                      SizedBox(
+                        width: 50,
+                      ),
+                      CategoryDropDown()
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  const ItemDescriptionTextField(),
+                  const SizedBox(
+                    height: 12,
+                  ),
+                  const ItemPriceTextField(),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  const MenuItemButtonSave()
+                ],
+              ),
             ),
           ),
         ),

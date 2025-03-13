@@ -4,8 +4,8 @@ import 'package:restaurant_dashboard/app/utils/colors.dart';
 import 'package:restaurant_dashboard/app/widget/custom_text.dart';
 
 class CustomerRate extends StatelessWidget {
-  const CustomerRate({super.key});
-
+  const CustomerRate({super.key, required this.reviewsNumber});
+  final int reviewsNumber;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -44,9 +44,9 @@ class CustomerRate extends StatelessWidget {
                   },
                 ),
               ),
-              const Flexible(
+              Flexible(
                 child: CustomText(
-                  text: '( 32 review )',
+                  text: '( $reviewsNumber review )',
                   color: AppColors.white,
                   fontSize: 14,
                   fontWeight: FontWeight.w700,

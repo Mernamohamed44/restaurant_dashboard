@@ -31,7 +31,10 @@ class DashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => getIt<DashboardCubit>()..getCategoriesData(),
+      create: (context) => getIt<DashboardCubit>()
+        ..getCategoriesData()
+        ..getItemsData()
+        ..reviewsCount(),
       child: const DashboardBody(),
     );
   }
@@ -235,6 +238,7 @@ class DashboardRow extends StatelessWidget {
                       builder: (context, state) {
                         final categories =
                             context.read<DashboardCubit>().categories;
+                        final items = context.read<DashboardCubit>().items;
                         return Row(
                           children: [
                             Flexible(
@@ -243,7 +247,11 @@ class DashboardRow extends StatelessWidget {
                                   categories: categories,
                                 )),
                             10.horizontalSpace,
-                            Flexible(flex: 1, child: ItemViews())
+                            Flexible(
+                                flex: 1,
+                                child: ItemViews(
+                                  items: items,
+                                ))
                           ],
                         );
                       },
@@ -275,7 +283,13 @@ class DashboardRow extends StatelessWidget {
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Flexible(child: CustomerRate()),
+                        Flexible(
+                            child: BlocBuilder<DashboardCubit, DashboardState>(
+                          builder: (context, state) {
+                            final reviewsNumber=context.read<DashboardCubit>().reviewsNumber;
+                            return CustomerRate(reviewsNumber: reviewsNumber,);
+                          },
+                        )),
                         10.horizontalSpace,
                         const Flexible(child: LanguagesUsage()),
                       ],
@@ -322,12 +336,23 @@ class DashboardColumn extends StatelessWidget {
               );
             },
           ),
-          ItemViews(),
+          BlocBuilder<DashboardCubit, DashboardState>(
+            builder: (context, state) {
+              final items = context.read<DashboardCubit>().items;
+
+              return ItemViews(items: items);
+            },
+          ),
           LatestActivities(),
           const GeographicalAccess(
             text: 'Geographical Access',
           ),
-          const CustomerRate(),
+          BlocBuilder<DashboardCubit, DashboardState>(
+            builder: (context, state) {
+              final reviewsNumber=context.read<DashboardCubit>().reviewsNumber;
+              return CustomerRate( reviewsNumber: reviewsNumber,);
+            },
+          ),
           const LanguagesUsage(),
           const GeographicalAccess(
             text: 'Traffic Leads',

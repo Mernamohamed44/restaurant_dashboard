@@ -36,7 +36,6 @@ abstract class CategoriesEntities {
         updatedAt: updatedAt ?? this.updatedAt,
         image: image ?? this.image,
         createdAt: createdAt ?? this.createdAt,
-        iV: iV ?? this.iV
-        );
+        iV: iV ?? this.iV);
   }
 }

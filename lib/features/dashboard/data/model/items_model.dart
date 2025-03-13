@@ -1,7 +1,7 @@
-import 'package:restaurant_dashboard/features/dashboard/domain/entities/categories_entities.dart';
+import 'package:restaurant_dashboard/features/dashboard/domain/entities/item_entities.dart';
 
-class CategoriesModel extends CategoriesEntities {
-  CategoriesModel(
+class ItemsModel extends ItemsEntities {
+  ItemsModel(
       {required super.views,
       required super.sId,
       required super.user,
@@ -10,9 +10,11 @@ class CategoriesModel extends CategoriesEntities {
       required super.createdAt,
       required super.updatedAt,
       required super.iV,
-      });
-  factory CategoriesModel.fromJson(Map<String, dynamic> json) {
-    return CategoriesModel(
+      required super.category,
+      required super.price,
+      required super.description});
+  factory ItemsModel.fromJson(Map<String, dynamic> json) {
+    return ItemsModel(
       views: json["views"],
       sId: json["_id"],
       user: json["user"],
@@ -21,6 +23,9 @@ class CategoriesModel extends CategoriesEntities {
       image: json["image"],
       updatedAt: json["updatedAt"],
       iV: json["__v"],
+      category: json["category"],
+      price: json["price"],
+      description: json["description"],
     );
   }
 }

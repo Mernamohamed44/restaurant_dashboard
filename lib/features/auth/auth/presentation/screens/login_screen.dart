@@ -11,6 +11,7 @@ import 'package:restaurant_dashboard/app/utils/image_manager.dart';
 import 'package:restaurant_dashboard/app/widget/custom_button.dart';
 import 'package:restaurant_dashboard/app/widget/custom_text.dart';
 import 'package:restaurant_dashboard/app/widget/custom_text_form_field.dart';
+import 'package:restaurant_dashboard/app/widget/toastification_widget.dart';
 
 import '../cubit/login_cubit.dart';
 import '../cubit/login_states.dart';
@@ -34,9 +35,13 @@ class LoginBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.white,
-      body: context.screenWidth >= 900 ? const LoginRow() : const LoginColumn(),
+    return Form(
+      key: context.read<LogInCubit>().formKey,
+
+      child: Scaffold(
+        backgroundColor: AppColors.white,
+        body: context.screenWidth >= 900 ? const LoginRow() : const LoginColumn(),
+      ),
     );
   }
 }
@@ -46,41 +51,44 @@ class LoginRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cubit = context.read<LogInCubit>();
     return Row(
       children: [
         Expanded(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  height: context.screenHeight * .2,
-                ),
-                const CustomText(
-                  text: 'Login',
-                  color: AppColors.textColor,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 32,
-                ),
-                const CustomText(
-                  text: 'Welcome back dear.',
-                  color: AppColors.grey73818D99,
-                  fontWeight: FontWeight.w400,
-                  fontSize: 14,
-                ),
-                const Divider(
-                  color: Color.fromRGBO(115, 129, 141, 0.16),
-                ),
-                10.verticalSpace,
-                const LoginTextField(),
-                const Divider(
-                  color: Color.fromRGBO(115, 129, 141, 0.16),
-                ),
-                25.verticalSpace,
-                const LoginButtons()
-              ],
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    height: context.screenHeight * .2,
+                  ),
+                  const CustomText(
+                    text: 'Login',
+                    color: AppColors.textColor,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 32,
+                  ),
+                  const CustomText(
+                    text: 'Welcome back dear.',
+                    color: AppColors.grey73818D99,
+                    fontWeight: FontWeight.w400,
+                    fontSize: 14,
+                  ),
+                  const Divider(
+                    color: Color.fromRGBO(115, 129, 141, 0.16),
+                  ),
+                  10.verticalSpace,
+                  const LoginTextField(),
+                  const Divider(
+                    color: Color.fromRGBO(115, 129, 141, 0.16),
+                  ),
+                  25.verticalSpace,
+                  const LoginButtons(),
+                  25.verticalSpace,
+
+                ],
+              ),
             ),
           ),
         ),
@@ -100,7 +108,6 @@ class LoginColumn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cubit = context.read<LogInCubit>();
 
     return SingleChildScrollView(
       child: Column(
@@ -156,16 +163,38 @@ class LoginButtons extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        CustomButton(
-          onTap: () {
-            context.pushNamed(Routes.dashboard);
+        BlocConsumer<LogInCubit, LogInStates>(
+          listener: (context, state) {
+            if (state is LogInSuccessState) {
+              context.pushReplacementNamed(Routes.dashboard);
+            } else if (state is LogInFailState) {
+              showToastificationWidget(
+                message: state.message,
+                context: context,
+              );
+            }
           },
-          text: 'Login',
-          fontColor: Colors.white,
-          fontSize: 16,
-          isGradient: true,
-          borderColor: AppColors.transparent,
-          borderRadius: 50,
+          builder: (context, state) {
+            final cubit = context.read<LogInCubit>();
+            if (state is LogInLoadingState) {
+              return const Center(
+                child: CircularProgressIndicator(
+                  color: AppColors.primary,
+                ),
+              );
+            }
+            return CustomButton(
+              onTap: () {
+                cubit.login();
+              },
+              text: 'Login',
+              fontColor: Colors.white,
+              fontSize: 16,
+              isGradient: true,
+              borderColor: AppColors.transparent,
+              borderRadius: 50,
+            );
+          },
         ),
         20.verticalSpace,
         CustomButton(
@@ -195,6 +224,7 @@ class LoginTextField extends StatelessWidget {
     return Column(
       children: [
         CustomTextFormField(
+          controller: cubit.userNameController,
           title: 'Email Address or Phone Number',
           titleFontSize: 14,
           validator: (value) {
@@ -208,6 +238,7 @@ class LoginTextField extends StatelessWidget {
         BlocBuilder<LogInCubit, LogInStates>(
           builder: (context, state) {
             return CustomTextFormField(
+              controller: cubit.passwordController,
               maxLines: 1,
               title: 'Password',
               titleFontSize: 14,

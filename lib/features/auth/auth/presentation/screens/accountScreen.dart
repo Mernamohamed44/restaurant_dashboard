@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl_phone_field/phone_number.dart';
+import 'package:restaurant_dashboard/app/caching/shared_prefs.dart';
+import 'package:restaurant_dashboard/app/dependancy_injection/dependancy_injection.dart';
 import 'package:restaurant_dashboard/app/flutter_admin_scaffold/admin_scaffold.dart';
 import 'package:restaurant_dashboard/app/helper/extension.dart';
 import 'package:restaurant_dashboard/app/routing/routes.dart';
@@ -13,7 +15,9 @@ import 'package:restaurant_dashboard/app/widget/custom_text.dart';
 import 'package:restaurant_dashboard/app/widget/custom_text_form_field.dart';
 import 'package:restaurant_dashboard/app/widget/phone_number_input.dart';
 import 'package:restaurant_dashboard/app/widget/svg_icons.dart';
+import 'package:restaurant_dashboard/app/widget/toastification_widget.dart';
 import 'package:restaurant_dashboard/features/auth/auth/presentation/cubit/account_cubit.dart';
+import 'package:restaurant_dashboard/features/auth/auth/presentation/cubit/register_cubit.dart';
 import 'package:restaurant_dashboard/features/side_bar.dart';
 
 class AccountScreen extends StatelessWidget {
@@ -22,7 +26,7 @@ class AccountScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => AccountCubit(),
+      create: (context) => getIt<AccountCubit>()..getUserData(),
       child: const AccountBody(),
     );
   }
@@ -75,7 +79,10 @@ class AccountBody extends StatelessWidget {
                 ),
                 child: CustomButton(
                   height: 40,
-                  onTap: () {},
+                  onTap: () {
+                    Caching.clearAllData();
+                    context.pushReplacementNamed(Routes.login);
+                  },
                   width: 110,
                   borderRadius: 25,
                   borderColor: AppColors.white,
@@ -110,8 +117,20 @@ class AccountBody extends StatelessWidget {
               ),
             ),
           ),
-          body: SingleChildScrollView(
-            child: context.screenWidth > 600 ? const AccountWeb() : const AccountMobile(),
+          body: BlocBuilder<AccountCubit, AccountState>(
+            builder: (context, state) {
+              if (state is UserDataLoadingState) {
+                return const Center(
+                    child: CircularProgressIndicator(
+                  color: AppColors.primary,
+                ));
+              }
+              return SingleChildScrollView(
+                child: context.screenWidth > 600
+                    ? const AccountWeb()
+                    : const AccountMobile(),
+              );
+            },
           ),
         ));
   }
@@ -127,160 +146,17 @@ class AccountWeb extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          SizedBox(
+          const SizedBox(
             height: 240,
-            child: Stack(
-              alignment: Alignment.topCenter,
-              children: [
-                Image.asset(
-                  ImageManager.account,
-                  fit: BoxFit.cover,
-                  height: 200,
-                  width: double.infinity,
-                ),
-                Positioned(
-                  bottom: 0,
-                  child: Container(
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(3),
-                      child: ClipOval(
-                        child: SizedBox.fromSize(
-                          size: const Size.fromRadius(40),
-                          child: const CustomCachedImage(
-                            image:
-                                "https://s3-alpha-sig.figma.com/img/be72/a765/08472652a0debe5195a33455348efc14?Expires=1741564800&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=V6szh0oYawpU5seosn3l3MNqxfSfCRbGPkQfKbD7kAxi5-j53BYPBVrhuSTVlnoeKnTgDlsw~PiIVoAoC3JHkUQaBAxPsfTr~vCEeNj31BJXseueZZB-JkZ1YTwC2k1BvYWL~ibC1vRHcWhBTzfHCQcN8EhsN0vOffAj-Jh6Gibc~xhaqGqp7Vzj4MDfY~mgNyDKhPLw6S9yOzRJD9ap0fbE-E0~iLQUakBrDwM6g8y8U~SVdnWj-NWgYecGo7PKUnIzgL3vMTwNiJbs4ku0RY4OlrijEsE0D0qOsZsRcCxYvfcO2ydB7RRdL9lDLGoMZIukRidr6IVHTQ0CN9S7Sw__",
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                )
-              ],
-            ),
+            child: ProfileImage(),
           ),
           const SizedBox(
             height: 40,
           ),
           Padding(
-            padding:  EdgeInsets.symmetric(horizontal: 0.25.sw),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                CustomTextFormField(
-                  title: 'Full Name',
-                  titleFontSize: 14,
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Please enter  Full Name ';
-                    }
-                    return null;
-                  },
-                ),
-                10.verticalSpace,
-                CustomTextFormField(
-                  title: ' Email Address',
-                  titleFontSize: 14,
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Please enter Email Address or Phone Number ';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                BlocBuilder<AccountCubit, AccountState>(
-                  builder: (context, state) {
-                    final cubit = context.read<AccountCubit>();
-                    return PhoneNumberInput(
-                      title: 'Phone Number',
-                      onInputChanged: (PhoneNumber number) {
-                        cubit.onInputChanged(number);
-                      },
-                    );
-                  },
-                ),
-                10.verticalSpace,
-                BlocBuilder<AccountCubit, AccountState>(
-                  builder: (context, state) {
-                    final cubit = context.read<AccountCubit>();
-                    return CustomTextFormField(
-                      maxLines: 1,
-                      title: 'New Password',
-                      titleFontSize: 14,
-                      suffixIcon: SizedBox(
-                        height: 0.02.sh,
-                        child: GestureDetector(
-                          onTap: () {
-                            cubit.changeVisibility();
-                          },
-                          child: Icon(
-                            cubit.isObscure ? Icons.visibility_off_outlined : Icons.visibility_outlined,
-                            color: AppColors.grey73818D99,
-                          ),
-                        ),
-                      ),
-                      obscureText: cubit.isObscure,
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Please enter Password';
-                        }
-                        return null;
-                      },
-                    );
-                  },
-                ),
-                10.verticalSpace,
-                BlocBuilder<AccountCubit, AccountState>(
-                  builder: (context, state) {
-                    final cubit = context.read<AccountCubit>();
-
-                    return CustomTextFormField(
-                      maxLines: 1,
-                      title: 'Enter New Password Again',
-                      titleFontSize: 14,
-                      suffixIcon: SizedBox(
-                        height: 0.02.sh,
-                        child: GestureDetector(
-                          onTap: () {
-                            cubit.changeConfirmVisibility();
-                          },
-                          child: Icon(
-                            cubit.isObscure1 ? Icons.visibility_off_outlined : Icons.visibility_outlined,
-                            color: AppColors.grey73818D99,
-                          ),
-                        ),
-                      ),
-                      obscureText: cubit.isObscure1,
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Please enter Password';
-                        }
-                        return null;
-                      },
-                    );
-                  },
-                ),
-                25.verticalSpace,
-                CustomButton(
-                  onTap: () {},
-                  text: 'save',
-                  fontColor: Colors.white,
-                  fontSize: 16,
-                  isGradient: true,
-                  borderColor: AppColors.transparent,
-                  borderRadius: 50,
-                ),
-                const SizedBox(
-                  height: 40,
-                ),
-              ],
+            padding: EdgeInsets.symmetric(horizontal: 0.25.sw),
+            child: ProfileTextField(
+              cubit: context.read<AccountCubit>(),
             ),
           )
         ],
@@ -296,50 +172,55 @@ class AccountMobile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Stack(
-          children: [
-            Image.asset(
-              ImageManager.account,
-              fit: BoxFit.cover,
-              height: 200,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 130, left: 10),
-              child: Align(
-                alignment: context.screenWidth > 500 ? Alignment.center : Alignment.bottomLeft,
-                child: Container(
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(3),
-                    child: ClipOval(
-                      child: SizedBox.fromSize(
-                        size: const Size.fromRadius(40),
-                        child: const CustomCachedImage(
-                          image:
-                          "https://s3-alpha-sig.figma.com/img/be72/a765/08472652a0debe5195a33455348efc14?Expires=1741564800&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=V6szh0oYawpU5seosn3l3MNqxfSfCRbGPkQfKbD7kAxi5-j53BYPBVrhuSTVlnoeKnTgDlsw~PiIVoAoC3JHkUQaBAxPsfTr~vCEeNj31BJXseueZZB-JkZ1YTwC2k1BvYWL~ibC1vRHcWhBTzfHCQcN8EhsN0vOffAj-Jh6Gibc~xhaqGqp7Vzj4MDfY~mgNyDKhPLw6S9yOzRJD9ap0fbE-E0~iLQUakBrDwM6g8y8U~SVdnWj-NWgYecGo7PKUnIzgL3vMTwNiJbs4ku0RY4OlrijEsE0D0qOsZsRcCxYvfcO2ydB7RRdL9lDLGoMZIukRidr6IVHTQ0CN9S7Sw__",
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
+        const ProfileImage(),
         const SizedBox(
           height: 40,
         ),
-        Padding(
+        ProfileTextField(
+          cubit: context.read<AccountCubit>(),
+        )
+      ],
+    );
+  }
+}
+
+class ProfileTextField extends StatefulWidget {
+  const ProfileTextField({super.key, required this.cubit});
+  final AccountCubit cubit;
+
+  @override
+  State<ProfileTextField> createState() => _ProfileTextFieldState();
+}
+
+class _ProfileTextFieldState extends State<ProfileTextField> {
+  final FocusNode _focusNode = FocusNode();
+
+  @override
+  void initState() {
+    _focusNode.addListener(() {
+      if (!_focusNode.hasFocus) {
+        if (widget.cubit.emailController.text.isNotEmpty) {
+          debugPrint(widget.cubit.emailController.text);
+          widget.cubit.checkUsername();
+        }
+      }
+    });
+
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<AccountCubit, AccountState>(
+      builder: (context, state) {
+        return Padding(
           padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               CustomTextFormField(
                 title: 'Full Name',
+                controller: context.read<AccountCubit>().nameController,
                 titleFontSize: 14,
                 validator: (value) {
                   if (value!.isEmpty) {
@@ -349,14 +230,25 @@ class AccountMobile extends StatelessWidget {
                 },
               ),
               10.verticalSpace,
-              CustomTextFormField(
-                title: ' Email Address',
-                titleFontSize: 14,
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Please enter Email Address or Phone Number ';
-                  }
-                  return null;
+              BlocBuilder<AccountCubit, AccountState>(
+                builder: (context, state) {
+                  return CustomTextFormField(
+                    title: 'Email Address',
+                    focusNode: _focusNode,
+                    controller: context.read<AccountCubit>().emailController,
+                    titleFontSize: 14,
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Please enter valid Email Address ';
+                      } else if (value ==
+                          context.read<AccountCubit>().user!.username) {
+                        return null;
+                      } else if (widget.cubit.isUsernameAvailable) {
+                        return "Email Address is available!";
+                      }
+                      return null;
+                    },
+                  );
                 },
               ),
               const SizedBox(
@@ -366,6 +258,8 @@ class AccountMobile extends StatelessWidget {
                 builder: (context, state) {
                   final cubit = context.read<AccountCubit>();
                   return PhoneNumberInput(
+                    controller: cubit.phoneController,
+                    isoCode: cubit.isoCode,
                     title: 'Phone Number',
                     onInputChanged: (PhoneNumber number) {
                       cubit.onInputChanged(number);
@@ -379,7 +273,8 @@ class AccountMobile extends StatelessWidget {
                   final cubit = context.read<AccountCubit>();
                   return CustomTextFormField(
                     maxLines: 1,
-                    title: 'New Password',
+                    title: 'Old Password',
+                    controller: cubit.oldPasswordController,
                     titleFontSize: 14,
                     suffixIcon: SizedBox(
                       height: 0.02.sh,
@@ -388,7 +283,42 @@ class AccountMobile extends StatelessWidget {
                           cubit.changeVisibility();
                         },
                         child: Icon(
-                          cubit.isObscure ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                          cubit.isObscure
+                              ? Icons.visibility_off_outlined
+                              : Icons.visibility_outlined,
+                          color: AppColors.grey73818D99,
+                        ),
+                      ),
+                    ),
+                    obscureText: cubit.isObscure,
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Please enter Password';
+                      }
+                      return null;
+                    },
+                  );
+                },
+              ),
+              10.verticalSpace,
+              BlocBuilder<AccountCubit, AccountState>(
+                builder: (context, state) {
+                  final cubit = context.read<AccountCubit>();
+                  return CustomTextFormField(
+                    maxLines: 1,
+                    title: 'New Password',
+                    controller: cubit.newPasswordController,
+                    titleFontSize: 14,
+                    suffixIcon: SizedBox(
+                      height: 0.02.sh,
+                      child: GestureDetector(
+                        onTap: () {
+                          cubit.changeNewPasswordVisibility();
+                        },
+                        child: Icon(
+                          cubit.isObscure2
+                              ? Icons.visibility_off_outlined
+                              : Icons.visibility_outlined,
                           color: AppColors.grey73818D99,
                         ),
                       ),
@@ -411,6 +341,7 @@ class AccountMobile extends StatelessWidget {
                   return CustomTextFormField(
                     maxLines: 1,
                     title: 'Enter New Password Again',
+                    controller: cubit.confirmPasswordController,
                     titleFontSize: 14,
                     suffixIcon: SizedBox(
                       height: 0.02.sh,
@@ -419,7 +350,9 @@ class AccountMobile extends StatelessWidget {
                           cubit.changeConfirmVisibility();
                         },
                         child: Icon(
-                          cubit.isObscure1 ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                          cubit.isObscure1
+                              ? Icons.visibility_off_outlined
+                              : Icons.visibility_outlined,
                           color: AppColors.grey73818D99,
                         ),
                       ),
@@ -435,19 +368,86 @@ class AccountMobile extends StatelessWidget {
                 },
               ),
               25.verticalSpace,
-              CustomButton(
-                onTap: () {},
-                text: 'save',
-                fontColor: Colors.white,
-                fontSize: 16,
-                isGradient: true,
-                borderColor: AppColors.transparent,
-                borderRadius: 50,
+              BlocConsumer<AccountCubit, AccountState>(
+                listener: (context, state) {
+                  if (state is ChangePasswordSuccessState) {
+                    showToastificationWidget(
+                      message: 'Password changed Successfully',
+                      context: context,
+                    );
+                  } else if (state is ChangePasswordFailState) {
+                    showToastificationWidget(
+                      message: state.message,
+                      context: context,
+                    );
+                  }
+                },
+                builder: (context, state) {
+                  final cubit = context.read<AccountCubit>();
+                  if (state is ChangePasswordLoadingState) {
+                    return const Center(
+                      child: CircularProgressIndicator(
+                        color: AppColors.primary,
+                      ),
+                    );
+                  }
+                  return CustomButton(
+                    onTap: () {
+                      cubit.changePassword();
+                    },
+                    text: 'save',
+                    fontColor: Colors.white,
+                    fontSize: 16,
+                    isGradient: true,
+                    borderColor: AppColors.transparent,
+                    borderRadius: 50,
+                  );
+                },
               ),
               const SizedBox(
                 height: 40,
               ),
             ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+class ProfileImage extends StatelessWidget {
+  const ProfileImage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      alignment: Alignment.topCenter,
+      children: [
+        Image.asset(
+          ImageManager.account,
+          fit: BoxFit.cover,
+          height: 200,
+          width: double.infinity,
+        ),
+        Positioned(
+          bottom: 0,
+          child: Container(
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(3),
+              child: ClipOval(
+                child: SizedBox.fromSize(
+                  size: const Size.fromRadius(40),
+                  child: const CustomCachedImage(
+                    image: ImageManager.logo,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+            ),
           ),
         )
       ],

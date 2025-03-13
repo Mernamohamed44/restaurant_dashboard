@@ -1,31 +1,31 @@
-import '../../data/models/user_model.dart';
+import '../../data/models/auth_model.dart';
 
-class UserEntity {
+class AuthEntity {
   final String displayName;
   final String id;
-  final String username;
+  final String role;
   String accessToken;
   String refreshToken;
 
-  UserEntity({
+  AuthEntity({
     required this.displayName,
     required this.id,
-    required this.username,
+    required this.role,
     required this.accessToken,
     required this.refreshToken,
   });
 
-  UserModel copyWith({
+  AuthModel copyWith({
     String? id,
     String? accessToken,
     String? refreshToken,
     String? displayName,
     String? username,
   }) {
-    return UserModel(
+    return AuthModel(
       id: id ?? this.id,
       displayName: displayName ?? this.displayName,
-      username: username ?? this.username,
+      role: username ?? this.role,
       accessToken: accessToken ?? this.accessToken,
       refreshToken: refreshToken ?? this.refreshToken,
     );

@@ -1,18 +1,19 @@
 import 'package:dio/dio.dart';
+import 'package:restaurant_dashboard/app/caching/shared_prefs.dart';
 import 'package:restaurant_dashboard/app/network/dio.dart';
 import 'package:restaurant_dashboard/app/network/end_points.dart';
+import 'package:restaurant_dashboard/features/auth/auth/data/models/user_data_model.dart';
 
-import '../models/user_model.dart';
+import '../models/auth_model.dart';
 import 'base_remote_auth_data_source.dart';
 
 class RemoteAuthDataSource extends BaseRemoteAuthDataSource {
   final dioManager = DioManager();
 
   @override
-  Future<UserModel> login({
+  Future<AuthModel> login({
     required String userName,
     required String password,
-    required String role,
   }) async {
     final Response response = await dioManager.post(
       ApiConstants.login,
@@ -21,25 +22,27 @@ class RemoteAuthDataSource extends BaseRemoteAuthDataSource {
         "password": password,
       },
     );
-    return UserModel.fromJson(response.data);
+    return AuthModel.fromJson(response.data);
   }
 
   @override
-  Future<UserModel> register({
-    required String companyName,
-    required String userName,
+  Future<AuthModel> register({
+    required String displayName,
+    required String username,
     required String password,
-    required String role,
+    required String phone,
   }) async {
     final Response response = await dioManager.post(
       ApiConstants.register,
       data: {
-        "username": userName,
+        "displayName": displayName,
+        "username": username,
         "password": password,
-        "displayName": companyName,
+        "phone": phone,
+        "image": '',
       },
     );
-    return UserModel.fromJson(response.data);
+    return AuthModel.fromJson(response.data);
   }
 
   @override
@@ -79,6 +82,29 @@ class RemoteAuthDataSource extends BaseRemoteAuthDataSource {
       },
     );
 
-    return response.data["usernameAvailable"] ?? false;
+    return response.data["success"] ?? false;
+  }
+
+  @override
+  Future<UserDataModel> getUserData() async {
+    final Response response = await dioManager.get(
+      ApiConstants.profile,
+    );
+    return UserDataModel.fromJson(response.data);
+  }
+
+  @override
+  changePassword(
+      {required String oldPassword,
+      required String newPassword,
+      required String confirmPassword}) async {
+    await dioManager.post(
+      ApiConstants.changePassword,
+      data: {
+        "oldPassword": oldPassword,
+        "newPassword": newPassword,
+        "confirmPassword": confirmPassword,
+      },
+    );
   }
 }

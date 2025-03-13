@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl_phone_field/phone_number.dart';
+import 'package:logger/logger.dart';
+import 'package:restaurant_dashboard/app/caching/shared_prefs.dart';
 
-import '../../../domain/repository/base_auth_repository.dart';
+import '../../domain/repository/base_auth_repository.dart';
 import 'register_states.dart';
 
 class RegisterCubit extends Cubit<RegisterStates> {
@@ -13,59 +15,66 @@ class RegisterCubit extends Cubit<RegisterStates> {
   static RegisterCubit of(BuildContext context) => BlocProvider.of(context);
 
   final formKey = GlobalKey<FormState>();
-  TextEditingController companyNameController = TextEditingController();
+  TextEditingController displayNameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
   TextEditingController userNameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  TextEditingController confirmPasswordController = TextEditingController();
   TextEditingController codeController = TextEditingController();
 
   // ====================== REGISTER ===================== //
 
   String role = "employee";
+  String phoneNumber = "";
 
-  // Future register() async {
-  //   if (formKey.currentState!.validate()) {
-  //     emit(RegisterLoadingState());
-  //
-  //     final response = await repo.register(
-  //       userName: userNameController.text,
-  //       password: passwordController.text,
-  //       companyName: companyNameController.text,
-  //       role: role,
-  //     );
-  //     response.fold(
-  //       (l) {
-  //         emit(RegisterFailState(message: l.message));
-  //         Logger().e(l.message);
-  //       },
-  //       (r) {
-  //         Caching.put(key: "access_token", value: r.accessToken);
-  //         Caching.put(key: "refresh_token", value: r.refreshToken);
-  //         emit(RegisterSuccessState());
-  //       },
-  //     );
-  //   }
-  // }
+  onInputChanged(PhoneNumber phone) {
+    phoneNumber = "${phone.countryCode}${phone.number}";
+    emit(ChangeNumberState());
+  }
+
+  Future register() async {
+    if (formKey.currentState!.validate()) {
+      emit(RegisterLoadingState());
+      final response = await repo.register(
+        displayName: displayNameController.text,
+        username: emailController.text,
+        password: passwordController.text,
+        phone: phoneNumber,
+      );
+      response.fold(
+        (l) {
+          emit(RegisterFailState(message: l.message));
+          Logger().e(l.message);
+        },
+        (r) {
+          Caching.put(key: "access_token", value: r.accessToken);
+          Caching.put(key: "refresh_token", value: r.refreshToken);
+          emit(RegisterSuccessState());
+        },
+      );
+    }
+  }
 
 //===================== CHECK USERNAME ========================//
 
-  bool isUsernameAvailable = true;
+  bool isUsernameAvailable = false;
 
-  // Future<void> checkUsername() async {
-  //   emit(CheckUserLoadingState());
-  //
-  //   final response = await repo.checkUsername(
-  //     username: userNameController.text,
-  //   );
-  //   response.fold(
-  //     (l) {
-  //       emit(CheckUserFailState(message: l.message));
-  //     },
-  //     (r) {
-  //       isUsernameAvailable = r;
-  //       emit(CheckUserSuccessState());
-  //     },
-  //   );
-  // }
+  Future<void> checkUsername() async {
+    emit(CheckUserLoadingState());
+
+    final response = await repo.checkUsername(
+      username:  emailController.text,
+    );
+    response.fold(
+      (l) {
+        emit(CheckUserFailState(message: l.message));
+      },
+      (r) {
+        isUsernameAvailable = r;
+        emit(CheckUserSuccessState());
+      },
+    );
+  }
 
   // ====================== SEND CODE ===================== //
 
@@ -106,13 +115,6 @@ class RegisterCubit extends Cubit<RegisterStates> {
   // }
 
   // ===========================================================================
-
-  String phoneNumber = "";
-
-  onInputChanged(PhoneNumber phone) {
-    phoneNumber = "${phone.countryCode}${phone.number}";
-    emit(ChangeNumberState());
-  }
 
   // ===========================================================================
 

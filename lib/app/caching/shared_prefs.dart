@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:restaurant_dashboard/features/auth/auth/data/models/auth_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Caching {
@@ -29,18 +32,18 @@ class Caching {
     await prefs?.clear();
   }
 
-  // static RegisterModel? getUser() {
-  //   String? userPref = prefs?.getString("user_data");
-  //   if (userPref == null) {
-  //     return null;
-  //   }
-  //   Map<String, dynamic> userMap = jsonDecode(userPref) as Map<String, dynamic>;
-  //   return RegisterModel.fromJson(userMap);
-  // }
-  //
-  // static Future<void> setUser(RegisterModel model) async {
-  //   await prefs?.setString("user_data", jsonEncode(model.toJson()));
-  // }
+  static AuthModel? getUser() {
+    String? userPref = prefs?.getString("user_data");
+    if (userPref == null) {
+      return null;
+    }
+    Map<String, dynamic> userMap = jsonDecode(userPref) as Map<String, dynamic>;
+    return AuthModel.fromJson(userMap);
+  }
+
+  static Future<void> setUser(AuthModel model) async {
+    await prefs?.setString("user_data", jsonEncode(model.toJson()));
+  }
 
   static Future<void> removeUser() async {
     await prefs?.remove("user_data");

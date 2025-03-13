@@ -129,7 +129,7 @@ class CustomTextFormField extends StatelessWidget {
             errorStyle: TextStyle(
               color: AppColors.red,
               fontWeight: FontWeight.w400,
-              fontSize: errorFontSize ?? 0,
+              fontSize: errorFontSize ?? 10,
               fontFamily: AppConstance.appFontName,
             ),
             counterStyle: const TextStyle(fontSize: 0),

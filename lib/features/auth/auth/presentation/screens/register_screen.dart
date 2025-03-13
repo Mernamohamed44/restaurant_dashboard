@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl_phone_field/phone_number.dart';
 import 'package:restaurant_dashboard/app/dependancy_injection/dependancy_injection.dart';
 import 'package:restaurant_dashboard/app/helper/extension.dart';
 import 'package:restaurant_dashboard/app/routing/routes.dart';
@@ -11,9 +12,11 @@ import 'package:restaurant_dashboard/app/utils/image_manager.dart';
 import 'package:restaurant_dashboard/app/widget/custom_button.dart';
 import 'package:restaurant_dashboard/app/widget/custom_text.dart';
 import 'package:restaurant_dashboard/app/widget/custom_text_form_field.dart';
-import 'package:restaurant_dashboard/features/auth/auth/presentation/cubit/register/register_states.dart';
+import 'package:restaurant_dashboard/app/widget/phone_number_input.dart';
+import 'package:restaurant_dashboard/app/widget/toastification_widget.dart';
+import 'package:restaurant_dashboard/features/auth/auth/presentation/cubit/register_states.dart';
 
-import '../cubit/register/register_cubit.dart';
+import '../cubit/register_cubit.dart';
 
 class RegisterScreen extends StatelessWidget {
   const RegisterScreen({super.key});
@@ -34,13 +37,14 @@ class RegisterBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cubit = context.read<RegisterCubit>();
-
-    return Scaffold(
-      backgroundColor: AppColors.white,
-      body: context.screenWidth >= 600
-          ? const RegisterRow()
-          : const RegisterColumn(),
+    return Form(
+      key: context.read<RegisterCubit>().formKey,
+      child: Scaffold(
+        backgroundColor: AppColors.white,
+        body: context.screenWidth >= 600
+            ? const RegisterRow()
+            : const RegisterColumn(),
+      ),
     );
   }
 }
@@ -50,7 +54,6 @@ class RegisterRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cubit = context.read<RegisterCubit>();
     return Row(
       children: [
         Expanded(
@@ -78,7 +81,7 @@ class RegisterRow extends StatelessWidget {
                     color: Color.fromRGBO(115, 129, 141, 0.16),
                   ),
                   10.verticalSpace,
-                  const RegisterTextFields(),
+                  RegisterTextFields(cubit: context.read<RegisterCubit>()),
                   20.verticalSpace,
                   const Divider(
                     color: Color.fromRGBO(115, 129, 141, 0.16),
@@ -107,8 +110,6 @@ class RegisterColumn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cubit = context.read<RegisterCubit>();
-
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -142,7 +143,9 @@ class RegisterColumn extends StatelessWidget {
                   color: Color.fromRGBO(115, 129, 141, 0.16),
                 ),
                 10.verticalSpace,
-                const RegisterTextFields(),
+                RegisterTextFields(
+                  cubit: context.read<RegisterCubit>(),
+                ),
                 25.verticalSpace,
                 const RegisterButtons(),
                 const SizedBox(height: 40)
@@ -155,8 +158,28 @@ class RegisterColumn extends StatelessWidget {
   }
 }
 
-class RegisterTextFields extends StatelessWidget {
-  const RegisterTextFields({super.key});
+class RegisterTextFields extends StatefulWidget {
+  const RegisterTextFields({super.key, required this.cubit});
+  final RegisterCubit cubit;
+  @override
+  State<RegisterTextFields> createState() => _RegisterTextFieldsState();
+}
+
+class _RegisterTextFieldsState extends State<RegisterTextFields> {
+  final FocusNode _focusNode = FocusNode();
+
+  @override
+  void initState() {
+    _focusNode.addListener(() {
+      if (!_focusNode.hasFocus) {
+        if (widget.cubit.emailController.text.isNotEmpty) {
+          debugPrint(widget.cubit.emailController.text);
+          widget.cubit.checkUsername();
+        }
+      }
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -165,6 +188,8 @@ class RegisterTextFields extends StatelessWidget {
     return Column(
       children: [
         CustomTextFormField(
+          controller: cubit.displayNameController,
+
           title: 'Full Name',
           titleFontSize: 14,
           validator: (value) {
@@ -175,20 +200,42 @@ class RegisterTextFields extends StatelessWidget {
           },
         ),
         10.verticalSpace,
-        CustomTextFormField(
-          title: ' Email Address or Phone Number',
+        BlocBuilder<RegisterCubit, RegisterStates>(
+  builder: (context, state) {
+    return CustomTextFormField(
+          title: 'Email Address',
+          focusNode: _focusNode,
+          controller: cubit.emailController,
           titleFontSize: 14,
           validator: (value) {
             if (value!.isEmpty) {
-              return 'Please enter Email Address or Phone Number ';
+              return 'Please enter valid Email Address ';
+            }
+            else if (widget.cubit.isUsernameAvailable) {
+              return "Email Address is available!";
             }
             return null;
+          },
+        );
+  },
+),
+        10.verticalSpace,
+        BlocBuilder<RegisterCubit, RegisterStates>(
+          builder: (context, state) {
+            final cubit = context.read<RegisterCubit>();
+            return PhoneNumberInput(
+              title: 'Phone Number',
+              onInputChanged: (PhoneNumber number) {
+                cubit.onInputChanged(number);
+              },
+            );
           },
         ),
         10.verticalSpace,
         BlocBuilder<RegisterCubit, RegisterStates>(
           builder: (context, state) {
             return CustomTextFormField(
+              controller: cubit.passwordController,
               maxLines: 1,
               title: 'Password',
               titleFontSize: 14,
@@ -241,6 +288,8 @@ class RegisterTextFields extends StatelessWidget {
               validator: (value) {
                 if (value!.isEmpty) {
                   return 'Please enter Password';
+                } else if (value != cubit.passwordController.text) {
+                  return 'Please enter Same Password';
                 }
                 return null;
               },
@@ -259,14 +308,37 @@ class RegisterButtons extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        CustomButton(
-          onTap: () {},
-          text: 'Create My Acount',
-          fontColor: Colors.white,
-          fontSize: 16,
-          isGradient: true,
-          borderColor: AppColors.transparent,
-          borderRadius: 50,
+        BlocConsumer<RegisterCubit, RegisterStates>(
+          listener: (context, state) {
+            if (state is RegisterSuccessState) {
+              context.pushReplacementNamed(Routes.dashboard);
+            } else if (state is RegisterFailState) {
+              showToastificationWidget(
+                message: state.message,
+                context: context,
+              );
+            }
+          },
+          builder: (context, state) {
+            if (state is RegisterLoadingState) {
+              return const Center(
+                child: CircularProgressIndicator(
+                  color: AppColors.primary,
+                ),
+              );
+            }
+            return CustomButton(
+              onTap: () {
+                context.read<RegisterCubit>().register();
+              },
+              text: 'Create My Acount',
+              fontColor: Colors.white,
+              fontSize: 16,
+              isGradient: true,
+              borderColor: AppColors.transparent,
+              borderRadius: 50,
+            );
+          },
         ),
         20.verticalSpace,
         CustomButton(

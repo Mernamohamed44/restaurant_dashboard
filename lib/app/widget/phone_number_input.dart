@@ -23,7 +23,7 @@ class PhoneNumberInput extends StatelessWidget {
     required this.title,
     this.titleColor,
     this.titleFontSize = 13,
-    this.titleFontWeight,
+    this.titleFontWeight, this.controller,
   }) : super(key: key);
   final Function(PhoneNumber)? onInputChanged;
   final FutureOr<String?> Function(PhoneNumber?)? validator;
@@ -33,6 +33,7 @@ class PhoneNumberInput extends StatelessWidget {
   final Color? titleColor;
   final double titleFontSize;
   final FontWeight? titleFontWeight;
+  final TextEditingController? controller;
 
   final String? isoCode;
   final AutovalidateMode autoValidate;
@@ -55,6 +56,7 @@ class PhoneNumberInput extends StatelessWidget {
           ),
         IntlPhoneField(
           readOnly: readOnly,
+          controller: controller,
           onTap: onTap,
           initialCountryCode: isoCode,
           onChanged: onInputChanged,
@@ -69,7 +71,7 @@ class PhoneNumberInput extends StatelessWidget {
           autovalidateMode: autoValidate,
           dropdownIconPosition: IconPosition.trailing,
           style: const TextStyle(
-            color: AppColors.accentContainerColor,
+            color: AppColors.black,
             fontSize: 16,
             fontWeight: FontWeight.w400,
             fontFamily: AppConstance.appFontName,

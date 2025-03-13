@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:logger/logger.dart';
 import 'package:restaurant_dashboard/app/caching/shared_prefs.dart';
 import 'package:restaurant_dashboard/app/network/dio.dart';
 
@@ -19,30 +20,28 @@ class LogInCubit extends Cubit<LogInStates> {
 
   // ====================== LOGIN ===================== //
 
-  String role = "admin";
 
-  // Future login() async {
-  //   if (formKey.currentState!.validate()) {
-  //     emit(LogInLoadingState());
-  //
-  //     final response = await repo.login(
-  //       userName: userNameController.text,
-  //       password: passwordController.text,
-  //       role: role,
-  //     );
-  //     response.fold(
-  //       (l) {
-  //         emit(LogInFailState(message: l.message));
-  //         Logger().e(l.message);
-  //       },
-  //       (r) {
-  //         Caching.put(key: "access_token", value: r.accessToken);
-  //         Caching.put(key: "refresh_token", value: r.refreshToken);
-  //         emit(LogInSuccessState());
-  //       },
-  //     );
-  //   }
-  // }
+  Future login() async {
+    if (formKey.currentState!.validate()) {
+      emit(LogInLoadingState());
+
+      final response = await repo.login(
+        userName: userNameController.text,
+        password: passwordController.text,
+      );
+      response.fold(
+        (l) {
+          emit(LogInFailState(message: l.message));
+          Logger().e(l.message);
+        },
+        (r) {
+          Caching.put(key: "access_token", value: r.accessToken);
+          Caching.put(key: "refresh_token", value: r.refreshToken);
+          emit(LogInSuccessState());
+        },
+      );
+    }
+  }
 
 // *************************************
 

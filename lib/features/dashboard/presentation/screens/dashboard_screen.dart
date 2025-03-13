@@ -1,6 +1,7 @@
 import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:restaurant_dashboard/app/caching/shared_prefs.dart';
 import 'package:restaurant_dashboard/app/flutter_admin_scaffold/admin_scaffold.dart';
 import 'package:restaurant_dashboard/app/helper/extension.dart';
 import 'package:restaurant_dashboard/app/routing/routes.dart';
@@ -28,7 +29,7 @@ class DashboardScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final adminScaffoldKey = GlobalKey<AdminScaffoldState>();
     SideBarWidget sideBar = SideBarWidget();
-
+     print(Caching.get(key: 'access_token'));
     return AdminScaffold(
       key: adminScaffoldKey,
       backgroundColor: AppColors.white,

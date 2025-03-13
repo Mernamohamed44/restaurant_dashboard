@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:restaurant_dashboard/app/caching/shared_prefs.dart';
 import 'package:restaurant_dashboard/app/routing/app_router.dart';
 import 'package:restaurant_dashboard/app/routing/routes.dart';
 
@@ -18,7 +19,9 @@ class MyAppHome extends StatelessWidget {
         scrollBehavior: const MaterialScrollBehavior().copyWith(
           dragDevices: {PointerDeviceKind.mouse, PointerDeviceKind.touch},
         ),
-        initialRoute: Routes.login,
+        initialRoute: Caching.get(key: 'access_token') == null
+            ? Routes.login
+            : Routes.dashboard,
         onGenerateRoute: AppRouter().generateRoute,
         navigatorKey: navigatorKey,
       ),

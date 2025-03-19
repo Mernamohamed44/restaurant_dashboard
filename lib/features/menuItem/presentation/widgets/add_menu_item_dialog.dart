@@ -1,15 +1,11 @@
-import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:restaurant_dashboard/app/utils/colors.dart';
-import 'package:restaurant_dashboard/app/utils/constance.dart';
 import 'package:restaurant_dashboard/app/utils/image_manager.dart';
 import 'package:restaurant_dashboard/app/widget/custom_text.dart';
-import 'package:restaurant_dashboard/app/widget/custom_text_form_field.dart';
 import 'package:restaurant_dashboard/app/widget/svg_icons.dart';
 import 'package:restaurant_dashboard/features/categories/presentaion/cubit/categories_cubit.dart';
 import 'package:restaurant_dashboard/features/categories/presentaion/widgets/language_drop_down.dart';
-import 'package:restaurant_dashboard/features/categories/presentaion/widgets/categories_save_button.dart';
 import 'package:restaurant_dashboard/features/menuItem/presentation/widgets/category_drop_down.dart';
 import 'package:restaurant_dashboard/features/menuItem/presentation/widgets/item_description_text_field.dart';
 import 'package:restaurant_dashboard/features/menuItem/presentation/widgets/item_drop_down.dart';
@@ -19,7 +15,9 @@ import 'package:restaurant_dashboard/features/menuItem/presentation/widgets/menu
 
 class AddMenuItemDialog extends StatelessWidget {
   const AddMenuItemDialog({super.key, required this.categoriesCubit});
+
   final CategoriesCubit categoriesCubit;
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider.value(

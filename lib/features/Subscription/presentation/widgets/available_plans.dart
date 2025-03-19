@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:restaurant_dashboard/app/helper/extension.dart';
+import 'package:restaurant_dashboard/app/utils/colors.dart';
 import 'package:restaurant_dashboard/app/utils/image_manager.dart';
 import 'package:restaurant_dashboard/features/Subscription/presentation/cubit/subscription_cubit.dart';
 import 'package:restaurant_dashboard/features/Subscription/presentation/screens/free_container.dart';
@@ -12,11 +13,18 @@ class AvailablePlans extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<SubscriptionCubit, SubscriptionState>(
       builder: (context, state) {
+        final plans = context.read<SubscriptionCubit>().plans;
+        if (state is PlansDataLoadingState) {
+          return const Center(
+              child: CircularProgressIndicator(
+                color: AppColors.primary,
+              ));
+        }
         return context.screenWidth > 500
             ? Row(
                 children: [
                   ...List.generate(
-                      3,
+                      plans.length,
                       (index) => Expanded(
                               child: InkWell(
                             hoverColor: Colors.transparent,
@@ -36,6 +44,7 @@ class AvailablePlans extends StatelessWidget {
                                   ? true
                                   : false,
                               image: ImageManager.free,
+                              plansData: plans[index],
                             ),
                           )))
                 ],
@@ -43,7 +52,7 @@ class AvailablePlans extends StatelessWidget {
             : Column(
                 children: [
                   ...List.generate(
-                      3,
+                      plans.length,
                       (index) => Padding(
                             padding: const EdgeInsets.symmetric(vertical: 10),
                             child: InkWell(
@@ -57,6 +66,7 @@ class AvailablePlans extends StatelessWidget {
                                     .selectIndexContainer(index);
                               },
                               child: FreeContainer(
+                                plansData: plans[index],
                                 isSelected: context
                                             .read<SubscriptionCubit>()
                                             .selectedIndex ==

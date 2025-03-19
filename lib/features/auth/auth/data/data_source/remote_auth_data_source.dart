@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:restaurant_dashboard/app/caching/shared_prefs.dart';
 import 'package:restaurant_dashboard/app/network/dio.dart';
 import 'package:restaurant_dashboard/app/network/end_points.dart';
 import 'package:restaurant_dashboard/features/auth/auth/data/models/user_data_model.dart';

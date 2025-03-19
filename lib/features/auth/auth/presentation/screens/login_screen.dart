@@ -37,10 +37,10 @@ class LoginBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return Form(
       key: context.read<LogInCubit>().formKey,
-
       child: Scaffold(
         backgroundColor: AppColors.white,
-        body: context.screenWidth >= 900 ? const LoginRow() : const LoginColumn(),
+        body:
+            context.screenWidth >= 900 ? const LoginRow() : const LoginColumn(),
       ),
     );
   }
@@ -86,7 +86,6 @@ class LoginRow extends StatelessWidget {
                   25.verticalSpace,
                   const LoginButtons(),
                   25.verticalSpace,
-
                 ],
               ),
             ),
@@ -108,7 +107,6 @@ class LoginColumn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return SingleChildScrollView(
       child: Column(
         children: [

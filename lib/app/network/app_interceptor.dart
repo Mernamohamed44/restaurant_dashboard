@@ -41,7 +41,7 @@ class AppInterceptors extends Interceptor {
         await dio.get(ApiConstants.refreshTokenUrl,
             data: {'token': refreshToken}).then(
           (value) {
-            String accessToken = value.data["access_token"];
+            String accessToken = value.data["token"];
             Caching.put(key: "access_token", value: accessToken);
           },
         );

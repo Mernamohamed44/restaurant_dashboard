@@ -1,6 +1,5 @@
 import 'package:restaurant_dashboard/features/auth/auth/data/models/user_data_model.dart';
 
-
 class UserDataEntity {
   String? role;
   String? preferredLanguage;

@@ -13,6 +13,7 @@ class ItemsModel extends ItemsEntities {
       required super.category,
       required super.price,
       required super.description});
+
   factory ItemsModel.fromJson(Map<String, dynamic> json) {
     return ItemsModel(
       views: json["views"],

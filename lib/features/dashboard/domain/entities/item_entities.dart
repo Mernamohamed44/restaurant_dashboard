@@ -1,7 +1,7 @@
 import 'package:restaurant_dashboard/features/dashboard/data/model/items_model.dart';
 
 abstract class ItemsEntities {
-  final double views;
+  final int views;
   final String sId;
   final String user;
   final String name;
@@ -12,6 +12,7 @@ abstract class ItemsEntities {
   final String category;
   final String updatedAt;
   final int iV;
+
   ItemsEntities(
       {required this.views,
       required this.sId,
@@ -24,8 +25,9 @@ abstract class ItemsEntities {
       required this.price,
       required this.category,
       required this.iV});
+
   ItemsModel copyWith({
-    double? views,
+    int? views,
     String? user,
     String? name,
     String? sId,
@@ -46,9 +48,9 @@ abstract class ItemsEntities {
       image: image ?? this.image,
       createdAt: createdAt ?? this.createdAt,
       iV: iV ?? this.iV,
-      category:  category ?? this.category,
-      price: price ?? this.price ,
-      description: description ?? this.description ,
+      category: category ?? this.category,
+      price: price ?? this.price,
+      description: description ?? this.description,
     );
   }
 }

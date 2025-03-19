@@ -63,7 +63,7 @@ class RegisterCubit extends Cubit<RegisterStates> {
     emit(CheckUserLoadingState());
 
     final response = await repo.checkUsername(
-      username:  emailController.text,
+      username: emailController.text,
     );
     response.fold(
       (l) {

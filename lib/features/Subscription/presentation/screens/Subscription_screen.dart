@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:restaurant_dashboard/app/dependancy_injection/dependancy_injection.dart';
 import 'package:restaurant_dashboard/app/flutter_admin_scaffold/admin_scaffold.dart';
 import 'package:restaurant_dashboard/app/helper/extension.dart';
 import 'package:restaurant_dashboard/app/routing/routes.dart';
@@ -19,7 +20,7 @@ class SubscriptionScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => SubscriptionCubit(),
+      create: (context) => getIt<SubscriptionCubit>()..getPlans(),
       child: const SubscriptionBody(),
     );
   }

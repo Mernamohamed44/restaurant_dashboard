@@ -1,7 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:logger/logger.dart';
 import 'package:meta/meta.dart';
-import 'package:restaurant_dashboard/features/dashboard/data/model/categories_model.dart';
 import 'package:restaurant_dashboard/features/dashboard/domain/entities/categories_entities.dart';
 import 'package:restaurant_dashboard/features/dashboard/domain/entities/item_entities.dart';
 import 'package:restaurant_dashboard/features/dashboard/domain/repository/base_dashboard_repository.dart';
@@ -12,6 +11,7 @@ class DashboardCubit extends Cubit<DashboardState> {
   DashboardCubit(this.repo) : super(DashboardInitial());
   final BaseDashboardRepository repo;
   List<CategoriesEntities> categories = [];
+
   Future getCategoriesData() async {
     emit(CategoriesDataLoadingState());
     final response = await repo.getCategoriesData();
@@ -45,6 +45,7 @@ class DashboardCubit extends Cubit<DashboardState> {
   }
 
   int reviewsNumber = 0;
+
   Future reviewsCount() async {
     emit(CategoriesDataLoadingState());
     final response = await repo.reviewsCount();

@@ -14,4 +14,6 @@ class ApiConstants {
   static String allCategories = "categories";
   static String allItems = "items";
   static String reviews = "reviews/count";
+  static String allReviews = "reviews";
+  static String plans = "plans";
 }

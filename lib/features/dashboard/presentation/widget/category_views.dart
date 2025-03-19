@@ -16,7 +16,9 @@ class Categories {
 
 class CategoryViews extends StatelessWidget {
   const CategoryViews({super.key, required this.categories});
-  final List <CategoriesEntities> categories;
+
+  final List<CategoriesEntities> categories;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -38,8 +40,8 @@ class CategoryViews extends StatelessWidget {
             categories.length,
             (index) => ViewsCategories(
               category: categories[index].name,
-              rank: index+1, views:  categories[index].views,
-              
+              rank: index + 1,
+              views: categories[index].views,
             ),
           )
         ],

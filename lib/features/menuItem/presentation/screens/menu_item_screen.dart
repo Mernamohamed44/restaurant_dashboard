@@ -133,7 +133,8 @@ class MenuItemBody extends StatelessWidget {
                               context: context,
                               builder: (c) {
                                 return AddMenuItemDialog(
-                                  categoriesCubit: context.read<CategoriesCubit>(),
+                                  categoriesCubit:
+                                      context.read<CategoriesCubit>(),
                                 );
                               });
                         }
@@ -313,5 +314,3 @@ class MenuItemColumn extends StatelessWidget {
     );
   }
 }
-
-

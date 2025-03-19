@@ -195,9 +195,11 @@ class ReviewsRow extends StatelessWidget {
     required this.value,
     required this.onChange,
   });
+
   final String rate;
   final bool value;
   final Function(bool) onChange;
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<SettingsCubit, SettingsState>(

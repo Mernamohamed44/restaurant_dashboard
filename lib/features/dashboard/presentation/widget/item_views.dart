@@ -16,6 +16,7 @@ class Categories {
 
 class ItemViews extends StatelessWidget {
   const ItemViews({super.key, required this.items});
+
   final List<ItemsEntities> items;
 
   @override

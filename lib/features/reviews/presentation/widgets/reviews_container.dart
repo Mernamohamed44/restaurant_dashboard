@@ -4,10 +4,11 @@ import 'package:percent_indicator/percent_indicator.dart';
 import 'package:restaurant_dashboard/app/helper/extension.dart';
 import 'package:restaurant_dashboard/app/utils/colors.dart';
 import 'package:restaurant_dashboard/app/widget/custom_text.dart';
+import 'package:restaurant_dashboard/features/reviews/domain/entities/reviews_entities.dart';
 
 class ReviewsContainer extends StatelessWidget {
-  const ReviewsContainer({super.key});
-
+  const ReviewsContainer({super.key, required this.reviews});
+  final List<ReviewsEntities> reviews;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -16,14 +17,21 @@ class ReviewsContainer extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           color: AppColors.containerColor),
       child: Column(
-        children: [...List.generate(5, (index) => const ReviewsRow())],
+        children: [
+          ...List.generate(
+              reviews.length,
+              (index) => ReviewsRow(
+                    rating: reviews[index].rating,
+                  ))
+        ],
       ),
     );
   }
 }
 
 class ReviewsRow extends StatelessWidget {
-  const ReviewsRow({super.key});
+  const ReviewsRow({super.key, required this.rating});
+  final int rating;
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +43,7 @@ class ReviewsRow extends StatelessWidget {
             flex: 1,
             child: FittedBox(
               child: RatingBar.builder(
-                initialRating: 3,
+                initialRating: rating.toDouble(),
                 // minRating: 1,
                 itemSize: 20,
                 direction: Axis.horizontal,
@@ -69,8 +77,8 @@ class ReviewsRow extends StatelessWidget {
           const SizedBox(
             width: 10,
           ),
-          const CustomText(
-            text: '3',
+          CustomText(
+            text: '$rating',
             color: AppColors.textColor,
             fontWeight: FontWeight.w400,
             fontSize: 12,

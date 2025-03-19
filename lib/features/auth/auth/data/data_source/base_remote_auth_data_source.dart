@@ -14,11 +14,13 @@ abstract class BaseRemoteAuthDataSource {
     required String password,
     required String phone,
   });
-   changePassword({
+
+  changePassword({
     required String oldPassword,
     required String newPassword,
     required String confirmPassword,
   });
+
   Future<UserDataModel> getUserData();
 
   Future<String?> sendCode({

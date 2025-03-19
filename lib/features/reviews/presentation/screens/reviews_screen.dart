@@ -1,5 +1,7 @@
 import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:restaurant_dashboard/app/dependancy_injection/dependancy_injection.dart';
 import 'package:restaurant_dashboard/app/flutter_admin_scaffold/admin_scaffold.dart';
 import 'package:restaurant_dashboard/app/helper/extension.dart';
 import 'package:restaurant_dashboard/app/routing/routes.dart';
@@ -9,12 +11,25 @@ import 'package:restaurant_dashboard/app/utils/image_manager.dart';
 import 'package:restaurant_dashboard/app/widget/custom_text.dart';
 import 'package:restaurant_dashboard/app/widget/custom_text_form_field.dart';
 import 'package:restaurant_dashboard/app/widget/svg_icons.dart';
+import 'package:restaurant_dashboard/features/reviews/presentation/cubit/reviews_cubit.dart';
 import 'package:restaurant_dashboard/features/reviews/presentation/widgets/review_liat.dart';
 import 'package:restaurant_dashboard/features/reviews/presentation/widgets/reviews_container.dart';
 import 'package:restaurant_dashboard/features/side_bar.dart';
 
 class ReviewsScreen extends StatelessWidget {
   const ReviewsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => getIt<ReviewsCubit>()..getReviews(),
+      child: const ReviewsBody(),
+    );
+  }
+}
+
+class ReviewsBody extends StatelessWidget {
+  const ReviewsBody({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -179,37 +194,58 @@ class ReviewsScreen extends StatelessWidget {
               ),
             ),
           ),
-          body: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            child: Column(
-              children: [
-                const ReviewsContainer(),
-                const SizedBox(
-                  height: 15,
-                ),
-                Row(
-                  children: [
-                    const CustomText(
-                      text: 'Review List',
-                      color: AppColors.textColor,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 14,
-                    ),
-                    Expanded(
-                      child: Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 5),
-                        height: 1, // Thickness of the line
-                        color: const Color.fromRGBO(115, 129, 141, 0.16),
+          body: BlocBuilder<ReviewsCubit, ReviewsState>(
+            builder: (context, state) {
+              final reviews = context.read<ReviewsCubit>().reviews;
+              if (state is ReviewsDataLoadingState) {
+                return const Center(
+                    child: CircularProgressIndicator(
+                  color: AppColors.primary,
+                ));
+              } else {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 20, vertical: 10),
+                  child: Column(
+                    children: [
+                      ReviewsContainer(
+                        reviews: reviews,
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 15,
-                ),
-                const ReviewList(),
-              ],
-            ),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      Row(
+                        children: [
+                          const CustomText(
+                            text: 'Review List',
+                            color: AppColors.textColor,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 14,
+                          ),
+                          Expanded(
+                            child: Container(
+                              margin:
+                                  const EdgeInsets.symmetric(horizontal: 5),
+                              height: 1, // Thickness of the line
+                              color:
+                                  const Color.fromRGBO(115, 129, 141, 0.16),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      Expanded(
+                        child: ReviewList(
+                          reviews: reviews,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }
+            },
           ),
         ));
   }

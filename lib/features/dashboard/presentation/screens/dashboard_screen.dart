@@ -286,8 +286,11 @@ class DashboardRow extends StatelessWidget {
                         Flexible(
                             child: BlocBuilder<DashboardCubit, DashboardState>(
                           builder: (context, state) {
-                            final reviewsNumber=context.read<DashboardCubit>().reviewsNumber;
-                            return CustomerRate(reviewsNumber: reviewsNumber,);
+                            final reviewsNumber =
+                                context.read<DashboardCubit>().reviewsNumber;
+                            return CustomerRate(
+                              reviewsNumber: reviewsNumber,
+                            );
                           },
                         )),
                         10.horizontalSpace,
@@ -349,8 +352,11 @@ class DashboardColumn extends StatelessWidget {
           ),
           BlocBuilder<DashboardCubit, DashboardState>(
             builder: (context, state) {
-              final reviewsNumber=context.read<DashboardCubit>().reviewsNumber;
-              return CustomerRate( reviewsNumber: reviewsNumber,);
+              final reviewsNumber =
+                  context.read<DashboardCubit>().reviewsNumber;
+              return CustomerRate(
+                reviewsNumber: reviewsNumber,
+              );
             },
           ),
           const LanguagesUsage(),

@@ -17,7 +17,6 @@ import 'package:restaurant_dashboard/app/widget/phone_number_input.dart';
 import 'package:restaurant_dashboard/app/widget/svg_icons.dart';
 import 'package:restaurant_dashboard/app/widget/toastification_widget.dart';
 import 'package:restaurant_dashboard/features/auth/auth/presentation/cubit/account_cubit.dart';
-import 'package:restaurant_dashboard/features/auth/auth/presentation/cubit/register_cubit.dart';
 import 'package:restaurant_dashboard/features/side_bar.dart';
 
 class AccountScreen extends StatelessWidget {
@@ -186,6 +185,7 @@ class AccountMobile extends StatelessWidget {
 
 class ProfileTextField extends StatefulWidget {
   const ProfileTextField({super.key, required this.cubit});
+
   final AccountCubit cubit;
 
   @override

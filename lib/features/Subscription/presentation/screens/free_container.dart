@@ -5,13 +5,18 @@ import 'package:restaurant_dashboard/app/utils/image_manager.dart';
 import 'package:restaurant_dashboard/app/widget/custom_button.dart';
 import 'package:restaurant_dashboard/app/widget/custom_text.dart';
 import 'package:restaurant_dashboard/app/widget/svg_icons.dart';
+import 'package:restaurant_dashboard/features/Subscription/domain/entities/plans_entities.dart';
 
 class FreeContainer extends StatelessWidget {
   const FreeContainer(
-      {super.key, required this.isSelected, required this.image});
+      {super.key,
+      required this.isSelected,
+      required this.image,
+      required this.plansData});
 
   final bool isSelected;
   final String image;
+  final PlansEntities plansData;
 
   @override
   Widget build(BuildContext context) {
@@ -39,11 +44,11 @@ class FreeContainer extends StatelessWidget {
                   const SizedBox(
                     height: 10,
                   ),
-                  const Row(
+                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       CustomText(
-                        text: 'Free',
+                        text: '${plansData.price!} /Mo' ,
                         color: AppColors.palePrimary,
                         fontWeight: FontWeight.w700,
                         fontSize: 18,
@@ -52,8 +57,8 @@ class FreeContainer extends StatelessWidget {
                   ),
                 ],
               ),
-              const CustomText(
-                text: 'Free plan',
+              CustomText(
+                text: '${plansData.name!} plan',
                 color: AppColors.textColor,
                 fontWeight: FontWeight.w800,
                 fontSize: 20,
@@ -61,8 +66,8 @@ class FreeContainer extends StatelessWidget {
               const SizedBox(
                 height: 3,
               ),
-              const CustomText(
-                text: 'description...',
+              CustomText(
+                text: plansData.description!,
                 color: AppColors.grey73818D99,
                 fontWeight: FontWeight.w400,
                 fontSize: 14,

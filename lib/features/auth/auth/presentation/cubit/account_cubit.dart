@@ -2,7 +2,6 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl_phone_field/phone_number.dart';
 import 'package:logger/logger.dart';
-import 'package:meta/meta.dart';
 import 'package:restaurant_dashboard/features/auth/auth/domain/entities/user_data_entity.dart';
 import 'package:restaurant_dashboard/features/auth/auth/domain/repository/base_auth_repository.dart';
 
@@ -17,7 +16,9 @@ class AccountCubit extends Cubit<AccountState> {
   void changeVisibility() {
     isObscure = !isObscure;
     emit(ChangeVisibilityState());
-  } void changeNewPasswordVisibility() {
+  }
+
+  void changeNewPasswordVisibility() {
     isObscure2 = !isObscure2;
     emit(ChangeVisibilityState());
   }
@@ -46,6 +47,7 @@ class AccountCubit extends Cubit<AccountState> {
   TextEditingController oldPasswordController = TextEditingController();
   TextEditingController newPasswordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
+
   Future getUserData() async {
     emit(UserDataLoadingState());
     final response = await repo.getUserData();
@@ -99,7 +101,6 @@ class AccountCubit extends Cubit<AccountState> {
         emit(ChangePasswordFailState(message: l.message));
       },
       (r) {
-
         emit(ChangePasswordSuccessState());
       },
     );

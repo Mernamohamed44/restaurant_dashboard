@@ -7,7 +7,7 @@ class ItemDescriptionTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return      const CustomTextFormField(
+    return const CustomTextFormField(
       title: 'Item Description ( local: English )',
       titleFontSize: 14,
       borderColor: AppColors.containerColor,

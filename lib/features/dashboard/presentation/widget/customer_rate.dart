@@ -5,7 +5,9 @@ import 'package:restaurant_dashboard/app/widget/custom_text.dart';
 
 class CustomerRate extends StatelessWidget {
   const CustomerRate({super.key, required this.reviewsNumber});
+
   final int reviewsNumber;
+
   @override
   Widget build(BuildContext context) {
     return Container(

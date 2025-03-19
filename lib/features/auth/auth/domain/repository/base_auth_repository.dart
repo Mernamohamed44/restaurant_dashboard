@@ -24,6 +24,7 @@ abstract class BaseAuthRepository {
   Future<Either<ServerError, void>> reSendCode({
     required String phone,
   });
+
   Future<Either<ServerError, void>> changePassword({
     required String oldPassword,
     required String newPassword,
@@ -33,5 +34,6 @@ abstract class BaseAuthRepository {
   Future<Either<ServerError, bool>> checkUsername({
     required String username,
   });
+
   Future<Either<ServerError, UserDataEntity>> getUserData();
 }

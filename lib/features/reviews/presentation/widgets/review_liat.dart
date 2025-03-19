@@ -1,46 +1,113 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:restaurant_dashboard/app/helper/extension.dart';
 import 'package:restaurant_dashboard/app/utils/colors.dart';
 import 'package:restaurant_dashboard/app/utils/image_manager.dart';
 import 'package:restaurant_dashboard/app/widget/custom_text.dart';
 import 'package:restaurant_dashboard/app/widget/svg_icons.dart';
+import 'package:restaurant_dashboard/features/reviews/domain/entities/reviews_entities.dart';
+import 'package:restaurant_dashboard/features/reviews/presentation/cubit/reviews_cubit.dart';
 
 class ReviewList extends StatelessWidget {
-  const ReviewList({super.key});
-
+  const ReviewList({super.key, required this.reviews});
+  final List<ReviewsEntities> reviews;
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: LayoutBuilder(builder: (context, constraints) {
-        int crossAxisCount;
-        if (context.screenWidth >= 1400) {
-          crossAxisCount = 4;
-        } else if (context.screenWidth >= 1200) {
-          crossAxisCount = 3;
-        } else if (context.screenWidth >= 600) {
-          crossAxisCount = 2;
-        } else {
-          crossAxisCount = 1;
-        }
-        return GridView.builder(
-            itemCount: 5,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: crossAxisCount,
-              mainAxisSpacing: 20,
-              crossAxisSpacing: 15,
-              mainAxisExtent: 190,
-            ),
-            itemBuilder: (context, index) {
-              return const ReviewListContainer();
+    final scrollController = ScrollController();
+    // Add a listener to the scroll controller
+
+    return RefreshIndicator(
+      onRefresh: () async {
+        context.read<ReviewsCubit>().refreshReviews();
+      },
+      child: BlocBuilder<ReviewsCubit, ReviewsState>(
+        builder: (context, state) {
+          if (state is ReviewsDataLoadingState) {
+            return const Center(
+                child: CircularProgressIndicator(
+              color: AppColors.primary,
+            ));
+          } else if (state is ReviewsDataFailedState) {
+            return Center(
+              child: CustomText(
+                text: state.message,
+                color: Colors.red,
+                fontSize: 16,
+              ),
+            );
+          } else {
+            scrollController.addListener(() {
+              if (scrollController.position.pixels >=
+                  scrollController.position.maxScrollExtent - 200) {
+                context.read<ReviewsCubit>().currentPage++;
+                // Trigger load more when near the bottom
+                context.read<ReviewsCubit>().getReviews(loadMore: true);
+              }
             });
-      }),
+
+            return LayoutBuilder(builder: (context, constraints) {
+              int crossAxisCount;
+              if (context.screenWidth >= 1400) {
+                crossAxisCount = 4;
+              } else if (context.screenWidth >= 1200) {
+                crossAxisCount = 3;
+              } else if (context.screenWidth >= 600) {
+                crossAxisCount = 2;
+              } else {
+                crossAxisCount = 1;
+              }
+
+              return Stack(
+                alignment: Alignment.center,
+                children: [
+                  reviews.isEmpty
+                      ? const Center(
+                          child: CustomText(
+                            text: 'No Reviews Yet',
+                            color: AppColors.primary,
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        )
+                      : GridView.builder(
+                          controller: scrollController,
+                          itemCount: reviews.length,
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: crossAxisCount,
+                            mainAxisSpacing: 20,
+                            crossAxisSpacing: 15,
+                            mainAxisExtent: 190,
+                          ),
+                          itemBuilder: (context, index) {
+                            return ReviewListContainer(
+                              reviewsData: reviews[index].fields!,
+                              reviews: reviews[index],
+                            );
+                          }),
+                  state is LoadingMoreReviewsState
+                      ? const Positioned(
+                          bottom: 0,
+                          child: CircularProgressIndicator(
+                            color: AppColors.primary,
+                          ))
+                      : SizedBox()
+                ],
+              );
+            });
+          }
+        },
+      ),
     );
   }
 }
 
 class ReviewListContainer extends StatelessWidget {
-  const ReviewListContainer({super.key});
+  const ReviewListContainer(
+      {super.key, required this.reviewsData, required this.reviews});
+  final FieldsEntities reviewsData;
+  final ReviewsEntities reviews;
 
   @override
   Widget build(BuildContext context) {
@@ -56,9 +123,9 @@ class ReviewListContainer extends StatelessWidget {
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
                 color: AppColors.white),
-            child: const Column(
+            child: Column(
               children: [
-                Row(
+                const Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     SvgIcon(
@@ -68,14 +135,13 @@ class ReviewListContainer extends StatelessWidget {
                   ],
                 ),
                 CustomText(
-                  text:
-                      'Mixed Rocca, Caesar, Fattoush, Armenian, Hummus with meat.',
+                  text: reviews.comment,
                   maxLines: 2,
                   color: AppColors.textColor,
                   fontWeight: FontWeight.w400,
                   fontSize: 16,
                 ),
-                Row(
+                const Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     SvgIcon(
@@ -94,7 +160,7 @@ class ReviewListContainer extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               RatingBar.builder(
-                initialRating: 3,
+                initialRating: reviews.rating.toDouble(),
                 // minRating: 1,
                 itemSize: 20,
                 direction: Axis.horizontal,
@@ -109,10 +175,10 @@ class ReviewListContainer extends StatelessWidget {
                   print(rating);
                 },
               ),
-              const Flexible(
+              Flexible(
                 child: CustomText(
                   maxLines: 1,
-                  text: 'islamsayedr@gmail.com',
+                  text: reviewsData.email!,
                   color: AppColors.textColor,
                   fontWeight: FontWeight.w400,
                   fontSize: 16,

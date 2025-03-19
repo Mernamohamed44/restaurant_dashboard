@@ -160,7 +160,9 @@ class RegisterColumn extends StatelessWidget {
 
 class RegisterTextFields extends StatefulWidget {
   const RegisterTextFields({super.key, required this.cubit});
+
   final RegisterCubit cubit;
+
   @override
   State<RegisterTextFields> createState() => _RegisterTextFieldsState();
 }
@@ -189,7 +191,6 @@ class _RegisterTextFieldsState extends State<RegisterTextFields> {
       children: [
         CustomTextFormField(
           controller: cubit.displayNameController,
-
           title: 'Full Name',
           titleFontSize: 14,
           validator: (value) {
@@ -201,24 +202,23 @@ class _RegisterTextFieldsState extends State<RegisterTextFields> {
         ),
         10.verticalSpace,
         BlocBuilder<RegisterCubit, RegisterStates>(
-  builder: (context, state) {
-    return CustomTextFormField(
-          title: 'Email Address',
-          focusNode: _focusNode,
-          controller: cubit.emailController,
-          titleFontSize: 14,
-          validator: (value) {
-            if (value!.isEmpty) {
-              return 'Please enter valid Email Address ';
-            }
-            else if (widget.cubit.isUsernameAvailable) {
-              return "Email Address is available!";
-            }
-            return null;
+          builder: (context, state) {
+            return CustomTextFormField(
+              title: 'Email Address',
+              focusNode: _focusNode,
+              controller: cubit.emailController,
+              titleFontSize: 14,
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return 'Please enter valid Email Address ';
+                } else if (widget.cubit.isUsernameAvailable) {
+                  return "Email Address is available!";
+                }
+                return null;
+              },
+            );
           },
-        );
-  },
-),
+        ),
         10.verticalSpace,
         BlocBuilder<RegisterCubit, RegisterStates>(
           builder: (context, state) {

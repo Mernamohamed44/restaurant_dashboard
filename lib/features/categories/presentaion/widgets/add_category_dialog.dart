@@ -6,13 +6,15 @@ import 'package:restaurant_dashboard/app/utils/colors.dart';
 import 'package:restaurant_dashboard/app/utils/image_manager.dart';
 import 'package:restaurant_dashboard/app/widget/custom_text.dart';
 import 'package:restaurant_dashboard/features/categories/presentaion/cubit/categories_cubit.dart';
+import 'package:restaurant_dashboard/features/categories/presentaion/widgets/categories_save_button.dart';
 import 'package:restaurant_dashboard/features/categories/presentaion/widgets/categories_text_feild.dart';
 import 'package:restaurant_dashboard/features/categories/presentaion/widgets/language_drop_down.dart';
-import 'package:restaurant_dashboard/features/categories/presentaion/widgets/categories_save_button.dart';
 
 class AddCategoryDialog extends StatelessWidget {
   const AddCategoryDialog({super.key, required this.categoriesCubit});
- final CategoriesCubit categoriesCubit;
+
+  final CategoriesCubit categoriesCubit;
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider.value(
@@ -68,6 +70,7 @@ class AddCategoryDialog extends StatelessWidget {
     );
   }
 }
+
 class AddImageContainer extends StatelessWidget {
   const AddImageContainer({super.key});
 
@@ -120,7 +123,7 @@ class AddImageContainer extends StatelessWidget {
                       ),
                       const TextSpan(
                         text:
-                        ' to upload an image, min height 100px, these extensions are acceptable .svg, .png, .jpeg',
+                            ' to upload an image, min height 100px, these extensions are acceptable .svg, .png, .jpeg',
                         style: TextStyle(
                           fontSize: 12,
                           color: AppColors

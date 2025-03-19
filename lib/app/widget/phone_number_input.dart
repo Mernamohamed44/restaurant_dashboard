@@ -23,7 +23,8 @@ class PhoneNumberInput extends StatelessWidget {
     required this.title,
     this.titleColor,
     this.titleFontSize = 13,
-    this.titleFontWeight, this.controller,
+    this.titleFontWeight,
+    this.controller,
   }) : super(key: key);
   final Function(PhoneNumber)? onInputChanged;
   final FutureOr<String?> Function(PhoneNumber?)? validator;

@@ -1,12 +1,8 @@
-import 'package:dropdown_textfield/dropdown_textfield.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:restaurant_dashboard/app/flutter_admin_scaffold/admin_scaffold.dart';
 import 'package:restaurant_dashboard/app/helper/extension.dart';
 import 'package:restaurant_dashboard/app/utils/colors.dart';
-import 'package:restaurant_dashboard/app/utils/constance.dart';
 import 'package:restaurant_dashboard/app/utils/image_manager.dart';
 import 'package:restaurant_dashboard/app/widget/custom_button.dart';
 import 'package:restaurant_dashboard/app/widget/custom_text.dart';
@@ -14,10 +10,8 @@ import 'package:restaurant_dashboard/app/widget/svg_icons.dart';
 import 'package:restaurant_dashboard/features/categories/presentaion/cubit/categories_cubit.dart';
 import 'package:restaurant_dashboard/features/categories/presentaion/widgets/add_categories.dart';
 import 'package:restaurant_dashboard/features/categories/presentaion/widgets/add_category_dialog.dart';
-import 'package:restaurant_dashboard/features/categories/presentaion/widgets/categories_text_feild.dart';
 import 'package:restaurant_dashboard/features/categories/presentaion/widgets/drinks_categories.dart';
 import 'package:restaurant_dashboard/features/categories/presentaion/widgets/food_categories.dart';
-import 'package:restaurant_dashboard/features/categories/presentaion/widgets/categories_save_button.dart';
 import 'package:restaurant_dashboard/features/categories/presentaion/widgets/super_categories.dart';
 import 'package:restaurant_dashboard/features/categories/presentaion/widgets/sweets_categories.dart';
 import 'package:restaurant_dashboard/features/side_bar.dart';
@@ -189,5 +183,3 @@ class CategoriesColumn extends StatelessWidget {
     );
   }
 }
-
-

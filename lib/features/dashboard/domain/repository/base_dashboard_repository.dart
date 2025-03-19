@@ -5,6 +5,8 @@ import 'package:restaurant_dashboard/features/dashboard/domain/entities/item_ent
 
 abstract class BaseDashboardRepository {
   Future<Either<ServerError, List<CategoriesEntities>>> getCategoriesData();
+
   Future<Either<ServerError, List<ItemsEntities>>> getItemsData();
+
   Future<Either<ServerError, int>> reviewsCount();
 }

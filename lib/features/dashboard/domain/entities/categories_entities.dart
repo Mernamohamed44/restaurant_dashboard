@@ -1,7 +1,7 @@
 import 'package:restaurant_dashboard/features/dashboard/data/model/categories_model.dart';
 
 abstract class CategoriesEntities {
-  final double views;
+  final int views;
   final String sId;
   final String user;
   final String name;
@@ -9,6 +9,7 @@ abstract class CategoriesEntities {
   final String createdAt;
   final String updatedAt;
   final int iV;
+
   CategoriesEntities(
       {required this.views,
       required this.sId,
@@ -18,8 +19,9 @@ abstract class CategoriesEntities {
       required this.createdAt,
       required this.updatedAt,
       required this.iV});
+
   CategoriesModel copyWith({
-    double? views,
+    int? views,
     String? user,
     String? name,
     String? sId,

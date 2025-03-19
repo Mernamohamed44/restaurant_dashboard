@@ -20,7 +20,6 @@ class LogInCubit extends Cubit<LogInStates> {
 
   // ====================== LOGIN ===================== //
 
-
   Future login() async {
     if (formKey.currentState!.validate()) {
       emit(LogInLoadingState());

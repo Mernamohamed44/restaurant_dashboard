@@ -23,7 +23,7 @@ class SettingsCubit extends Cubit<SettingsState> {
   TextEditingController linksController = TextEditingController();
   TextEditingController customInputController = TextEditingController();
   final SingleValueDropDownController inputTypeController =
-  SingleValueDropDownController();
+      SingleValueDropDownController();
   List<String> words = [];
   List<String> links = [];
   List<String> customerInput = [];

@@ -2,7 +2,6 @@ import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:restaurant_dashboard/app/errors/server_errors.dart';
 import 'package:restaurant_dashboard/features/dashboard/data/data_source/base_remote_dashboard_data_source.dart';
-import 'package:restaurant_dashboard/features/dashboard/data/model/categories_model.dart';
 import 'package:restaurant_dashboard/features/dashboard/domain/entities/categories_entities.dart';
 import 'package:restaurant_dashboard/features/dashboard/domain/entities/item_entities.dart';
 import 'package:restaurant_dashboard/features/dashboard/domain/repository/base_dashboard_repository.dart';
@@ -20,7 +19,8 @@ class DashboardRepository extends BaseDashboardRepository {
       return Right(result);
     } on DioException catch (fail) {
       return Left(ServerFailure.fromDiorError(fail));
-    } catch (error) {
+    }
+    catch (error) {
       return Left(
         ServerFailure(error.toString()),
       );
@@ -34,7 +34,8 @@ class DashboardRepository extends BaseDashboardRepository {
       return Right(result);
     } on DioException catch (fail) {
       return Left(ServerFailure.fromDiorError(fail));
-    } catch (error) {
+    }
+    catch (error) {
       return Left(
         ServerFailure(error.toString()),
       );

@@ -21,6 +21,11 @@ import 'package:restaurant_dashboard/features/reviews/data/data_source/remote_re
 import 'package:restaurant_dashboard/features/reviews/data/repo/reviews_repository.dart';
 import 'package:restaurant_dashboard/features/reviews/domain/repository/base_reviews_repository.dart';
 import 'package:restaurant_dashboard/features/reviews/presentation/cubit/reviews_cubit.dart';
+import 'package:restaurant_dashboard/features/settings/data/data_source/base_remote_settings_data_source.dart';
+import 'package:restaurant_dashboard/features/settings/data/data_source/remote_settings_data_source.dart';
+import 'package:restaurant_dashboard/features/settings/data/repo/settings_repository.dart';
+import 'package:restaurant_dashboard/features/settings/domain/repository/base_settings_repository.dart';
+import 'package:restaurant_dashboard/features/settings/presentation/cubit/settings_cubit.dart';
 
 final getIt = GetIt.instance;
 
@@ -50,4 +55,10 @@ Future<void> setupGetIt() async {
   getIt.registerLazySingleton<BaseSubscriptionRepository>(
           () => SubscriptionRepository(getIt()));
   getIt.registerFactory<SubscriptionCubit>(() => SubscriptionCubit(getIt()));
+  /////////settings
+  getIt.registerLazySingleton<BaseRemoteSettingsDataSource>(
+          () => RemoteSettingsDataSource());
+  getIt.registerLazySingleton<BaseSettingsRepository>(
+          () => SettingsRepository(getIt()));
+  getIt.registerFactory<SettingsCubit>(() => SettingsCubit(getIt()));
 }

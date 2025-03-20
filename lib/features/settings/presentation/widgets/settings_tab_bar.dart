@@ -45,10 +45,10 @@ class _SettingsTabBarState extends State<SettingsTabBar>
     return DefaultTabController(
       length: 3,
       child: CustomTabBar(
-        pages: const [
-          AboutBody(),
+        pages:  [
+          const AboutBody(),
           ContactUs(),
-          Reviews(),
+          const Reviews(),
         ],
         tabs: List.generate(3, (index) {
           return InkWell(

@@ -60,4 +60,5 @@ class ImageManager {
   static const String menu = '$svgPath/menu.svg';
   static const String headphone = '$svgPath/headphone.svg';
   static const String logOut = '$svgPath/log_out.svg';
+  static const String address = '$svgPath/address.svg';
 }

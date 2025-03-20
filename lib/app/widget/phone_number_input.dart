@@ -25,6 +25,7 @@ class PhoneNumberInput extends StatelessWidget {
     this.titleFontSize = 13,
     this.titleFontWeight,
     this.controller,
+    this.onFieldSubmitted, this.focusNode,
   }) : super(key: key);
   final Function(PhoneNumber)? onInputChanged;
   final FutureOr<String?> Function(PhoneNumber?)? validator;
@@ -35,10 +36,12 @@ class PhoneNumberInput extends StatelessWidget {
   final double titleFontSize;
   final FontWeight? titleFontWeight;
   final TextEditingController? controller;
+  final FocusNode? focusNode;
 
   final String? isoCode;
   final AutovalidateMode autoValidate;
   final VoidCallback? onTap;
+  final void Function(String?)? onFieldSubmitted;
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +59,8 @@ class PhoneNumberInput extends StatelessWidget {
             ),
           ),
         IntlPhoneField(
+          focusNode: focusNode,
+          onSubmitted: onFieldSubmitted,
           readOnly: readOnly,
           controller: controller,
           onTap: onTap,

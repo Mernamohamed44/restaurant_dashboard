@@ -12,8 +12,21 @@ import 'package:restaurant_dashboard/app/widget/custom_text_form_field.dart';
 import 'package:restaurant_dashboard/app/widget/phone_number_input.dart';
 import 'package:restaurant_dashboard/features/settings/presentation/cubit/settings_cubit.dart';
 
-class ContactUs extends StatelessWidget {
+class ContactUs extends StatefulWidget {
   const ContactUs({super.key});
+
+  @override
+  State<ContactUs> createState() => _ContactUsState();
+}
+
+class _ContactUsState extends State<ContactUs> {
+  @override
+  void initState() {
+    context.read<SettingsCubit>().addListenerFocusNode(0);
+    context.read<SettingsCubit>().addListenerFocusNodeEmails(0);
+    context.read<SettingsCubit>().addListenerFocusNodeAddress(0);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +35,6 @@ class ContactUs extends StatelessWidget {
       child: BlocBuilder<SettingsCubit, SettingsState>(
         builder: (context, state) {
           final cubit = context.read<SettingsCubit>();
-
           return SingleChildScrollView(
             child: Column(
               children: [
@@ -46,44 +58,24 @@ class ContactUs extends StatelessWidget {
                 const SizedBox(
                   height: 15,
                 ),
-                BlocBuilder<SettingsCubit, SettingsState>(
-                  builder: (context, state) {
-                    final cubit = context.read<SettingsCubit>();
-                    return PhoneNumberInput(
-                      title: 'Phone Number',
-                      onInputChanged: (PhoneNumber number) {
-                        cubit.onInputChanged(number);
-                      },
-                    );
-                  },
-                ),
+                cubit.buildPhoneTextField(0),
                 const SizedBox(
                   height: 10,
                 ),
-                BlocBuilder<SettingsCubit, SettingsState>(
-                  builder: (context, state) {
-                    final cubit = context.read<SettingsCubit>();
-                    return PhoneNumberInput(
-                      title: 'Phone Number',
-                      onInputChanged: (PhoneNumber number) {
-                        cubit.onInputChanged(number);
-                      },
-                    );
-                  },
-                ),
-                const CustomTextFormField(
-                  title: 'Email',
-                  titleFontSize: 14,
-                  hintText: 'Add Email',
-                ),
+                ...cubit.phoneTextField,
+                cubit.buildEmailTextField(0),
                 const SizedBox(
                   height: 10,
                 ),
-                const CustomTextFormField(
-                  title: 'Adress',
-                  titleFontSize: 14,
-                  hintText: 'Add Adress',
+                ...cubit.emailTextField,
+                const SizedBox(
+                  height: 10,
                 ),
+                cubit.buildAddressTextField(0),
+                const SizedBox(
+                  height: 10,
+                ),
+                ...cubit.addressTextField,
                 const SizedBox(
                   height: 10,
                 ),

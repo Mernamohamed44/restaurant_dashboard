@@ -16,3 +16,12 @@ class ChangeStarRatingValueState extends SettingsState {}
 class ChooseImageState extends SettingsState {}
 
 class OnColorChangedState extends SettingsState {}
+class ContactsLoadingState extends SettingsState {}
+
+class ContactsSuccessState extends SettingsState {}
+
+class ContactsFailState extends SettingsState {
+  final String message;
+
+  ContactsFailState({required this.message});
+}

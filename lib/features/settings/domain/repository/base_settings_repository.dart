@@ -9,5 +9,20 @@ abstract class BaseSettingsRepository {
     required List emails,
     required List addresses,
     required List<Map> socialMedia,});
+  Future<Either<ServerError, void>> createAboutUs({
+    required String name,
+    required String title,
+    required String description,
+    required List tags,});
+  Future<Either<ServerError, void>> createReviews({
+    required String user,
+    required String starRatingEnabled,
+    required String generalCommentEnabled,
+    required String customerNameRequired,
+    required String customerEmailRequired,
+    required String thankYouMessage,
+    required List<Map> customInputs,
+  }
+      );
 
 }

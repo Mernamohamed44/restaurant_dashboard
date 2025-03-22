@@ -10,6 +10,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl_phone_field/phone_number.dart';
 import 'package:logger/logger.dart';
+import 'package:restaurant_dashboard/app/caching/shared_prefs.dart';
 import 'package:restaurant_dashboard/app/utils/colors.dart';
 import 'package:restaurant_dashboard/app/utils/image_manager.dart';
 import 'package:restaurant_dashboard/app/widget/custom_text_form_field.dart';
@@ -163,12 +164,14 @@ class SettingsCubit extends Cubit<SettingsState> {
     focusNodesAddress[index].addListener(() {
       if (!focusNodesAddress[index].hasFocus) {
         if (addressControllers[index].text.isNotEmpty) {
-          addressControllersString = addressControllers.map((e) => e.text).toList();
+          addressControllersString =
+              addressControllers.map((e) => e.text).toList();
           print(addressControllersString);
         }
       }
     });
   }
+
   Widget buildAddressTextField(int index) {
     return Row(
       children: [
@@ -179,6 +182,12 @@ class SettingsCubit extends Cubit<SettingsState> {
             title: 'Adress',
             titleFontSize: 14,
             hintText: 'Add Adress',
+            validator: (value) {
+              if (value!.isEmpty) {
+                return "please enter Adress";
+              }
+              return null;
+            },
             suffixIcon: Padding(
               padding: const EdgeInsets.all(8.0),
               child: SvgPicture.asset(
@@ -221,44 +230,54 @@ class SettingsCubit extends Cubit<SettingsState> {
   TextEditingController customInputController = TextEditingController();
   final SingleValueDropDownController inputTypeController =
       SingleValueDropDownController();
-  List<String> words = [];
+  List<String> tags = [];
   List<String> links = [];
   List<String> customerInput = [];
   List<String> customerInputValue = [];
 
   void addKeyWords() {
-    words.add(keyWordsController.text);
-    print(words);
+    tags.add(keyWordsController.text);
+    print(tags);
     keyWordsController.clear();
     emit(AddWordsState());
   }
 
   void clearKeyWords(index) {
-    words.removeAt(index);
-    print(words);
+    tags.removeAt(index);
+    print(tags);
     emit(ClearWordsState());
   }
 
+  SingleValueDropDownController platformController =
+      SingleValueDropDownController();
+  List<Map<String, String>> platformList = [];
+  GlobalKey<FormState> settingsFormKey = GlobalKey<FormState>();
   void addLink() {
-    links.add(linksController.text);
-    print(links);
-    linksController.clear();
-    emit(AddWordsState());
+    if (settingsFormKey.currentState!.validate()) {
+      platformList.add({
+        'platform': platformController.dropDownValue!.name.toLowerCase(),
+        'url': linksController.text,
+      });
+      print(platformList);
+      emit(AddWordsState());
+    }
   }
 
   void clearLink(index) {
-    links.removeAt(index);
-    print(links);
+    platformList.removeAt(index);
+    print(platformList);
     emit(ClearWordsState());
   }
 
   void addCustomInput() {
-    customerInput.add(customInputController.text);
-    customerInputValue.add(inputTypeController.dropDownValue!.name);
-    print(customerInput);
-    print(customerInputValue);
-    customInputController.clear();
-    emit(AddWordsState());
+    if (settingsFormKey.currentState!.validate()) {
+      customerInput.add(customInputController.text);
+      customerInputValue.add(inputTypeController.dropDownValue!.name);
+      print(customerInput);
+      print(customerInputValue);
+      customInputController.clear();
+      emit(AddWordsState());
+    }
   }
 
   void clearCustomInput(index) {
@@ -271,7 +290,9 @@ class SettingsCubit extends Cubit<SettingsState> {
   bool generalCommentValue = false;
   bool customerNameValue = false;
   bool customerEmailValue = false;
+  bool requiredValue = false;
   bool thankValue = false;
+  TextEditingController thankMessageController = TextEditingController();
 
   changeStarRatingValue(value) {
     starRatingValue = value;
@@ -295,6 +316,10 @@ class SettingsCubit extends Cubit<SettingsState> {
 
   changeThankValue(value) {
     thankValue = value;
+    emit(ChangeStarRatingValueState());
+  }
+  changeInputValue(value) {
+    requiredValue = value;
     emit(ChangeStarRatingValueState());
   }
 
@@ -328,17 +353,15 @@ class SettingsCubit extends Cubit<SettingsState> {
     emit(OnColorChangedState());
   }
 
-  final formKey = GlobalKey<FormState>();
   BaseSettingsRepository repo;
   Future createContact() async {
-    if (formKey.currentState!.validate()) {
+    if (settingsFormKey.currentState!.validate()) {
       emit(ContactsLoadingState());
-
       final response = await repo.createContacts(
-          phones: phoneTextField,
+          phones: phoneControllers,
           emails: emailControllersString,
           addresses: addressControllersString,
-          socialMedia: []);
+          socialMedia: platformList);
       response.fold(
         (l) {
           emit(ContactsFailState(message: l.message));
@@ -346,6 +369,64 @@ class SettingsCubit extends Cubit<SettingsState> {
         },
         (r) {
           emit(ContactsSuccessState());
+        },
+      );
+    }
+  }
+
+  TextEditingController nameController = TextEditingController();
+  TextEditingController titleController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
+  Future createAboutUs() async {
+    if (settingsFormKey.currentState!.validate()) {
+      emit(AboutUsLoadingState());
+      final response = await repo.createAboutUs(
+          name: nameController.text,
+          title: titleController.text,
+          description: descriptionController.text,
+          tags: tags);
+      response.fold(
+        (l) {
+          emit(AboutUsFailState(message: l.message));
+          Logger().e(l.message);
+        },
+        (r) {
+          emit(AboutUsSuccessState());
+        },
+      );
+    }
+  }
+  List <Map<String,dynamic>> customInputs=[];
+  void addCustomInputs() {
+    if (settingsFormKey.currentState!.validate()) {
+      customInputs.add({
+          "label": inputTypeController.dropDownValue!.name,
+          "inputType": customInputController.text ,
+          "required": '$requiredValue',
+          "options": []
+      });
+      print(platformList);
+      emit(AddWordsState());
+    }
+  }
+  Future createReviews() async {
+    if (settingsFormKey.currentState!.validate()) {
+      emit(CreateReviewsLoadingState());
+      final response = await repo.createReviews(
+          user: Caching.get(key: 'user'),
+          starRatingEnabled: '$starRatingValue',
+          generalCommentEnabled: '$generalCommentValue',
+          customerEmailRequired: '$customerEmailValue',
+          customerNameRequired: '$customerNameValue',
+          thankYouMessage: thankMessageController.text,
+          customInputs: customInputs);
+      response.fold(
+        (l) {
+          emit(CreateReviewsFailState(message: l.message));
+          Logger().e(l.message);
+        },
+        (r) {
+          emit(CreateReviewsSuccessState());
         },
       );
     }

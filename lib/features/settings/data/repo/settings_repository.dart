@@ -1,10 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:restaurant_dashboard/app/errors/server_errors.dart';
-import 'package:restaurant_dashboard/features/dashboard/data/data_source/base_remote_dashboard_data_source.dart';
-import 'package:restaurant_dashboard/features/dashboard/domain/entities/categories_entities.dart';
-import 'package:restaurant_dashboard/features/dashboard/domain/entities/item_entities.dart';
-import 'package:restaurant_dashboard/features/dashboard/domain/repository/base_dashboard_repository.dart';
 import 'package:restaurant_dashboard/features/settings/data/data_source/base_remote_settings_data_source.dart';
 import 'package:restaurant_dashboard/features/settings/domain/repository/base_settings_repository.dart';
 
@@ -25,6 +21,53 @@ class SettingsRepository extends BaseSettingsRepository {
           emails: emails,
           addresses: addresses,
           socialMedia: socialMedia);
+      return Right(result);
+    } on DioException catch (fail) {
+      return Left(ServerFailure.fromDiorError(fail));
+    } catch (error) {
+      return Left(
+        ServerFailure(error.toString()),
+      );
+    }
+  }
+
+  @override
+  Future<Either<ServerError, void>> createAboutUs(
+      {required String name,
+      required String title,
+      required String description,
+      required List tags}) async {
+    try {
+      final result = await dataSource.createAboutUs(
+          name: name, title: title, description: description, tags: tags);
+      return Right(result);
+    } on DioException catch (fail) {
+      return Left(ServerFailure.fromDiorError(fail));
+    } catch (error) {
+      return Left(
+        ServerFailure(error.toString()),
+      );
+    }
+  }
+
+  @override
+  Future<Either<ServerError, void>> createReviews(
+      {required String user,
+      required String starRatingEnabled,
+      required String generalCommentEnabled,
+      required String customerNameRequired,
+      required String customerEmailRequired,
+      required String thankYouMessage,
+      required List<Map> customInputs}) async {
+    try {
+      final result = await dataSource.createReviews(
+          user: user,
+          starRatingEnabled: starRatingEnabled,
+          generalCommentEnabled: generalCommentEnabled,
+          customerEmailRequired: customerEmailRequired,
+          customerNameRequired: customerNameRequired,
+          thankYouMessage: thankYouMessage,
+          customInputs: customInputs);
       return Right(result);
     } on DioException catch (fail) {
       return Left(ServerFailure.fromDiorError(fail));

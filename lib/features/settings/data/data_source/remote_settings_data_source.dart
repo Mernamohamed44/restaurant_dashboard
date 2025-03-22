@@ -25,4 +25,44 @@ class RemoteSettingsDataSource extends BaseRemoteSettingsDataSource {
       },
     );
   }
+
+  @override
+  Future<void> createAboutUs(
+      {required String name,
+      required String title,
+      required String description,
+      required List tags}) async {
+    await dioManager.post(
+      ApiConstants.aboutUs,
+      data: {
+        "name": name,
+        "title": title,
+        "description": description,
+        "tags": tags,
+      },
+    );
+  }
+
+  @override
+  Future<void> createReviews(
+      {required String user,
+      required String starRatingEnabled,
+      required String generalCommentEnabled,
+      required String customerNameRequired,
+      required String customerEmailRequired,
+      required String thankYouMessage,
+      required List<Map> customInputs}) async {
+    await dioManager.post(
+      ApiConstants.aboutUs,
+      data: {
+        "user": user,
+        "starRatingEnabled": starRatingEnabled,
+        "generalCommentEnabled": generalCommentEnabled,
+        "customerNameRequired": customerNameRequired,
+        "customerEmailRequired": customerEmailRequired,
+        "thankYouMessage": thankYouMessage,
+        "customInputs": customInputs,
+      },
+    );
+  }
 }

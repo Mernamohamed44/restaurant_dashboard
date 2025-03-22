@@ -141,9 +141,9 @@ class TypographyWidget extends StatelessWidget {
                       spacing: 8.0,
                       runSpacing: 8.0,
                       children: List.generate(
-                          cubit.words.length,
+                          cubit.tags.length,
                           (index) => LanguagesContainer(
-                                text: cubit.words[index],
+                                text: cubit.tags[index],
                                 index: index,
                               ))),
                 ],

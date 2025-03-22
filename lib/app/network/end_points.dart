@@ -1,6 +1,6 @@
 class ApiConstants {
   static String baseUrl = "http://209.250.237.58:1209/api/";
-  static String baseImagesUrl = "http://209.250.237.58:1209/images/";
+  static String baseImagesUrl = "http://209.250.237.58:1209/uoloads";
 
   static String refreshTokenUrl = "/auth/refresh-token";
 
@@ -17,4 +17,6 @@ class ApiConstants {
   static String allReviews = "reviews";
   static String plans = "plans";
   static String contacts = "contacts";
+  static String aboutUs = "about";
+  static String reviewsSettings = "reviews-settings";
 }

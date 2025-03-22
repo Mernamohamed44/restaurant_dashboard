@@ -3,11 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:restaurant_dashboard/app/helper/extension.dart';
+import 'package:restaurant_dashboard/app/routing/routes.dart';
 import 'package:restaurant_dashboard/app/utils/colors.dart';
 import 'package:restaurant_dashboard/app/utils/constance.dart';
 import 'package:restaurant_dashboard/app/utils/image_manager.dart';
+import 'package:restaurant_dashboard/app/widget/custom_button.dart';
 import 'package:restaurant_dashboard/app/widget/custom_text.dart';
 import 'package:restaurant_dashboard/app/widget/custom_text_form_field.dart';
+import 'package:restaurant_dashboard/app/widget/toastification_widget.dart';
 import 'package:restaurant_dashboard/features/settings/presentation/cubit/settings_cubit.dart';
 
 class Reviews extends StatelessWidget {
@@ -86,10 +89,17 @@ class Reviews extends StatelessWidget {
                   height: 8,
                 ),
                 cubit.thankValue
-                    ? const CustomTextFormField(
+                    ? CustomTextFormField(
+                        controller: cubit.thankMessageController,
                         maxLines: 3,
                         hintText: 'Type your message here...',
                         titleFontSize: 14,
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return "please enter message";
+                    }
+                    return null;
+                  },
                       )
                     : const SizedBox(),
                 const SizedBox(
@@ -149,11 +159,44 @@ class Reviews extends StatelessWidget {
                     (index) => AddInputTypeRow(
                           text: cubit.customerInput[index],
                           index: index,
-                          value: cubit.customerInputValue[index] == 'Required'
-                              ? true
-                              : false,
-                          switchText: cubit.customerInputValue[index],
-                        ))
+                        )),
+                const SizedBox(
+                  height: 20,
+                ),
+                BlocConsumer<SettingsCubit, SettingsState>(
+                  listener: (context, state) {
+                    if (state is CreateReviewsSuccessState) {
+                      showToastificationWidget(
+                        message: 'Create Review successfully',
+                        context: context,
+                      );
+                      context.pushReplacementNamed(Routes.dashboard);
+                    } else if (state is CreateReviewsFailState) {
+                      showToastificationWidget(
+                        message: state.message,
+                        context: context,
+                      );
+                    }
+                  },
+                  builder: (context, state) {
+                    if (state is CreateReviewsLoadingState) {
+                      return const Center(
+                        child: CircularProgressIndicator(
+                          color: AppColors.primary,
+                        ),
+                      );
+                    }
+                    return CustomButton(
+                      onTap: cubit.createReviews,
+                      text: 'Create',
+                      fontColor: Colors.white,
+                      fontSize: 16,
+                      isGradient: true,
+                      borderColor: AppColors.transparent,
+                      borderRadius: 50,
+                    );
+                  },
+                ),
               ],
             ),
           ),
@@ -237,17 +280,14 @@ class ReviewsRow extends StatelessWidget {
 }
 
 class AddInputTypeRow extends StatelessWidget {
-  const AddInputTypeRow(
-      {super.key,
-      required this.text,
-      required this.index,
-      required this.value,
-      required this.switchText});
+  const AddInputTypeRow({
+    super.key,
+    required this.text,
+    required this.index,
+  });
 
   final String text;
-  final String switchText;
   final int index;
-  final bool value;
 
   @override
   Widget build(BuildContext context) {
@@ -303,15 +343,21 @@ class AddInputTypeRow extends StatelessWidget {
           scale: .7,
           child: Switch(
             activeColor: AppColors.primary,
-            value: value,
-            onChanged: (bool value) {},
+            value: context.read<SettingsCubit>().requiredValue,
+            onChanged:(value){
+              context
+                  .read<SettingsCubit>()
+                  .changeInputValue(value);
+            },
           ),
         ),
         const SizedBox(
           width: 5,
         ),
         CustomText(
-          text: switchText,
+          text: context.read<SettingsCubit>().requiredValue
+              ? 'Required'
+              : 'Not Required',
           color: AppColors.textColor,
           fontSize: 14,
         )
@@ -328,6 +374,12 @@ class InputTypeTextField extends StatelessWidget {
     return CustomTextFormField(
       controller: context.read<SettingsCubit>().customInputController,
       hintText: 'Input Title...',
+      validator: (value) {
+        if (value!.isEmpty) {
+          return "Please enter Input Title";
+        }
+        return null;
+      },
     );
   }
 }
@@ -340,6 +392,12 @@ class InputTypeSelection extends StatelessWidget {
     return SizedBox(
       width: context.screenWidth > 500 ? 150 : double.infinity,
       child: DropDownTextField(
+        validator: (value) {
+          if (value!.isEmpty) {
+            return "Please enter Input Type";
+          }
+          return null;
+        },
         controller: context.read<SettingsCubit>().inputTypeController,
         dropDownIconProperty: IconProperty(
           icon: Icons.keyboard_arrow_down,
@@ -404,8 +462,9 @@ class InputTypeSelection extends StatelessWidget {
         clearOption: true,
         clearIconProperty: IconProperty(color: Colors.green),
         dropDownList: const [
-          DropDownValueModel(name: 'Not Required', value: "value1"),
-          DropDownValueModel(name: 'Required', value: "value2"),
+          DropDownValueModel(name: 'number', value: "value1"),
+          DropDownValueModel(name: 'date', value: "value2"),
+          DropDownValueModel(name: 'text', value: "value2"),
         ],
       ),
     );

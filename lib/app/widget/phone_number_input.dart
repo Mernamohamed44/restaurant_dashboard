@@ -25,7 +25,9 @@ class PhoneNumberInput extends StatelessWidget {
     this.titleFontSize = 13,
     this.titleFontWeight,
     this.controller,
-    this.onFieldSubmitted, this.focusNode,
+    this.onFieldSubmitted,
+    this.focusNode,
+    this.errorFontSize,
   }) : super(key: key);
   final Function(PhoneNumber)? onInputChanged;
   final FutureOr<String?> Function(PhoneNumber?)? validator;
@@ -37,7 +39,7 @@ class PhoneNumberInput extends StatelessWidget {
   final FontWeight? titleFontWeight;
   final TextEditingController? controller;
   final FocusNode? focusNode;
-
+  final double? errorFontSize;
   final String? isoCode;
   final AutovalidateMode autoValidate;
   final VoidCallback? onTap;
@@ -119,11 +121,17 @@ class PhoneNumberInput extends StatelessWidget {
                 ),
               ),
               focusedErrorBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12.r),
+                borderRadius: BorderRadius.circular(12),
                 borderSide: const BorderSide(
                   width: 1,
                   color: AppColors.primary,
                 ),
+              ),
+              errorStyle: TextStyle(
+                color: AppColors.red,
+                fontWeight: FontWeight.w400,
+                fontSize: errorFontSize ?? 10,
+                fontFamily: AppConstance.appFontName,
               ),
               hintText: hint,
               hintStyle: const TextStyle(

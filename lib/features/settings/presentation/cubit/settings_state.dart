@@ -25,3 +25,21 @@ class ContactsFailState extends SettingsState {
 
   ContactsFailState({required this.message});
 }
+class AboutUsLoadingState extends SettingsState {}
+
+class AboutUsSuccessState extends SettingsState {}
+
+class AboutUsFailState extends SettingsState {
+  final String message;
+
+  AboutUsFailState({required this.message});
+}
+class CreateReviewsLoadingState extends SettingsState {}
+
+class CreateReviewsSuccessState extends SettingsState {}
+
+class CreateReviewsFailState extends SettingsState {
+  final String message;
+
+  CreateReviewsFailState({required this.message});
+}

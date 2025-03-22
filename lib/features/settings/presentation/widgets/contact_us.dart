@@ -1,15 +1,20 @@
+import 'dart:developer';
+
 import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl_phone_field/phone_number.dart';
 import 'package:restaurant_dashboard/app/helper/extension.dart';
+import 'package:restaurant_dashboard/app/routing/routes.dart';
 import 'package:restaurant_dashboard/app/utils/colors.dart';
 import 'package:restaurant_dashboard/app/utils/constance.dart';
 import 'package:restaurant_dashboard/app/utils/image_manager.dart';
+import 'package:restaurant_dashboard/app/widget/custom_button.dart';
 import 'package:restaurant_dashboard/app/widget/custom_text.dart';
 import 'package:restaurant_dashboard/app/widget/custom_text_form_field.dart';
 import 'package:restaurant_dashboard/app/widget/phone_number_input.dart';
+import 'package:restaurant_dashboard/app/widget/toastification_widget.dart';
 import 'package:restaurant_dashboard/features/settings/presentation/cubit/settings_cubit.dart';
 
 class ContactUs extends StatefulWidget {
@@ -128,12 +133,53 @@ class _ContactUsState extends State<ContactUs> {
                           )
                         ],
                       ),
+
                 ...List.generate(
-                    cubit.links.length,
+                    cubit.platformList.length,
                     (index) => SocialMediaLinksRow(
-                          text: cubit.links[index],
+                          text: cubit.platformList[index]['url']!,
                           index: index,
-                        ))
+                        )),
+                const SizedBox(
+                  height: 20,
+                ),
+                BlocConsumer<SettingsCubit, SettingsState>(
+                  listener: (context, state) {
+                    if (state is ContactsSuccessState) {
+                      showToastificationWidget(
+                        message: 'Contacts Create successfully',
+                        context: context,
+                      );
+                      context.pushReplacementNamed(Routes.dashboard);
+                    } else if (state is ContactsFailState) {
+                      showToastificationWidget(
+                        message: state.message,
+                        context: context,
+                      );
+                    }
+                  },
+                  builder: (context, state) {
+                    final cubit = context.read<SettingsCubit>();
+                    if (state is ContactsLoadingState) {
+                      return const Center(
+                        child: CircularProgressIndicator(
+                          color: AppColors.primary,
+                        ),
+                      );
+                    }
+                    return CustomButton(
+                      onTap: () {
+                        context.read<SettingsCubit>().createContact();
+                      },
+                      text: 'Create',
+                      fontColor: Colors.white,
+                      fontSize: 16,
+                      isGradient: true,
+                      borderColor: AppColors.transparent,
+                      borderRadius: 50,
+                    );
+                  },
+                ),
               ],
             ),
           );
@@ -190,7 +236,7 @@ class SocialMediaLinksRow extends StatelessWidget {
             Flexible(
               child: Row(
                 children: [
-                  SvgPicture.asset(ImageManager.facebook),
+                  // SvgPicture.asset(ImageManager.facebook),
                   const SizedBox(
                     width: 15,
                   ),
@@ -228,6 +274,12 @@ class LinkTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomTextFormField(
+      validator: (value) {
+        if (value!.isEmpty) {
+          return 'Please enter Link';
+        }
+        return null;
+      },
       controller: context.read<SettingsCubit>().linksController,
       hintText: 'eg. htpps://facbook.com/geosid40...',
     );
@@ -242,11 +294,19 @@ class PlatformSelection extends StatelessWidget {
     return SizedBox(
       width: context.screenWidth > 500 ? 150 : double.infinity,
       child: DropDownTextField(
+        controller: context.read<SettingsCubit>().platformController,
         dropDownIconProperty: IconProperty(
           icon: Icons.keyboard_arrow_down,
           size: 24,
           color: AppColors.textColor,
         ),
+        validator: (value) {
+          if (value!.isEmpty) {
+            return "enter your platform";
+          } else {
+            return null;
+          }
+        },
         textFieldDecoration: InputDecoration(
           fillColor: AppColors.boldContainerColor,
           filled: true,

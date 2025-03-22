@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:restaurant_dashboard/app/helper/extension.dart';
+import 'package:restaurant_dashboard/app/routing/routes.dart';
 import 'package:restaurant_dashboard/app/utils/colors.dart';
 import 'package:restaurant_dashboard/app/utils/image_manager.dart';
+import 'package:restaurant_dashboard/app/widget/custom_button.dart';
 import 'package:restaurant_dashboard/app/widget/custom_text.dart';
 import 'package:restaurant_dashboard/app/widget/custom_text_form_field.dart';
+import 'package:restaurant_dashboard/app/widget/toastification_widget.dart';
 import 'package:restaurant_dashboard/features/settings/presentation/cubit/settings_cubit.dart';
 
 class AboutBody extends StatelessWidget {
@@ -88,27 +92,48 @@ class AboutBody extends StatelessWidget {
               const SizedBox(
                 height: 15,
               ),
-              const CustomTextFormField(
+              CustomTextFormField(
                 title: 'Name',
                 titleFontSize: 14,
                 hintText: 'Name',
+                controller: context.read<SettingsCubit>().nameController,
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return "please enter Name";
+                  }
+                  return null;
+                },
               ),
               const SizedBox(
                 height: 10,
               ),
-              const CustomTextFormField(
+              CustomTextFormField(
                 title: ' Title',
                 titleFontSize: 14,
                 hintText: 'Add a title to be used in the browser taps...',
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return "please enter Title";
+                  }
+                  return null;
+                },
+                controller: context.read<SettingsCubit>().titleController,
               ),
               const SizedBox(
                 height: 10,
               ),
-              const CustomTextFormField(
+              CustomTextFormField(
                 title: 'Description',
                 maxLines: 3,
                 hintText: 'Tell your customer about your restaurant ...',
                 titleFontSize: 14,
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return "please enter Description";
+                  }
+                  return null;
+                },
+                controller: context.read<SettingsCubit>().descriptionController,
               ),
               const SizedBox(
                 height: 10,
@@ -123,6 +148,12 @@ class AboutBody extends StatelessWidget {
                       title: 'Key Words',
                       titleFontSize: 14,
                       hintText: 'Add keywords to help the seo...',
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return "please enter keywords";
+                        }
+                        return null;
+                      },
                     ),
                   ),
                   const SizedBox(
@@ -158,13 +189,54 @@ class AboutBody extends StatelessWidget {
                       spacing: 8.0,
                       runSpacing: 8.0,
                       children: List.generate(
-                          cubit.words.length,
+                          cubit.tags.length,
                           (index) => keywordContainer(
-                                text: cubit.words[index],
+                                text: cubit.tags[index],
                                 index: index,
                               ))),
+
+
                 ],
-              )
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              BlocConsumer<SettingsCubit, SettingsState>(
+                listener: (context, state) {
+                  if (state is AboutUsSuccessState) {
+                    showToastificationWidget(
+                      message: 'AboutUs Create successfully',
+                      context: context,
+                    );
+                    context.pushReplacementNamed(Routes.dashboard);
+                  } else if (state is AboutUsFailState) {
+                    showToastificationWidget(
+                      message: state.message,
+                      context: context,
+                    );
+                  }
+                },
+                builder: (context, state) {
+                  if (state is AboutUsLoadingState) {
+                    return const Center(
+                      child: CircularProgressIndicator(
+                        color: AppColors.primary,
+                      ),
+                    );
+                  }
+                  return CustomButton(
+                    onTap: () {
+                      context.read<SettingsCubit>().createAboutUs();
+                    },
+                    text: 'Create',
+                    fontColor: Colors.white,
+                    fontSize: 16,
+                    isGradient: true,
+                    borderColor: AppColors.transparent,
+                    borderRadius: 50,
+                  );
+                },
+              ),
             ],
           ),
         );

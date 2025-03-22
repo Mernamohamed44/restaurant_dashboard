@@ -72,9 +72,12 @@ class GeneralSettingBody extends StatelessWidget {
             ),
           ),
         ),
-        body: const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          child: SettingsTabBar(),
+        body: Form(
+          key: context.read<SettingsCubit>().settingsFormKey,
+          child: const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            child: SettingsTabBar(),
+          ),
         ),
       ),
     );

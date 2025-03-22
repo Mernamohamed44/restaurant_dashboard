@@ -36,6 +36,7 @@ class LogInCubit extends Cubit<LogInStates> {
         (r) {
           Caching.put(key: "access_token", value: r.accessToken);
           Caching.put(key: "refresh_token", value: r.refreshToken);
+          Caching.put(key: "user", value: r.id);
           emit(LogInSuccessState());
         },
       );

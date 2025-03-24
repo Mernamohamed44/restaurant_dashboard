@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:restaurant_dashboard/app/dependancy_injection/dependancy_injection.dart';
 import 'package:restaurant_dashboard/app/flutter_admin_scaffold/admin_scaffold.dart';
 import 'package:restaurant_dashboard/app/helper/extension.dart';
 import 'package:restaurant_dashboard/app/routing/routes.dart';
@@ -7,6 +8,8 @@ import 'package:restaurant_dashboard/app/utils/colors.dart';
 import 'package:restaurant_dashboard/app/widget/custom_button.dart';
 import 'package:restaurant_dashboard/app/widget/custom_text.dart';
 import 'package:restaurant_dashboard/features/categories/presentaion/cubit/categories_cubit.dart';
+import 'package:restaurant_dashboard/features/menuItem/domain/entities/categories_items_entities.dart';
+import 'package:restaurant_dashboard/features/menuItem/presentation/cubit/menu_cubit.dart';
 import 'package:restaurant_dashboard/features/menuItem/presentation/screens/add_menu_item.dart';
 import 'package:restaurant_dashboard/features/menuItem/presentation/widgets/add_menu_item_dialog.dart';
 import 'package:restaurant_dashboard/features/menuItem/presentation/widgets/drop_down_items.dart';
@@ -23,8 +26,12 @@ class MenuItemScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => CategoriesCubit(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+            create: (context) => getIt<CategoriesCubit>()..getCategoriesData()),
+        BlocProvider(create: (context) => getIt<MenuCubit>()),
+      ],
       child: const MenuItemBody(),
     );
   }
@@ -151,10 +158,22 @@ class MenuItemBody extends StatelessWidget {
               ),
             ),
           ),
-          body: SingleChildScrollView(
-            child: context.screenWidth < 500
-                ? const MenuItemColumn()
-                : const MenuItemRow(),
+          body: BlocBuilder<CategoriesCubit, CategoriesState>(
+            builder: (context, state) {
+              if (state is SuperCategoriesDataLoadingState) {
+                return const Center(
+                  child: CircularProgressIndicator(
+                    color: AppColors.primary,
+                  ),
+                );
+              } else {
+                return SingleChildScrollView(
+                  child: context.screenWidth < 500
+                      ? const MenuItemColumn()
+                      : const MenuItemRow(),
+                );
+              }
+            },
           ),
         ));
   }
@@ -220,49 +239,34 @@ class ItemsMenuList extends StatefulWidget {
 }
 
 class _ItemsMenuListState extends State<ItemsMenuList> {
-  List<MenuItemContainer> categories = [
-    const MenuItemContainer(
-      text: 'Grilled',
-    ),
-    const MenuItemContainer(
-      text: 'Salad',
-    ),
-    const MenuItemContainer(
-      text: 'Main Course',
-    ),
-    const MenuItemContainer(
-      text: 'Turkish Food',
-    ),
-    const MenuItemContainer(
-      text: 'Masgouf Fish',
-    ),
-    const MenuItemContainer(
-      text: 'Fast Food',
-    ),
-    const MenuItemContainer(
-      text: 'Special Food',
-    ),
-  ];
-
   int selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        ...List.generate(
-            categories.length,
-            (index) => GestureDetector(
-                onTap: () {
-                  setState(() {
-                    selectedIndex = index;
-                  });
-                },
-                child: MenuItemContainer(
-                  text: categories[index].text,
-                  isSelected: selectedIndex == index ? true : false,
-                )))
-      ],
+    return BlocBuilder<MenuCubit, MenuState>(
+      builder: (context, state) {
+        List<CategoriesItemEntity> itemsCategories =
+            context.read<MenuCubit>().itemsCategories;
+        return Row(
+          children: [
+            ...List.generate(
+                itemsCategories.length,
+                (index) => GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        selectedIndex = index;
+                        context.read<MenuCubit>().getSubCategoriesData(
+                            items: 'subCategory',
+                            id: itemsCategories[index].category!);
+                      });
+                    },
+                    child: MenuItemContainer(
+                      text: itemsCategories[index].name!,
+                      isSelected: selectedIndex == index ? true : false,
+                    )))
+          ],
+        );
+      },
     );
   }
 }

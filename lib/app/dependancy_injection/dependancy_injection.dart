@@ -4,18 +4,29 @@ import 'package:restaurant_dashboard/features/Subscription/data/data_source/remo
 import 'package:restaurant_dashboard/features/Subscription/data/repo/subscription_repository.dart';
 import 'package:restaurant_dashboard/features/Subscription/domain/repository/base_subscription_repository.dart';
 import 'package:restaurant_dashboard/features/Subscription/presentation/cubit/subscription_cubit.dart';
-import 'package:restaurant_dashboard/features/auth/auth/data/data_source/base_remote_auth_data_source.dart';
-import 'package:restaurant_dashboard/features/auth/auth/data/data_source/remote_auth_data_source.dart';
-import 'package:restaurant_dashboard/features/auth/auth/data/repo/auth_repository.dart';
-import 'package:restaurant_dashboard/features/auth/auth/domain/repository/base_auth_repository.dart';
-import 'package:restaurant_dashboard/features/auth/auth/presentation/cubit/account_cubit.dart';
-import 'package:restaurant_dashboard/features/auth/auth/presentation/cubit/login_cubit.dart';
-import 'package:restaurant_dashboard/features/auth/auth/presentation/cubit/register_cubit.dart';
+import 'package:restaurant_dashboard/features/auth/data/data_source/base_remote_auth_data_source.dart';
+import 'package:restaurant_dashboard/features/auth/data/data_source/remote_auth_data_source.dart';
+import 'package:restaurant_dashboard/features/auth/data/repo/auth_repository.dart';
+import 'package:restaurant_dashboard/features/auth/domain/repository/base_auth_repository.dart';
+import 'package:restaurant_dashboard/features/auth/presentation/cubit/account_cubit.dart';
+import 'package:restaurant_dashboard/features/auth/presentation/cubit/login_cubit.dart';
+import 'package:restaurant_dashboard/features/auth/presentation/cubit/register_cubit.dart';
+import 'package:restaurant_dashboard/features/categories/data/data_source/base_remote_categories_data_source.dart';
+import 'package:restaurant_dashboard/features/categories/data/data_source/remote_categories_data_source.dart';
+import 'package:restaurant_dashboard/features/categories/data/repo/categories_repository.dart';
+import 'package:restaurant_dashboard/features/categories/domin/repository/base_categories_repository.dart';
+import 'package:restaurant_dashboard/features/categories/presentaion/cubit/categories_cubit.dart';
+
 import 'package:restaurant_dashboard/features/dashboard/data/data_source/base_remote_dashboard_data_source.dart';
 import 'package:restaurant_dashboard/features/dashboard/data/data_source/remote_dashboard_data_source.dart';
 import 'package:restaurant_dashboard/features/dashboard/data/repo/dashboard_repository.dart';
 import 'package:restaurant_dashboard/features/dashboard/domain/repository/base_dashboard_repository.dart';
 import 'package:restaurant_dashboard/features/dashboard/presentation/cubit/dashboard_cubit.dart';
+import 'package:restaurant_dashboard/features/menuItem/data/data_source/base_remote_menu_data_source.dart';
+import 'package:restaurant_dashboard/features/menuItem/data/data_source/remote_menu_data_source.dart';
+import 'package:restaurant_dashboard/features/menuItem/data/repo/menu_repository.dart';
+import 'package:restaurant_dashboard/features/menuItem/domain/repository/base_menu_repository.dart';
+import 'package:restaurant_dashboard/features/menuItem/presentation/cubit/menu_cubit.dart';
 import 'package:restaurant_dashboard/features/reviews/data/data_source/base_remote_reviews_data_source.dart';
 import 'package:restaurant_dashboard/features/reviews/data/data_source/remote_reviews_data_source.dart';
 import 'package:restaurant_dashboard/features/reviews/data/repo/reviews_repository.dart';
@@ -61,4 +72,16 @@ Future<void> setupGetIt() async {
   getIt.registerLazySingleton<BaseSettingsRepository>(
           () => SettingsRepository(getIt()));
   getIt.registerFactory<SettingsCubit>(() => SettingsCubit(getIt()));
+  /////////Categories
+  getIt.registerLazySingleton<BaseRemoteCategoriesDataSource>(
+          () => RemoteCategoriesDataSource());
+  getIt.registerLazySingleton<BaseCategoriesRepository>(
+          () => CategoriesRepository(getIt()));
+  getIt.registerFactory<CategoriesCubit>(() => CategoriesCubit(getIt()));
+  /////////Menu
+  getIt.registerLazySingleton<BaseRemoteMenuDataSource>(
+          () => RemoteMenuDataSource());
+  getIt.registerLazySingleton<BaseMenuRepository>(
+          () => MenuRepository(getIt()));
+  getIt.registerFactory<MenuCubit>(() => MenuCubit(getIt()));
 }

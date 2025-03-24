@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:restaurant_dashboard/app/network/dio.dart';
 import 'package:restaurant_dashboard/app/network/end_points.dart';
-import 'package:restaurant_dashboard/features/auth/auth/data/models/user_data_model.dart';
+import 'package:restaurant_dashboard/features/auth/data/models/user_data_model.dart';
 
 import '../models/auth_model.dart';
 import 'base_remote_auth_data_source.dart';

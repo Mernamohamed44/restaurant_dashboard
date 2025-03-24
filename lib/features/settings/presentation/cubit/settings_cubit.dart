@@ -34,6 +34,7 @@ class SettingsCubit extends Cubit<SettingsState> {
   List<Widget> phoneTextField = [];
   List<String> phoneControllers = [];
   List<FocusNode> focusNodesPhones = [FocusNode()];
+
   //listen to foucusnode
   addListenerFocusNode(int index) {
     focusNodesPhones[index].addListener(() {
@@ -160,6 +161,7 @@ class SettingsCubit extends Cubit<SettingsState> {
   List<TextEditingController> addressControllers = [TextEditingController()];
   List<String> addressControllersString = [];
   List<FocusNode> focusNodesAddress = [FocusNode()];
+
   addListenerFocusNodeAddress(int index) {
     focusNodesAddress[index].addListener(() {
       if (!focusNodesAddress[index].hasFocus) {
@@ -232,7 +234,6 @@ class SettingsCubit extends Cubit<SettingsState> {
       SingleValueDropDownController();
   List<String> tags = [];
   List<String> links = [];
-  List<String> customerInput = [];
   List<String> customerInputValue = [];
 
   void addKeyWords() {
@@ -252,6 +253,7 @@ class SettingsCubit extends Cubit<SettingsState> {
       SingleValueDropDownController();
   List<Map<String, String>> platformList = [];
   GlobalKey<FormState> settingsFormKey = GlobalKey<FormState>();
+
   void addLink() {
     if (settingsFormKey.currentState!.validate()) {
       platformList.add({
@@ -269,20 +271,29 @@ class SettingsCubit extends Cubit<SettingsState> {
     emit(ClearWordsState());
   }
 
+  bool isCustomerOptions = false;
+  List customerInput = [];
   void addCustomInput() {
     if (settingsFormKey.currentState!.validate()) {
-      customerInput.add(customInputController.text);
-      customerInputValue.add(inputTypeController.dropDownValue!.name);
-      print(customerInput);
-      print(customerInputValue);
-      customInputController.clear();
+      if (inputTypeController.dropDownValue!.name == 'select') {
+        isCustomerOptions = true;
+        customerInput.add(customInputController.text);
+        customerInputValue.add(inputTypeController.dropDownValue!.name);
+      } else {
+        customerInput.add(customInputController.text);
+        customerInputValue.add(inputTypeController.dropDownValue!.name);
+        addCustomInputs([]);
+        customInputController.clear();
+        inputTypeController.clearDropDown();
+      }
       emit(AddWordsState());
     }
   }
 
   void clearCustomInput(index) {
     customerInput.removeAt(index);
-    print(customerInput);
+    customInputs.removeAt(index);
+    print(customInputs);
     emit(ClearWordsState());
   }
 
@@ -291,6 +302,7 @@ class SettingsCubit extends Cubit<SettingsState> {
   bool customerNameValue = false;
   bool customerEmailValue = false;
   bool requiredValue = false;
+  List<bool> requiredInputValues = List.generate(10, (index) => false);
   bool thankValue = false;
   TextEditingController thankMessageController = TextEditingController();
 
@@ -318,8 +330,12 @@ class SettingsCubit extends Cubit<SettingsState> {
     thankValue = value;
     emit(ChangeStarRatingValueState());
   }
-  changeInputValue(value) {
-    requiredValue = value;
+
+  changeInputValue(value, index) {
+    requiredInputValues[index] = value;
+    requiredValue = requiredInputValues[index];
+    print(requiredValue);
+    customInputs[index]['required'] = requiredValue;
     emit(ChangeStarRatingValueState());
   }
 
@@ -354,6 +370,7 @@ class SettingsCubit extends Cubit<SettingsState> {
   }
 
   BaseSettingsRepository repo;
+
   Future createContact() async {
     if (settingsFormKey.currentState!.validate()) {
       emit(ContactsLoadingState());
@@ -377,6 +394,7 @@ class SettingsCubit extends Cubit<SettingsState> {
   TextEditingController nameController = TextEditingController();
   TextEditingController titleController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
+
   Future createAboutUs() async {
     if (settingsFormKey.currentState!.validate()) {
       emit(AboutUsLoadingState());
@@ -396,21 +414,108 @@ class SettingsCubit extends Cubit<SettingsState> {
       );
     }
   }
-  List <Map<String,dynamic>> customInputs=[];
-  void addCustomInputs() {
-    if (settingsFormKey.currentState!.validate()) {
-      customInputs.add({
-          "label": inputTypeController.dropDownValue!.name,
-          "inputType": customInputController.text ,
-          "required": '$requiredValue',
-          "options": []
-      });
-      print(platformList);
-      emit(AddWordsState());
-    }
+
+  List<Widget> optionsTextField = [];
+  List<TextEditingController> optionsControllers = [TextEditingController()];
+  List<String> optionsControllersString = [];
+  List<FocusNode> focusNodesOptions = [FocusNode()];
+
+  addListenerFocusNodeOptions(int index) {
+    focusNodesOptions[index].addListener(() {
+      if (!focusNodesOptions[index].hasFocus) {
+        if (optionsControllers[index].text.isNotEmpty) {
+          optionsControllersString =
+              optionsControllers.map((e) => e.text).toList();
+          print('optionsControllersString :$optionsControllersString');
+          // customInputs.add({
+          //   "inputType": inputTypeController.dropDownValue!.name,
+          //   "label": customInputController.text,
+          //   "required": '$requiredValue',
+          //   "options": optionsControllersString
+          // });
+          addCustomInputs(optionsControllersString);
+          print('vvvvvvvvvv');
+          customInputController.clear();
+          inputTypeController.clearDropDown();
+          //optionsControllers[index].clear();
+        }
+      }
+    });
   }
+
+  Widget buildOptionsTextField(int index) {
+    return Row(
+      children: [
+        SizedBox(
+          width: 350,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 5),
+            child: CustomTextFormField(
+              controller: optionsControllers[index],
+              focusNode: focusNodesOptions[index],
+              titleFontSize: 14,
+              hintText: 'Add Option',
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return "please enter Option";
+                }
+                return null;
+              },
+            ),
+          ),
+        ),
+        const SizedBox(
+          width: 10,
+        ),
+        InkWell(
+          onTap: () {
+            int newIndex = optionsControllers.length;
+            optionsControllers.insert(newIndex, TextEditingController());
+            focusNodesOptions.insert(newIndex, FocusNode());
+            optionsTextField.add(buildOptionsTextField(newIndex));
+            addListenerFocusNodeOptions(newIndex);
+            // print(optionsControllers.map((e) => e.text).toList());
+            emit(AddWordsState());
+          },
+          child: Container(
+            decoration: BoxDecoration(
+                border: Border.all(color: AppColors.primary),
+                borderRadius: BorderRadius.circular(10)),
+            child: const Icon(
+              Icons.add,
+              color: AppColors.primary,
+            ),
+          ),
+        )
+      ],
+    );
+  }
+
+  List<Map<String, dynamic>> customInputs = [];
+
+  void addCustomInputs(optionsControllersString) {
+    customInputs.add({
+      "inputType": inputTypeController.dropDownValue!.name,
+      "label": customInputController.text,
+      "required": '$requiredValue',
+      "options": optionsControllersString
+    });
+    emit(AddWordsState());
+    // if (settingsFormKey.currentState!.validate()) {
+    //   customInputs.add({
+    //     "inputType": inputTypeController.dropDownValue!.name,
+    //     "label": customInputController.text,
+    //     "required": '$requiredValue',
+    //     "options": optionsControllersString
+    //   });
+    //   print(customInputs);
+    //   emit(AddWordsState());
+    // }
+  }
+
   Future createReviews() async {
-    if (settingsFormKey.currentState!.validate()) {
+    // print('customInputs : $customInputs');
+
       emit(CreateReviewsLoadingState());
       final response = await repo.createReviews(
           user: Caching.get(key: 'user'),
@@ -430,5 +535,5 @@ class SettingsCubit extends Cubit<SettingsState> {
         },
       );
     }
-  }
+
 }

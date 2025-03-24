@@ -14,7 +14,7 @@ import 'package:restaurant_dashboard/app/widget/custom_text.dart';
 import 'package:restaurant_dashboard/app/widget/custom_text_form_field.dart';
 import 'package:restaurant_dashboard/app/widget/phone_number_input.dart';
 import 'package:restaurant_dashboard/app/widget/toastification_widget.dart';
-import 'package:restaurant_dashboard/features/auth/auth/presentation/cubit/register_states.dart';
+import 'package:restaurant_dashboard/features/auth/presentation/cubit/register_states.dart';
 
 import '../cubit/register_cubit.dart';
 

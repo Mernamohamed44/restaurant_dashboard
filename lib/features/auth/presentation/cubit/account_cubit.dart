@@ -2,8 +2,8 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl_phone_field/phone_number.dart';
 import 'package:logger/logger.dart';
-import 'package:restaurant_dashboard/features/auth/auth/domain/entities/user_data_entity.dart';
-import 'package:restaurant_dashboard/features/auth/auth/domain/repository/base_auth_repository.dart';
+import 'package:restaurant_dashboard/features/auth/domain/entities/user_data_entity.dart';
+import 'package:restaurant_dashboard/features/auth/domain/repository/base_auth_repository.dart';
 
 part 'account_state.dart';
 

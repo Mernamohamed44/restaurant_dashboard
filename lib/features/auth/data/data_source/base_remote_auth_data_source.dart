@@ -1,4 +1,5 @@
-import 'package:restaurant_dashboard/features/auth/auth/data/models/user_data_model.dart';
+
+import 'package:restaurant_dashboard/features/auth/data/models/user_data_model.dart';
 
 import '../models/auth_model.dart';
 

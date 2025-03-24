@@ -12,9 +12,21 @@ import 'package:restaurant_dashboard/app/widget/custom_text.dart';
 import 'package:restaurant_dashboard/app/widget/custom_text_form_field.dart';
 import 'package:restaurant_dashboard/app/widget/toastification_widget.dart';
 import 'package:restaurant_dashboard/features/settings/presentation/cubit/settings_cubit.dart';
+import 'package:restaurant_dashboard/features/settings/presentation/widgets/options_input_widget.dart';
 
-class Reviews extends StatelessWidget {
+class Reviews extends StatefulWidget {
   const Reviews({super.key});
+
+  @override
+  State<Reviews> createState() => _ReviewsState();
+}
+
+class _ReviewsState extends State<Reviews> {
+  @override
+  void initState() {
+    //context.read<SettingsCubit>().addListenerFocusNodeoptions(0);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -94,12 +106,12 @@ class Reviews extends StatelessWidget {
                         maxLines: 3,
                         hintText: 'Type your message here...',
                         titleFontSize: 14,
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return "please enter message";
-                    }
-                    return null;
-                  },
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return "please enter message";
+                          }
+                          return null;
+                        },
                       )
                     : const SizedBox(),
                 const SizedBox(
@@ -154,6 +166,10 @@ class Reviews extends StatelessWidget {
                           )
                         ],
                       ),
+                const SizedBox(height: 10),
+                context.read<SettingsCubit>().isCustomerOptions
+                    ? const OptionInputWidget()
+                    : const SizedBox(),
                 ...List.generate(
                     cubit.customerInput.length,
                     (index) => AddInputTypeRow(
@@ -212,9 +228,7 @@ class AddButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {
-        context.read<SettingsCubit>().addCustomInput();
-      },
+      onTap: context.read<SettingsCubit>().addCustomInput,
       child: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
@@ -247,7 +261,6 @@ class ReviewsRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<SettingsCubit, SettingsState>(
       builder: (context, state) {
-        final cubit = context.read<SettingsCubit>();
         return Padding(
           padding: const EdgeInsets.symmetric(vertical: 10),
           child: Container(
@@ -343,11 +356,9 @@ class AddInputTypeRow extends StatelessWidget {
           scale: .7,
           child: Switch(
             activeColor: AppColors.primary,
-            value: context.read<SettingsCubit>().requiredValue,
-            onChanged:(value){
-              context
-                  .read<SettingsCubit>()
-                  .changeInputValue(value);
+            value: context.read<SettingsCubit>().requiredInputValues[index],
+            onChanged: (value) {
+              context.read<SettingsCubit>().changeInputValue(value,index);
             },
           ),
         ),
@@ -355,7 +366,7 @@ class AddInputTypeRow extends StatelessWidget {
           width: 5,
         ),
         CustomText(
-          text: context.read<SettingsCubit>().requiredValue
+          text: context.read<SettingsCubit>().requiredInputValues[index]
               ? 'Required'
               : 'Not Required',
           color: AppColors.textColor,
@@ -464,7 +475,9 @@ class InputTypeSelection extends StatelessWidget {
         dropDownList: const [
           DropDownValueModel(name: 'number', value: "value1"),
           DropDownValueModel(name: 'date', value: "value2"),
-          DropDownValueModel(name: 'text', value: "value2"),
+          DropDownValueModel(name: 'text', value: "value3"),
+          DropDownValueModel(name: 'bool', value: "value4"),
+          DropDownValueModel(name: 'select', value: "value5"),
         ],
       ),
     );

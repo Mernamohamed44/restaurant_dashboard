@@ -53,7 +53,7 @@ class RemoteSettingsDataSource extends BaseRemoteSettingsDataSource {
       required String thankYouMessage,
       required List<Map> customInputs}) async {
     await dioManager.post(
-      ApiConstants.aboutUs,
+      ApiConstants.reviewsSettings,
       data: {
         "user": user,
         "starRatingEnabled": starRatingEnabled,

@@ -71,10 +71,11 @@ class SettingsRepository extends BaseSettingsRepository {
       return Right(result);
     } on DioException catch (fail) {
       return Left(ServerFailure.fromDiorError(fail));
-    } catch (error) {
-      return Left(
-        ServerFailure(error.toString()),
-      );
     }
+    // catch (error) {
+    //   return Left(
+    //     ServerFailure(error.toString()),
+    //   );
+    // }
   }
 }

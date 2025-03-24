@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:restaurant_dashboard/app/errors/server_errors.dart';
-import 'package:restaurant_dashboard/features/auth/auth/domain/entities/user_data_entity.dart';
+import 'package:restaurant_dashboard/features/auth/domain/entities/user_data_entity.dart';
 
 import '../entities/auth_entity.dart';
 

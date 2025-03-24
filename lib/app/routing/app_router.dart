@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:restaurant_dashboard/features/Subscription/presentation/screens/Subscription_screen.dart';
-import 'package:restaurant_dashboard/features/auth/auth/presentation/screens/accountScreen.dart';
-import 'package:restaurant_dashboard/features/auth/auth/presentation/screens/login_screen.dart';
-import 'package:restaurant_dashboard/features/auth/auth/presentation/screens/register_screen.dart';
+import 'package:restaurant_dashboard/features/auth/presentation/screens/accountScreen.dart';
+import 'package:restaurant_dashboard/features/auth/presentation/screens/login_screen.dart';
+import 'package:restaurant_dashboard/features/auth/presentation/screens/register_screen.dart';
 import 'package:restaurant_dashboard/features/categories/presentaion/screens/categories_screen.dart';
 import 'package:restaurant_dashboard/features/dashboard/presentation/screens/dashboard_screen.dart';
 import 'package:restaurant_dashboard/features/menuItem/presentation/screens/menu_item_screen.dart';

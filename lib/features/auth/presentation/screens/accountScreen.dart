@@ -16,7 +16,7 @@ import 'package:restaurant_dashboard/app/widget/custom_text_form_field.dart';
 import 'package:restaurant_dashboard/app/widget/phone_number_input.dart';
 import 'package:restaurant_dashboard/app/widget/svg_icons.dart';
 import 'package:restaurant_dashboard/app/widget/toastification_widget.dart';
-import 'package:restaurant_dashboard/features/auth/auth/presentation/cubit/account_cubit.dart';
+import 'package:restaurant_dashboard/features/auth/presentation/cubit/account_cubit.dart';
 import 'package:restaurant_dashboard/features/side_bar.dart';
 
 class AccountScreen extends StatelessWidget {

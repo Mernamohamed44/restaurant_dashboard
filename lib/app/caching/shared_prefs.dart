@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:restaurant_dashboard/features/auth/auth/data/models/auth_model.dart';
+import 'package:restaurant_dashboard/features/auth/data/models/auth_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Caching {

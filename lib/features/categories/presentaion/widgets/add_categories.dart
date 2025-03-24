@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:restaurant_dashboard/app/dependancy_injection/dependancy_injection.dart';
 import 'package:restaurant_dashboard/app/helper/extension.dart';
 import 'package:restaurant_dashboard/app/widget/custom_text.dart';
 import 'package:restaurant_dashboard/features/categories/presentaion/cubit/categories_cubit.dart';
@@ -49,7 +50,7 @@ class AddCategories extends StatelessWidget {
             highlightColor: Colors.transparent,
           )),
       body: BlocProvider(
-        create: (context) => CategoriesCubit(),
+        create: (context) => getIt<CategoriesCubit>(),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Column(

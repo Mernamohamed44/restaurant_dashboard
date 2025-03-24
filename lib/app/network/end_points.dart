@@ -19,4 +19,6 @@ class ApiConstants {
   static String contacts = "contacts";
   static String aboutUs = "about";
   static String reviewsSettings = "reviews-settings";
+  static String categories = "categories";
+  static String items = "items";
 }

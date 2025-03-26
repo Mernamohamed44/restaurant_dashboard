@@ -4,22 +4,23 @@ import 'package:restaurant_dashboard/app/utils/colors.dart';
 import 'package:restaurant_dashboard/app/widget/custom_text_form_field.dart';
 import 'package:restaurant_dashboard/features/menuItem/presentation/cubit/menu_cubit.dart';
 
-class ItemDescriptionTextField extends StatelessWidget {
-  const ItemDescriptionTextField({super.key});
+class ItemNameTextField extends StatelessWidget {
+  ItemNameTextField({super.key});
+
+  TextEditingController itemController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<MenuCubit, MenuState>(
       builder: (context, state) {
         return CustomTextFormField(
-          controller: context.read<MenuCubit>().descriptionController,
-          title: 'Item Description ( local: English )',
+          controller: context.read<MenuCubit>().nameController ,
+          title: 'Name ( local: English )',
           titleFontSize: 14,
-          borderColor: AppColors.containerColor,
-          maxLines: 3,
+          borderColor: AppColors.primary,
           validator: (value) {
             if (value!.isEmpty) {
-              return "please enter Item Description";
+              return "please enter name";
             }
             return null;
           },

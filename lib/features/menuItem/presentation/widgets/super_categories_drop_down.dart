@@ -7,15 +7,15 @@ import 'package:restaurant_dashboard/features/categories/domin/entities/categori
 import 'package:restaurant_dashboard/features/categories/presentaion/cubit/categories_cubit.dart';
 import 'package:restaurant_dashboard/features/menuItem/presentation/cubit/menu_cubit.dart';
 
-class SubCategoriesDropDown extends StatelessWidget {
-  const SubCategoriesDropDown({super.key});
+class CategoriesDropDown extends StatelessWidget {
+  const CategoriesDropDown({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<CategoriesCubit, CategoriesState>(
       builder: (context, state) {
-        List<CategoriesEntity> categories =
-            context.read<CategoriesCubit>().categories;
+        List<CategoriesEntity> superCategories =
+            context.read<CategoriesCubit>().superCategories;
         return Flexible(
           child: DropDownTextField(
             dropDownIconProperty: IconProperty(
@@ -64,14 +64,13 @@ class SubCategoriesDropDown extends StatelessWidget {
                   color: AppColors.red,
                 ),
               ),
-              hintText:  'Choose Subcategory',
+              hintText: 'Choose category',
               hintStyle: const TextStyle(
                 color: AppColors.textColor,
                 fontWeight: FontWeight.w700,
                 fontSize: 14,
                 fontFamily: AppConstance.appFontName,
               ),
-
               errorStyle: const TextStyle(
                 color: AppColors.red,
                 fontWeight: FontWeight.w400,
@@ -84,19 +83,32 @@ class SubCategoriesDropDown extends StatelessWidget {
               if (value is DropDownValueModel) {
                 print(value.value);
                 print('cccccccccccccccccccc');
-                context.read<MenuCubit>().subCategory = value.value;
+                context.read<MenuCubit>().category = value.value;
+                context
+                    .read<CategoriesCubit>().parent= value.value;
+                context
+                    .read<CategoriesCubit>()
+                    .getCategoriesData(parent: value.value);
+                //     .whenComplete(() {
+                //   print('xxxxxxxxxxxxx');
+                //   if (context.read<CategoriesCubit>().categoriesMenu.isNotEmpty) {
+                //     context.read<MenuCubit>().getItemsData(
+                //         id: context.read<CategoriesCubit>().categoriesMenu[0].sId!,
+                //         items: 'subCategory');
+                //   }
+                // });
               }
             },
             validator: (value) {
               if (value!.isEmpty) {
-                return "please enter subCategory";
+                return "please enter category";
               }
               return null;
             },
             clearIconProperty: IconProperty(color: Colors.green),
-            dropDownList: categories
+            dropDownList: superCategories
                 .map((category) => DropDownValueModel(
-                name: category.name!, value: category.sId))
+                    name: category.name!, value: category.sId))
                 .toList(),
           ),
         );

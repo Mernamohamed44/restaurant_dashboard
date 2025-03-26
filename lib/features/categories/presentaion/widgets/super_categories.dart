@@ -9,6 +9,7 @@ import 'package:restaurant_dashboard/app/widget/custom_text_form_field.dart';
 import 'package:restaurant_dashboard/app/widget/svg_icons.dart';
 import 'package:restaurant_dashboard/features/categories/domin/entities/categories_entities.dart';
 import 'package:restaurant_dashboard/features/categories/presentaion/cubit/categories_cubit.dart';
+import 'package:restaurant_dashboard/features/menuItem/presentation/cubit/menu_cubit.dart';
 
 class SuperCategories extends StatefulWidget {
   const SuperCategories({super.key});
@@ -19,8 +20,9 @@ class SuperCategories extends StatefulWidget {
 
 class _SuperCategoriesState extends State<SuperCategories> {
   bool isClicked = false;
-  TextEditingController itemController = TextEditingController();
+  TextEditingController superController = TextEditingController();
   List<CategoriesEntity> superCategories = [];
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<CategoriesCubit, CategoriesState>(
@@ -33,8 +35,7 @@ class _SuperCategoriesState extends State<SuperCategories> {
               color: AppColors.primary,
             ),
           );
-        }
-        else {
+        } else {
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             child: Column(
@@ -51,42 +52,43 @@ class _SuperCategoriesState extends State<SuperCategories> {
                 ),
                 context.screenWidth > 500
                     ? SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: [
-                      ...List.generate(
-                          superCategories.length,
-                              (index) => CategoriesContainer(
-                            number: superCategories[index].itemsCount!,
-                            text: superCategories[index].name!,
-                          )),
-                      isClicked ? buildTextField() : const SizedBox(),
-                      const SizedBox(
-                        width: 5,
-                      ),
-                      buildNewButton()
-                    ],
-                  ),
-                )
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: [
+                            ...List.generate(
+                                superCategories.length,
+                                (index) => CategoriesContainer(
+                                      number:
+                                          superCategories[index].itemsCount!,
+                                      text: superCategories[index].name!,
+                                    )),
+                            isClicked ? buildTextField() : const SizedBox(),
+                            const SizedBox(
+                              width: 5,
+                            ),
+                            buildNewButton()
+                          ],
+                        ),
+                      )
                     : Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ...List.generate(
-                        superCategories.length,
-                            (index) => CategoriesContainer(
-                          number: superCategories[index].itemsCount!,
-                          text: superCategories[index].name!,
-                        )),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    isClicked ? buildTextField() : const SizedBox(),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    buildNewButton()
-                  ],
-                )
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ...List.generate(
+                              superCategories.length,
+                              (index) => CategoriesContainer(
+                                    number: superCategories[index].itemsCount!,
+                                    text: superCategories[index].name!,
+                                  )),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          isClicked ? buildTextField() : const SizedBox(),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          buildNewButton()
+                        ],
+                      )
               ],
             ),
           );
@@ -133,7 +135,7 @@ class _SuperCategoriesState extends State<SuperCategories> {
       width: context.screenWidth > 500 ? 120 : double.infinity,
       child: CustomTextFormField(
         textStyle: const TextStyle(fontSize: 12),
-        controller: itemController,
+        controller: superController,
         borderColor: AppColors.primary,
         //contentPadding: 5,
         borderRadius: 10,
@@ -142,22 +144,34 @@ class _SuperCategoriesState extends State<SuperCategories> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            GestureDetector(
-              onTap: () {
-                print(itemController.text);
-                // setState(() {
-                //   categories.add(CategoriesContainer(
-                //       text: itemController.text, number: '4'));
-                //   itemController.clear();
-                // });
+            BlocConsumer<CategoriesCubit, CategoriesState>(
+              listener: (context, state) {
+                if (state is AddCategorySuccessState) {
+                  context.read<CategoriesCubit>().getSuperCategoriesData();
+                }
               },
-              child: const CustomText(
-                text: 'save',
-                textAlign: TextAlign.justify,
-                color: AppColors.primary,
-                fontWeight: FontWeight.w600,
-                fontSize: 12,
-              ),
+              builder: (BuildContext context, CategoriesState state) {
+                return GestureDetector(
+                  onTap: () {
+                    print(superController.text);
+                    context
+                        .read<CategoriesCubit>()
+                        .addCategory(name: superController.text);
+                    // setState(() {
+                    //   categories.add(CategoriesContainer(
+                    //       text: itemController.text, number: '4'));
+                    //   itemController.clear();
+                    // });
+                  },
+                  child: const CustomText(
+                    text: 'save',
+                    textAlign: TextAlign.justify,
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 12,
+                  ),
+                );
+              },
             ),
           ],
         ),

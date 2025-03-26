@@ -64,6 +64,8 @@ dependencies:
   speedometer_chart:
   flutter_rating_bar:
   dotted_border:
+  http_parser:
+  file_picker:
 
 dev_dependencies:
   flutter_test:

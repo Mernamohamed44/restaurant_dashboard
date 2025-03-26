@@ -24,7 +24,6 @@ class DropDownItem extends StatelessWidget {
       child: BlocBuilder<CategoriesCubit, CategoriesState>(
         builder: (context, state) {
           superCategories = context.read<CategoriesCubit>().superCategories;
-          print(superCategories);
           return DropDownTextField(
             controller: itemController,
             dropDownIconProperty: IconProperty(
@@ -73,7 +72,9 @@ class DropDownItem extends StatelessWidget {
                   color: AppColors.red,
                 ),
               ),
-              hintText: superCategories[0].name,
+              hintText: superCategories.isNotEmpty
+                  ? superCategories[0].name
+                  : 'Choose category',
               hintStyle: const TextStyle(
                 color: AppColors.textColor,
                 fontWeight: FontWeight.w700,
@@ -91,9 +92,20 @@ class DropDownItem extends StatelessWidget {
             onChanged: (value) {
               if (value is DropDownValueModel) {
                 print(value.value);
+                print('cccccccccccccccccccc');
+                context.read<CategoriesCubit>().changeSelectedIndex(0);
                 context
-                    .read<MenuCubit>()
-                    .getItemCategoriesData(id: value.value, items: 'category');
+                    .read<CategoriesCubit>()
+                    .getCategoriesDataForMenu(parent: value.value)
+                    .whenComplete(() {
+                  print('xxxxxxxxxxxxx');
+
+                  if (context.read<CategoriesCubit>().categoriesMenu.isNotEmpty) {
+                    context.read<MenuCubit>().getItemsData(
+                        id: context.read<CategoriesCubit>().categoriesMenu[0].sId!,
+                        items: 'subCategory');
+                  }
+                });
               }
             },
             clearIconProperty: IconProperty(color: Colors.green),

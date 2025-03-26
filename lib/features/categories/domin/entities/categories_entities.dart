@@ -1,7 +1,7 @@
 
 
 class CategoriesEntity {
-  Null parent;
+  String parent;
   int? views;
   String? sId;
   String? name;

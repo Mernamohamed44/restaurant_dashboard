@@ -25,7 +25,7 @@ class CategoriesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => getIt<CategoriesCubit>()..getCategoriesData(),
+      create: (context) => getIt<CategoriesCubit>()..getSuperCategoriesData(),
       child: const CategoriesBody(),
     );
   }

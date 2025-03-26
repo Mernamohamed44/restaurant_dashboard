@@ -41,7 +41,7 @@ class CategoryViews extends StatelessWidget {
             (index) => ViewsCategories(
               category: categories[index].name,
               rank: index + 1,
-              views: categories[index].views,
+              views: categories[index].views.toDouble(),
             ),
           )
         ],

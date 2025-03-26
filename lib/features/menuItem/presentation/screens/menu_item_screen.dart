@@ -7,6 +7,7 @@ import 'package:restaurant_dashboard/app/routing/routes.dart';
 import 'package:restaurant_dashboard/app/utils/colors.dart';
 import 'package:restaurant_dashboard/app/widget/custom_button.dart';
 import 'package:restaurant_dashboard/app/widget/custom_text.dart';
+import 'package:restaurant_dashboard/features/categories/domin/entities/categories_entities.dart';
 import 'package:restaurant_dashboard/features/categories/presentaion/cubit/categories_cubit.dart';
 import 'package:restaurant_dashboard/features/menuItem/domain/entities/categories_items_entities.dart';
 import 'package:restaurant_dashboard/features/menuItem/presentation/cubit/menu_cubit.dart';
@@ -28,8 +29,7 @@ class MenuItemScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(
-            create: (context) => getIt<CategoriesCubit>()..getCategoriesData()),
+        BlocProvider(create: (context) => getIt<CategoriesCubit>()),
         BlocProvider(create: (context) => getIt<MenuCubit>()),
       ],
       child: const MenuItemBody(),
@@ -37,8 +37,33 @@ class MenuItemScreen extends StatelessWidget {
   }
 }
 
-class MenuItemBody extends StatelessWidget {
+class MenuItemBody extends StatefulWidget {
   const MenuItemBody({super.key});
+
+  @override
+  State<MenuItemBody> createState() => _MenuItemBodyState();
+}
+
+class _MenuItemBodyState extends State<MenuItemBody> {
+  @override
+  void initState() {
+    context.read<CategoriesCubit>().getSuperCategoriesData().whenComplete(() {
+      if (context.read<CategoriesCubit>().superCategories.isNotEmpty) {
+        context
+            .read<CategoriesCubit>()
+            .getCategoriesDataForMenu(
+                parent: context.read<CategoriesCubit>().superCategories[0].sId!)
+            .whenComplete(() {
+          if (context.read<CategoriesCubit>().categoriesMenu.isNotEmpty) {
+            context.read<MenuCubit>().getItemsData(
+                id: context.read<CategoriesCubit>().categoriesMenu[0].sId!,
+                items: 'subCategory');
+          }
+        });
+      }
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -142,11 +167,15 @@ class MenuItemBody extends StatelessWidget {
                                 return AddMenuItemDialog(
                                   categoriesCubit:
                                       context.read<CategoriesCubit>(),
+                                  menuCubit: context.read<MenuCubit>(),
                                 );
                               });
                         }
-                      : () =>
-                          MagicRouter.navigateTo(page: const AddMemnuItem()),
+                      : () => MagicRouter.navigateTo(
+                              page: AddMenuItem(
+                            categoriesCubit: context.read<CategoriesCubit>(),
+                            menuCubit: context.read<MenuCubit>(),
+                          )),
                 ),
               )
             ],
@@ -239,30 +268,30 @@ class ItemsMenuList extends StatefulWidget {
 }
 
 class _ItemsMenuListState extends State<ItemsMenuList> {
-  int selectedIndex = 0;
-
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<MenuCubit, MenuState>(
+    return BlocBuilder<CategoriesCubit, CategoriesState>(
       builder: (context, state) {
-        List<CategoriesItemEntity> itemsCategories =
-            context.read<MenuCubit>().itemsCategories;
+        List<CategoriesEntity> categories =
+            context.read<CategoriesCubit>().categoriesMenu;
         return Row(
           children: [
             ...List.generate(
-                itemsCategories.length,
+                categories.length,
                 (index) => GestureDetector(
                     onTap: () {
-                      setState(() {
-                        selectedIndex = index;
-                        context.read<MenuCubit>().getSubCategoriesData(
-                            items: 'subCategory',
-                            id: itemsCategories[index].category!);
-                      });
+                      context
+                          .read<CategoriesCubit>()
+                          .changeSelectedIndex(index);
+                      context.read<MenuCubit>().getItemsData(
+                          items: 'subCategory', id: categories[index].sId!);
                     },
                     child: MenuItemContainer(
-                      text: itemsCategories[index].name!,
-                      isSelected: selectedIndex == index ? true : false,
+                      text: categories[index].name!,
+                      isSelected:
+                          context.read<CategoriesCubit>().selectedIndex == index
+                              ? true
+                              : false,
                     )))
           ],
         );

@@ -22,7 +22,7 @@ class CategoriesModel extends CategoriesEntity {
       user: json["user"],
       name: json["name"],
       image: json["image"],
-      parent: json["parent"],
+      parent: json["parent"]??'',
       views: json["views"],
       updatedAt: json["updatedAt"],
       itemsCount: json["itemsCount"],

@@ -21,4 +21,5 @@ class ApiConstants {
   static String reviewsSettings = "reviews-settings";
   static String categories = "categories";
   static String items = "items";
+  static String uploadsImage = "uploads/image";
 }

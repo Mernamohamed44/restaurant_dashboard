@@ -1,14 +1,19 @@
+import 'dart:io';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:restaurant_dashboard/app/dependancy_injection/dependancy_injection.dart';
 import 'package:restaurant_dashboard/app/utils/colors.dart';
 import 'package:restaurant_dashboard/app/utils/image_manager.dart';
 import 'package:restaurant_dashboard/app/widget/custom_text.dart';
 import 'package:restaurant_dashboard/features/categories/presentaion/cubit/categories_cubit.dart';
 import 'package:restaurant_dashboard/features/categories/presentaion/widgets/categories_save_button.dart';
-import 'package:restaurant_dashboard/features/categories/presentaion/widgets/categories_text_feild.dart';
+import 'package:restaurant_dashboard/features/categories/presentaion/widgets/category_name_text_feild.dart';
 import 'package:restaurant_dashboard/features/categories/presentaion/widgets/language_drop_down.dart';
+import 'package:restaurant_dashboard/features/menuItem/presentation/cubit/menu_cubit.dart';
+import 'package:restaurant_dashboard/features/menuItem/presentation/widgets/super_categories_drop_down.dart';
 
 class AddCategoryDialog extends StatelessWidget {
   const AddCategoryDialog({super.key, required this.categoriesCubit});
@@ -17,9 +22,16 @@ class AddCategoryDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider.value(
+    return MultiBlocProvider(
+  providers: [
+    BlocProvider.value(
       value: categoriesCubit,
-      child: Dialog(
+),
+    BlocProvider(
+      create: (context) => getIt<MenuCubit>(),
+    ),
+  ],
+  child: Dialog(
         backgroundColor: AppColors.white,
         child: Container(
           width: 500,
@@ -27,13 +39,13 @@ class AddCategoryDialog extends StatelessWidget {
             borderRadius: BorderRadius.circular(15),
             color: AppColors.white,
           ),
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
+          child: const Padding(
+            padding: EdgeInsets.all(20.0),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               // Prevents taking full screen height
               children: [
-                const Row(
+                Row(
                   children: [
                     CustomText(
                       text: 'New Category',
@@ -47,27 +59,31 @@ class AddCategoryDialog extends StatelessWidget {
                     ),
                   ],
                 ),
-                const Divider(
+                Divider(
                   color: Color.fromRGBO(115, 129, 141, 0.16),
                 ),
-                const SizedBox(
+                SizedBox(
                   height: 10,
                 ),
-                const AddImageContainer(),
-                const SizedBox(
+                CategoriesDropDown(),
+                SizedBox(
                   height: 10,
                 ),
-                CategoriesTextField(),
-                const SizedBox(
+                AddImageContainer(),
+                SizedBox(
                   height: 10,
                 ),
-                const CategoriesButtonSave()
+                CategoryNameTextField(),
+                SizedBox(
+                  height: 10,
+                ),
+                CategoriesButtonSave()
               ],
             ),
           ),
         ),
       ),
-    );
+);
   }
 }
 
@@ -76,6 +92,8 @@ class AddImageContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return BlocBuilder<CategoriesCubit, CategoriesState>(
+  builder: (context, state) {
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
@@ -85,7 +103,14 @@ class AddImageContainer extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Image.asset(ImageManager.addImage),
+          context.read<CategoriesCubit>().myImage == null
+          ? Image.asset(ImageManager.addImage)
+          : Image.memory(
+            height: 70,
+              width: 70,
+              context.read<CategoriesCubit>().fileBytes!
+
+          ),
           const SizedBox(
             width: 5,
           ),
@@ -108,8 +133,8 @@ class AddImageContainer extends StatelessWidget {
                         text: 'Click here',
                         recognizer: TapGestureRecognizer()
                           ..onTap = () {
-                            context.read<CategoriesCubit>().chooseImage(
-                                source: ImageSource.gallery, context: context);
+                            context.read<CategoriesCubit>().chooseMyImage(
+                                );
                             print("Clicked!");
                           },
                         style: const TextStyle(
@@ -139,5 +164,7 @@ class AddImageContainer extends StatelessWidget {
         ],
       ),
     );
+  },
+);
   }
 }

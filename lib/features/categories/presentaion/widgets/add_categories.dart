@@ -5,7 +5,7 @@ import 'package:restaurant_dashboard/app/helper/extension.dart';
 import 'package:restaurant_dashboard/app/widget/custom_text.dart';
 import 'package:restaurant_dashboard/features/categories/presentaion/cubit/categories_cubit.dart';
 import 'package:restaurant_dashboard/features/categories/presentaion/widgets/categories_save_button.dart';
-import 'package:restaurant_dashboard/features/categories/presentaion/widgets/categories_text_feild.dart';
+import 'package:restaurant_dashboard/features/categories/presentaion/widgets/category_name_text_feild.dart';
 import 'package:restaurant_dashboard/features/categories/presentaion/widgets/language_drop_down.dart';
 
 import '../../../../app/utils/colors.dart';
@@ -59,7 +59,7 @@ class AddCategories extends StatelessWidget {
               const SizedBox(
                 height: 10,
               ),
-              CategoriesTextField(),
+              CategoryNameTextField(),
               const SizedBox(
                 height: 10,
               ),

@@ -56,6 +56,25 @@ class CategoriesCubit extends Cubit<CategoriesState> {
       },
       (r) async {
         superCategories = r;
+        if(superCategories.isEmpty){
+          emit(NoItemSuperCategoriesDataState());
+        }
+        else {
+          emit(SuperCategoriesDataSuccessState());
+        }
+      },
+    );
+  }List<CategoriesChildrenEntity> itemSuperCategories = [];
+  Future getItemSuperCategoriesData() async {
+    emit(SuperCategoriesDataLoadingState());
+    final response = await repo.getItemsSuperCategoriesData();
+    response.fold(
+      (l) {
+        emit(SuperCategoriesDataFailedState(message: l.message));
+        Logger().e(l.message);
+      },
+      (r) async {
+        itemSuperCategories = r;
         emit(SuperCategoriesDataSuccessState());
       },
     );

@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:logger/logger.dart';
 import 'package:meta/meta.dart';
+import 'package:restaurant_dashboard/features/reviews/domain/entities/reviews_count_entity.dart';
 import 'package:restaurant_dashboard/features/reviews/domain/entities/reviews_entities.dart';
 import 'package:restaurant_dashboard/features/reviews/domain/repository/base_reviews_repository.dart';
 
@@ -31,11 +32,28 @@ class ReviewsCubit extends Cubit<ReviewsState> {
         Logger().e(l.message);
       },
       (r) async {
-      reviews.addAll(r);
+        reviews.addAll(r);
         emit(ReviewsDataSuccessState());
       },
     );
   }
+  List<ReviewsCountEntities> reviewsCount=[];
+  Future countReviews() async {
+    emit(ReviewsDataLoadingState());
+
+    final response = await repo.countReviews();
+    response.fold(
+      (l) {
+        emit(ReviewsDataFailedState(message: l.message));
+        Logger().e(l.message);
+      },
+      (r) async {
+        reviewsCount=r;
+        emit(ReviewsDataSuccessState());
+      },
+    );
+  }
+
   void refreshReviews() {
     currentPage = 1;
     isLoadingMore = false;

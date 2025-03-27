@@ -5,6 +5,7 @@ import 'package:restaurant_dashboard/features/dashboard/data/data_source/base_re
 import 'package:restaurant_dashboard/features/dashboard/domain/entities/categories_entities.dart';
 import 'package:restaurant_dashboard/features/dashboard/domain/entities/item_entities.dart';
 import 'package:restaurant_dashboard/features/reviews/data/data_source/base_remote_reviews_data_source.dart';
+import 'package:restaurant_dashboard/features/reviews/domain/entities/reviews_count_entity.dart';
 import 'package:restaurant_dashboard/features/reviews/domain/entities/reviews_entities.dart';
 import 'package:restaurant_dashboard/features/reviews/domain/repository/base_reviews_repository.dart';
 
@@ -20,6 +21,22 @@ class ReviewsRepository extends BaseReviewsRepository {
     try {
       final result = await dataSource.getReviews(
         page: page
+      );
+      return Right(result);
+    } on DioException catch (fail) {
+      return Left(ServerFailure.fromDiorError(fail));
+    }
+    catch (error) {
+      return Left(
+        ServerFailure(error.toString()),
+      );
+    }
+  }
+
+  @override
+  Future<Either<ServerError, List<ReviewsCountEntities>>> countReviews() async {
+    try {
+      final result = await dataSource.countReviews(
       );
       return Right(result);
     } on DioException catch (fail) {

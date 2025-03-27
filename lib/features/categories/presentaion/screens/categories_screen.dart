@@ -11,10 +11,8 @@ import 'package:restaurant_dashboard/app/widget/svg_icons.dart';
 import 'package:restaurant_dashboard/features/categories/presentaion/cubit/categories_cubit.dart';
 import 'package:restaurant_dashboard/features/categories/presentaion/widgets/add_categories.dart';
 import 'package:restaurant_dashboard/features/categories/presentaion/widgets/add_category_dialog.dart';
-import 'package:restaurant_dashboard/features/categories/presentaion/widgets/drinks_categories.dart';
-import 'package:restaurant_dashboard/features/categories/presentaion/widgets/food_categories.dart';
+import 'package:restaurant_dashboard/features/categories/presentaion/widgets/items_categories.dart';
 import 'package:restaurant_dashboard/features/categories/presentaion/widgets/super_categories.dart';
-import 'package:restaurant_dashboard/features/categories/presentaion/widgets/sweets_categories.dart';
 import 'package:restaurant_dashboard/features/side_bar.dart';
 
 import '../../../../app/routing/routes.dart';
@@ -25,7 +23,9 @@ class CategoriesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => getIt<CategoriesCubit>()..getSuperCategoriesData(),
+      create: (context) => getIt<CategoriesCubit>()
+        ..getSuperCategoriesData()
+        ..getItemSuperCategoriesData(),
       child: const CategoriesBody(),
     );
   }
@@ -121,11 +121,9 @@ class CategoriesBody extends StatelessWidget {
             ),
           ),
         ),
-        body: SingleChildScrollView(
-          child: context.screenWidth < 500
-              ? const CategoriesColumn()
-              : const CategoriesRow(),
-        ),
+        body: context.screenWidth < 500
+            ? const CategoriesColumn()
+            : const CategoriesRow(),
       ),
     );
   }
@@ -136,23 +134,25 @@ class CategoriesRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SuperCategories(),
-        SizedBox(
-          height: 10,
-        ),
-        FoodCategories(),
-        SizedBox(
-          height: 10,
-        ),
-        DrinksCategories(),
-        SizedBox(
-          height: 10,
-        ),
-        SweetsCategories()
-      ],
+    return BlocBuilder<CategoriesCubit, CategoriesState>(
+      builder: (context, state) {
+        if (state is SuperCategoriesDataLoadingState) {
+          return const Center(
+            child: CircularProgressIndicator(
+              color: AppColors.primary,
+            ),
+          );
+        } else if (state is SuperCategoriesDataFailedState) {
+          return CustomText(text: state.message, color: AppColors.primary);
+        }
+        else if (state is NoItemSuperCategoriesDataState) {
+          return const CustomText(text: 'No Categories', color: AppColors.primary,fontSize: 20,);
+        }
+        return const Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [SuperCategories(), ItemsCategoriesList()],
+        );
+      },
     );
   }
 }
@@ -162,25 +162,22 @@ class CategoriesColumn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
-      children: [
-        Divider(
-          color: Color.fromRGBO(115, 129, 141, 0.16),
-        ),
-        SuperCategories(),
-        SizedBox(
-          height: 10,
-        ),
-        FoodCategories(),
-        SizedBox(
-          height: 10,
-        ),
-        DrinksCategories(),
-        SizedBox(
-          height: 10,
-        ),
-        SweetsCategories(),
-      ],
-    );
+    return BlocBuilder<CategoriesCubit, CategoriesState>(
+        builder: (context, state) {
+      if (state is SuperCategoriesDataLoadingState) {
+        return const CircularProgressIndicator(
+          color: AppColors.primary,
+        );
+      }
+      return const Column(
+        children: [
+          Divider(
+            color: Color.fromRGBO(115, 129, 141, 0.16),
+          ),
+          SuperCategories(),
+          ItemsCategoriesList()
+        ],
+      );
+    });
   }
 }

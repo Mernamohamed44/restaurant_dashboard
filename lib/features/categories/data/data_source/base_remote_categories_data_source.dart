@@ -5,6 +5,7 @@ import 'package:restaurant_dashboard/features/categories/data/models/categories_
 
 abstract class BaseRemoteCategoriesDataSource {
   Future<List<CategoriesModel>> superCategoriesData();
+  Future<List<CategoriesChildrenModel>> getItemsSuperCategoriesData();
   Future<List<CategoriesModel>> getCategoriesData({required String parent});
   Future<List<CategoriesModel>> getCategoriesDataForMenu({required String parent});
   Future<void> addCategory({ String? parent,required String image,required String name,});

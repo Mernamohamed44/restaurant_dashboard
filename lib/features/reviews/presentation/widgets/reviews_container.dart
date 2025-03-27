@@ -4,11 +4,12 @@ import 'package:percent_indicator/percent_indicator.dart';
 import 'package:restaurant_dashboard/app/helper/extension.dart';
 import 'package:restaurant_dashboard/app/utils/colors.dart';
 import 'package:restaurant_dashboard/app/widget/custom_text.dart';
+import 'package:restaurant_dashboard/features/reviews/domain/entities/reviews_count_entity.dart';
 import 'package:restaurant_dashboard/features/reviews/domain/entities/reviews_entities.dart';
 
 class ReviewsContainer extends StatelessWidget {
-  const ReviewsContainer({super.key, required this.reviews});
-  final List<ReviewsEntities> reviews;
+   ReviewsContainer({super.key, required this.reviewsCount});
+  final List<ReviewsCountEntities> reviewsCount;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -19,9 +20,10 @@ class ReviewsContainer extends StatelessWidget {
       child: Column(
         children: [
           ...List.generate(
-              reviews.length,
+              reviewsCount.length,
               (index) => ReviewsRow(
-                    rating: reviews[index].rating,
+                star: index+1,
+                reviewsCount: reviewsCount[index],
                   ))
         ],
       ),
@@ -30,9 +32,9 @@ class ReviewsContainer extends StatelessWidget {
 }
 
 class ReviewsRow extends StatelessWidget {
-  const ReviewsRow({super.key, required this.rating});
-  final int rating;
-
+  const ReviewsRow({super.key,required this.reviewsCount, required this.star});
+  final ReviewsCountEntities reviewsCount;
+ final int star;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -43,7 +45,7 @@ class ReviewsRow extends StatelessWidget {
             flex: 1,
             child: FittedBox(
               child: RatingBar.builder(
-                initialRating: rating.toDouble(),
+                initialRating: star.toDouble(),
                 // minRating: 1,
                 itemSize: 20,
                 direction: Axis.horizontal,
@@ -78,7 +80,7 @@ class ReviewsRow extends StatelessWidget {
             width: 10,
           ),
           CustomText(
-            text: '$rating',
+            text: '${reviewsCount.count}',
             color: AppColors.textColor,
             fontWeight: FontWeight.w400,
             fontSize: 12,

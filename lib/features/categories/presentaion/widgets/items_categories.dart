@@ -1,18 +1,50 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:restaurant_dashboard/app/helper/extension.dart';
 import 'package:restaurant_dashboard/app/utils/colors.dart';
 import 'package:restaurant_dashboard/app/widget/custom_text.dart';
+import 'package:restaurant_dashboard/features/categories/domin/entities/categories_entities.dart';
+import 'package:restaurant_dashboard/features/categories/presentaion/cubit/categories_cubit.dart';
 
 import 'category_list_item.dart';
 
-class SweetsCategories extends StatefulWidget {
-  const SweetsCategories({super.key});
+class ItemsCategoriesList extends StatelessWidget {
+  const ItemsCategoriesList({super.key});
 
   @override
-  State<SweetsCategories> createState() => _SweetsCategoriesState();
+  Widget build(BuildContext context) {
+    return BlocBuilder<CategoriesCubit, CategoriesState>(
+        builder: (context, state) {
+      final itemsList = context.read<CategoriesCubit>().itemSuperCategories;
+      if (state is SuperCategoriesDataFailedState) {
+        return CustomText(text: state.message, color: AppColors.primary);
+      }
+      return Expanded(
+        child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: itemsList.length,
+            itemBuilder: (context, index) => Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: ItemCategories(
+                    itemSuperCategories: itemsList[index],
+                  ),
+                )),
+      );
+    });
+  }
 }
 
-class _SweetsCategoriesState extends State<SweetsCategories> {
+class ItemCategories extends StatefulWidget {
+  const ItemCategories({
+    super.key,
+    required this.itemSuperCategories,
+  });
+  final CategoriesChildrenEntity itemSuperCategories;
+  @override
+  State<ItemCategories> createState() => _ItemCategoriesState();
+}
+
+class _ItemCategoriesState extends State<ItemCategories> {
   bool isFoodClicked = false;
 
   @override
@@ -24,8 +56,8 @@ class _SweetsCategoriesState extends State<SweetsCategories> {
         children: [
           Row(
             children: [
-              const CustomText(
-                text: 'Sweets Categories',
+              CustomText(
+                text: widget.itemSuperCategories.name!,
                 color: AppColors.textColor,
                 fontWeight: FontWeight.w600,
                 fontSize: 12,
@@ -74,7 +106,8 @@ class _SweetsCategoriesState extends State<SweetsCategories> {
                       crossAxisCount = 1;
                     }
                     return GridView.builder(
-                        itemCount: 5,
+                        shrinkWrap: true,
+                        itemCount: widget.itemSuperCategories.children.length,
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: crossAxisCount,
                           mainAxisSpacing: 15,
@@ -82,7 +115,21 @@ class _SweetsCategoriesState extends State<SweetsCategories> {
                           mainAxisExtent: 80,
                         ),
                         itemBuilder: (context, index) {
-                          return const CategoryListItem();
+                          return BlocBuilder<CategoriesCubit, CategoriesState>(
+                            builder: (context, state) {
+                              if (widget.itemSuperCategories.children.isEmpty) {
+                                return const CustomText(
+                                  text: 'No Items',
+                                  color: AppColors.primary,
+                                  fontSize: 20,
+                                );
+                              }
+                              return CategoryListItem(
+                                itemSuperCategories:
+                                    widget.itemSuperCategories.children[index],
+                              );
+                            },
+                          );
                         });
                   }),
                 )

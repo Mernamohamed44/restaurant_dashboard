@@ -18,6 +18,7 @@ class UploadImageLoadingState extends CategoriesState {
 class SuperCategoriesDataLoadingState extends CategoriesState {}
 
 class SuperCategoriesDataSuccessState extends CategoriesState {}
+class NoItemSuperCategoriesDataState extends CategoriesState {}
 
 class SuperCategoriesDataFailedState extends CategoriesState {
   final String message;

@@ -22,10 +22,42 @@ class CategoriesModel extends CategoriesEntity {
       user: json["user"],
       name: json["name"],
       image: json["image"],
-      parent: json["parent"]??'',
+      parent: json["parent"] ?? '',
       views: json["views"],
       updatedAt: json["updatedAt"],
       itemsCount: json["itemsCount"],
+    );
+  }
+}
+
+class CategoriesChildrenModel extends CategoriesChildrenEntity {
+  CategoriesChildrenModel({
+    required super.iV,
+    required super.createdAt,
+    required super.image,
+    required super.parent,
+    required super.sId,
+    required super.updatedAt,
+    required super.user,
+    required super.name,
+    required super.views,
+    required super.children,
+  });
+
+  factory CategoriesChildrenModel.fromJson(Map<String, dynamic> json) {
+    return CategoriesChildrenModel(
+      iV: json["__v"],
+      sId: json["_id"],
+      createdAt: json["createdAt"],
+      user: json["user"],
+      name: json["name"],
+      image: json["image"],
+      parent: json["parent"] ?? '',
+      views: json["views"],
+      updatedAt: json["updatedAt"],
+      children: (json["children"] as List)
+          .map((e) => CategoriesModel.fromJson(e))
+          .toList(),
     );
   }
 }

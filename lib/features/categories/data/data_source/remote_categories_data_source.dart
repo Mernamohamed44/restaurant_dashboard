@@ -70,4 +70,14 @@ class RemoteCategoriesDataSource extends BaseRemoteCategoriesDataSource {
         }));
     return response.data['image'];
   }
+
+  @override
+  Future<List<CategoriesChildrenModel>> getItemsSuperCategoriesData() async {
+    final Response response =
+    await dioManager.get(ApiConstants.categories, queryParameters: {
+      'children': 'true',
+    });
+    return List<CategoriesChildrenModel>.from(
+        response.data.map((e) => CategoriesChildrenModel.fromJson(e)));
+  }
 }

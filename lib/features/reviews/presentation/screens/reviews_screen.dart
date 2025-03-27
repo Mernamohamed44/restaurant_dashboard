@@ -22,7 +22,7 @@ class ReviewsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => getIt<ReviewsCubit>()..getReviews(),
+      create: (context) => getIt<ReviewsCubit>()..getReviews()..countReviews(),
       child: const ReviewsBody(),
     );
   }
@@ -197,6 +197,7 @@ class ReviewsBody extends StatelessWidget {
           body: BlocBuilder<ReviewsCubit, ReviewsState>(
             builder: (context, state) {
               final reviews = context.read<ReviewsCubit>().reviews;
+              final reviewsCount = context.read<ReviewsCubit>().reviewsCount;
               if (state is ReviewsDataLoadingState) {
                 return const Center(
                     child: CircularProgressIndicator(
@@ -209,7 +210,7 @@ class ReviewsBody extends StatelessWidget {
                   child: Column(
                     children: [
                       ReviewsContainer(
-                        reviews: reviews,
+                        reviewsCount: reviewsCount,
                       ),
                       const SizedBox(
                         height: 15,

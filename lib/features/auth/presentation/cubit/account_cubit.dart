@@ -1,7 +1,12 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl_phone_field/phone_number.dart';
 import 'package:logger/logger.dart';
+import 'package:restaurant_dashboard/app/caching/shared_prefs.dart';
+import 'package:restaurant_dashboard/app/helper/image_services.dart';
+import 'package:restaurant_dashboard/app/widget/toastification_widget.dart';
 import 'package:restaurant_dashboard/features/auth/domain/entities/user_data_entity.dart';
 import 'package:restaurant_dashboard/features/auth/domain/repository/base_auth_repository.dart';
 
@@ -60,8 +65,8 @@ class AccountCubit extends Cubit<AccountState> {
         user = r;
         nameController.text = user!.displayName!;
         emailController.text = user!.username!;
-        final phoneNumberData =
-            PhoneNumber.fromCompleteNumber(completeNumber: "${user?.phone}");
+        Caching.put(key: "image", value:user!.image);
+        final phoneNumberData = PhoneNumber.fromCompleteNumber(completeNumber: "${user?.phone}");
         isoCode = phoneNumberData.countryISOCode;
         phoneNumber = phoneNumberData.number;
         phoneController = TextEditingController(text: phoneNumber);
@@ -104,5 +109,55 @@ class AccountCubit extends Cubit<AccountState> {
         emit(ChangePasswordSuccessState());
       },
     );
+  }
+
+  XFile? myImage;
+  String imageUploaded = "";
+  final formKey = GlobalKey<FormState>();
+
+  Future<void> editProfile(BuildContext context) async {
+    if ( phoneNumber.isNotEmpty && nameController.text.isNotEmpty && emailController.text.isNotEmpty) {
+      emit(EditProfileLoadingState());
+      try {
+        if (myImage != null) {
+          if (kIsWeb) {
+            imageUploaded = await ImagesService.uploadImageWeb(myImage!);
+          } else {
+            imageUploaded = await ImagesService.uploadImage(myImage!.path);
+          }
+        }
+      } on Exception catch (e) {
+        emit(EditProfileFailState(message: e.toString()));
+        return;
+      }
+      final response = await repo.editProfile(
+        phone: phoneNumber,
+        image: imageUploaded,
+        displayName: nameController.text,
+        username: emailController.text,
+      );
+      response.fold(
+        (l) {
+          emit(EditProfileFailState(message: l.message));
+        },
+        (r) {
+          emit(EditProfileSuccessState());
+        },
+      );
+    }
+    else{
+      showToastificationWidget(
+        context: context,
+        message: "All field is required",
+      );
+    }
+  }
+
+  void pickMemberImageFile({
+    required BuildContext context,
+    required ImageSource source,
+  }) async {
+    myImage = await ImagesService.pickFile(context: context, source: source);
+    emit(ChooseImageState());
   }
 }

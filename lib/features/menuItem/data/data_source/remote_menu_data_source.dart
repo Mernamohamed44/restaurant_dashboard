@@ -18,9 +18,15 @@ class RemoteMenuDataSource extends BaseRemoteMenuDataSource {
     required String items,
     required String id,
     required int page,
+    required String search,
   }) async {
     final Response response = await dioManager.get(ApiConstants.items,
-        queryParameters: {items: id, 'page': page, 'limit': 20});
+        queryParameters: {
+          items: id,
+          'page': page,
+          'limit': 20,
+          if (search.isNotEmpty) 'search': search
+        });
     return List<CategoriesItemModel>.from(
         response.data.map((e) => CategoriesItemModel.fromJson(e)));
   }
@@ -33,7 +39,7 @@ class RemoteMenuDataSource extends BaseRemoteMenuDataSource {
       required String category,
       required String subCategory,
       required String price}) async {
-    final Response response = await dioManager.post(ApiConstants.items, data: {
+  await dioManager.post(ApiConstants.items, data: {
       'name': name,
       'description': description,
       'image': image,
@@ -52,9 +58,34 @@ class RemoteMenuDataSource extends BaseRemoteMenuDataSource {
         data: FormData.fromMap({
           "image": fileBytes != null
               ? MultipartFile.fromBytes(fileBytes,
-              filename: myImage, contentType: MediaType('image', 'jpeg'))
+                  filename: myImage, contentType: MediaType('image', 'jpeg'))
               : null,
         }));
     return response.data['image'];
   }
+
+  @override
+  editItem(
+      {required String name,
+      required String description,
+      required String image,
+      required String subCategory,
+      required String id,
+      required String price}) async {
+    await dioManager.put('${ApiConstants.items}/$id', data: {
+      'name': name,
+      'description': description,
+      'image': image,
+      'subCategory': subCategory,
+      'price': price,
+    });
+  }
+
+  @override
+  Future<void> deleteItems({required String id}) async {
+    await dioManager.delete(
+      '${ApiConstants.items}/$id',
+    );
+  }
+
 }

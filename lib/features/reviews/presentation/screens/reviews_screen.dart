@@ -12,7 +12,7 @@ import 'package:restaurant_dashboard/app/widget/custom_text.dart';
 import 'package:restaurant_dashboard/app/widget/custom_text_form_field.dart';
 import 'package:restaurant_dashboard/app/widget/svg_icons.dart';
 import 'package:restaurant_dashboard/features/reviews/presentation/cubit/reviews_cubit.dart';
-import 'package:restaurant_dashboard/features/reviews/presentation/widgets/review_liat.dart';
+import 'package:restaurant_dashboard/features/reviews/presentation/widgets/review_list.dart';
 import 'package:restaurant_dashboard/features/reviews/presentation/widgets/reviews_container.dart';
 import 'package:restaurant_dashboard/features/side_bar.dart';
 
@@ -22,14 +22,26 @@ class ReviewsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => getIt<ReviewsCubit>()..getReviews()..countReviews(),
+      create: (context) => getIt<ReviewsCubit>()..countReviews(),
       child: const ReviewsBody(),
     );
   }
 }
 
-class ReviewsBody extends StatelessWidget {
+class ReviewsBody extends StatefulWidget {
   const ReviewsBody({super.key});
+
+  @override
+  State<ReviewsBody> createState() => _ReviewsBodyState();
+}
+
+class _ReviewsBodyState extends State<ReviewsBody> {
+  @override
+  void initState() {
+    context.read<ReviewsCubit>().ratingFilter = 'ALL Reviews';
+    context.read<ReviewsCubit>().getReviews();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -139,13 +151,32 @@ class ReviewsBody extends StatelessWidget {
                     clearOption: true,
                     clearIconProperty: IconProperty(color: Colors.green),
                     dropDownList: const [
-                      DropDownValueModel(name: 'drinks', value: "value1"),
-                      DropDownValueModel(name: 'food', value: "value2"),
+                      DropDownValueModel(name: 'ALL Reviews', value: "value1"),
+                      DropDownValueModel(name: '1', value: "value2"),
                       DropDownValueModel(
-                        name: 'sweets',
+                        name: '2',
                         value: "value3",
                       ),
+                      DropDownValueModel(
+                        name: '3',
+                        value: "value4",
+                      ),
+                      DropDownValueModel(
+                        name: '4',
+                        value: "value5",
+                      ),
+                      DropDownValueModel(
+                        name: '5',
+                        value: "value6",
+                      ),
                     ],
+                    onChanged: (value) {
+                      if (value is DropDownValueModel) {
+                        context.read<ReviewsCubit>().ratingFilter = value.name;
+                        context.read<ReviewsCubit>().currentPage = 1;
+                        context.read<ReviewsCubit>().getReviews();
+                      }
+                    },
                   ),
                 ),
               ),
@@ -167,6 +198,12 @@ class ReviewsBody extends StatelessWidget {
                     : SizedBox(
                         width: 200,
                         child: CustomTextFormField(
+                          onFieldSubmitted: (value){
+                            context.read<ReviewsCubit>().searchController.text=value!;
+                            context.read<ReviewsCubit>().getReviews();
+                          },
+                          controller:
+                              context.read<ReviewsCubit>().searchController,
                           borderColor: AppColors.containerColor,
                           hintText: 'Search',
                           titleFontSize: 12,
@@ -205,8 +242,8 @@ class ReviewsBody extends StatelessWidget {
                 ));
               } else {
                 return Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 20, vertical: 10),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   child: Column(
                     children: [
                       ReviewsContainer(
@@ -225,11 +262,9 @@ class ReviewsBody extends StatelessWidget {
                           ),
                           Expanded(
                             child: Container(
-                              margin:
-                                  const EdgeInsets.symmetric(horizontal: 5),
+                              margin: const EdgeInsets.symmetric(horizontal: 5),
                               height: 1, // Thickness of the line
-                              color:
-                                  const Color.fromRGBO(115, 129, 141, 0.16),
+                              color: const Color.fromRGBO(115, 129, 141, 0.16),
                             ),
                           ),
                         ],

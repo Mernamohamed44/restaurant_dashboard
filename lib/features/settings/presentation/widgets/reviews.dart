@@ -13,6 +13,7 @@ import 'package:restaurant_dashboard/app/widget/custom_text_form_field.dart';
 import 'package:restaurant_dashboard/app/widget/toastification_widget.dart';
 import 'package:restaurant_dashboard/features/settings/presentation/cubit/settings_cubit.dart';
 import 'package:restaurant_dashboard/features/settings/presentation/widgets/options_input_widget.dart';
+import 'package:toastification/toastification.dart';
 
 class Reviews extends StatefulWidget {
   const Reviews({super.key});
@@ -24,7 +25,7 @@ class Reviews extends StatefulWidget {
 class _ReviewsState extends State<Reviews> {
   @override
   void initState() {
-    //context.read<SettingsCubit>().addListenerFocusNodeoptions(0);
+    context.read<SettingsCubit>().addListenerFocusNodeOptions(0);
     super.initState();
   }
 
@@ -138,33 +139,47 @@ class _ReviewsState extends State<Reviews> {
                   height: 15,
                 ),
                 context.screenWidth > 500
-                    ? const Row(
-                        children: [
-                          InputTypeSelection(),
-                          SizedBox(
-                            width: 5,
-                          ),
-                          Flexible(child: InputTypeTextField()),
-                          SizedBox(
-                            width: 5,
-                          ),
-                          AddButton()
-                        ],
-                      )
-                    : const Column(
-                        children: [
-                          InputTypeSelection(),
-                          SizedBox(height: 10),
-                          Row(
+                    ? BlocBuilder<SettingsCubit, SettingsState>(
+                        builder: (context, state) {
+                          return Row(
                             children: [
-                              Flexible(child: InputTypeTextField()),
-                              SizedBox(
+                              const InputTypeSelection(),
+                              const SizedBox(
                                 width: 5,
                               ),
-                              AddButton()
+                              const Flexible(child: InputTypeTextField()),
+                              const SizedBox(
+                                width: 5,
+                              ),
+                              context.read<SettingsCubit>().isCustomerOptions
+                                  ? const SizedBox()
+                                  : const AddButton(),
                             ],
-                          )
-                        ],
+                          );
+                        },
+                      )
+                    : BlocBuilder<SettingsCubit, SettingsState>(
+                        builder: (context, state) {
+                          return Column(
+                            children: [
+                              const InputTypeSelection(),
+                              const SizedBox(height: 10),
+                              Row(
+                                children: [
+                                  const Flexible(child: InputTypeTextField()),
+                                  const SizedBox(
+                                    width: 5,
+                                  ),
+                                  context
+                                          .read<SettingsCubit>()
+                                          .isCustomerOptions
+                                      ? const SizedBox()
+                                      : const AddButton(),
+                                ],
+                              )
+                            ],
+                          );
+                        },
                       ),
                 const SizedBox(height: 10),
                 context.read<SettingsCubit>().isCustomerOptions
@@ -185,6 +200,7 @@ class _ReviewsState extends State<Reviews> {
                       showToastificationWidget(
                         message: 'Create Review successfully',
                         context: context,
+                        notificationType: ToastificationType.success
                       );
                       context.pushReplacementNamed(Routes.dashboard);
                     } else if (state is CreateReviewsFailState) {
@@ -203,7 +219,9 @@ class _ReviewsState extends State<Reviews> {
                       );
                     }
                     return CustomButton(
-                      onTap: cubit.createReviews,
+                      onTap: () {
+                        cubit.createReviews();
+                      },
                       text: 'Create',
                       fontColor: Colors.white,
                       fontSize: 16,
@@ -223,12 +241,15 @@ class _ReviewsState extends State<Reviews> {
 }
 
 class AddButton extends StatelessWidget {
-  const AddButton({super.key});
-
+  const AddButton({
+    super.key,
+  });
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: context.read<SettingsCubit>().addCustomInput,
+      onTap: () {
+        context.read<SettingsCubit>().addCustomInput();
+      },
       child: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
@@ -304,75 +325,95 @@ class AddInputTypeRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Flexible(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10),
-            child: Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                  color: AppColors.containerColor,
-                  borderRadius: BorderRadius.circular(15)),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Flexible(
-                    child: Row(
-                      children: [
-                        SvgPicture.asset(ImageManager.extend),
-                        const SizedBox(
-                          width: 15,
-                        ),
-                        Flexible(
-                          child: CustomText(
-                            text: text,
-                            color: AppColors.textColor,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 14,
+    return BlocBuilder<SettingsCubit, SettingsState>(
+      builder: (context, state) {
+        return Row(
+          children: [
+            Flexible(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                      color: AppColors.containerColor,
+                      borderRadius: BorderRadius.circular(15)),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Flexible(
+                            child: Row(
+                              children: [
+                                SvgPicture.asset(ImageManager.extend),
+                                const SizedBox(
+                                  width: 15,
+                                ),
+                                Flexible(
+                                  child: CustomText(
+                                    text: text,
+                                    color: AppColors.textColor,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
+                          InkWell(
+                            onTap: () {
+                              context
+                                  .read<SettingsCubit>()
+                                  .clearCustomInput(index);
+                            },
+                            child: SvgPicture.asset(
+                              ImageManager.clear,
+                              height: 20,
+                            ),
+                          ),
+                        ],
+                      ),
+                      context
+                              .read<SettingsCubit>()
+                              .customInputs[index]['options']
+                              .isNotEmpty
+                          ? CustomText(
+                              text:
+                                  'options: ${context.read<SettingsCubit>().customInputs[index]['options']}',
+                              color: AppColors.accentContainerColor)
+                          : const SizedBox()
+                    ],
                   ),
-                  InkWell(
-                    onTap: () {
-                      context.read<SettingsCubit>().clearCustomInput(index);
-                    },
-                    child: SvgPicture.asset(
-                      ImageManager.clear,
-                      height: 20,
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
-          ),
-        ),
-        const SizedBox(
-          width: 5,
-        ),
-        Transform.scale(
-          scale: .7,
-          child: Switch(
-            activeColor: AppColors.primary,
-            value: context.read<SettingsCubit>().requiredInputValues[index],
-            onChanged: (value) {
-              context.read<SettingsCubit>().changeInputValue(value,index);
-            },
-          ),
-        ),
-        const SizedBox(
-          width: 5,
-        ),
-        CustomText(
-          text: context.read<SettingsCubit>().requiredInputValues[index]
-              ? 'Required'
-              : 'Not Required',
-          color: AppColors.textColor,
-          fontSize: 14,
-        )
-      ],
+            const SizedBox(
+              width: 5,
+            ),
+            Transform.scale(
+              scale: .7,
+              child: Switch(
+                activeColor: AppColors.primary,
+                value: context.read<SettingsCubit>().requiredInputValues[index],
+                onChanged: (value) {
+                  context.read<SettingsCubit>().changeInputValue(value, index);
+                },
+              ),
+            ),
+            const SizedBox(
+              width: 5,
+            ),
+            CustomText(
+              text: context.read<SettingsCubit>().requiredInputValues[index]
+                  ? 'Required'
+                  : 'Not Required',
+              color: AppColors.textColor,
+              fontSize: 14,
+            )
+          ],
+        );
+      },
     );
   }
 }
@@ -400,86 +441,98 @@ class InputTypeSelection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: context.screenWidth > 500 ? 150 : double.infinity,
-      child: DropDownTextField(
-        validator: (value) {
-          if (value!.isEmpty) {
-            return "Please enter Input Type";
-          }
-          return null;
-        },
-        controller: context.read<SettingsCubit>().inputTypeController,
-        dropDownIconProperty: IconProperty(
-          icon: Icons.keyboard_arrow_down,
-          size: 24,
-          color: AppColors.textColor,
-        ),
-        textFieldDecoration: InputDecoration(
-          fillColor: AppColors.boldContainerColor,
-          filled: true,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 15,
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(
-              width: 1,
-              color: AppColors.transparent,
+    return BlocBuilder<SettingsCubit, SettingsState>(
+      builder: (context, state) {
+        return SizedBox(
+          width: context.screenWidth > 500 ? 150 : double.infinity,
+          child: DropDownTextField(
+            validator: (value) {
+              if (value!.isEmpty) {
+                return "Please enter Input Type";
+              }
+              return null;
+            },
+            controller: context.read<SettingsCubit>().inputTypeController,
+            dropDownIconProperty: IconProperty(
+              icon: Icons.keyboard_arrow_down,
+              size: 24,
+              color: AppColors.textColor,
             ),
-          ),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(
-              width: 1,
-              color: AppColors.transparent,
+            textFieldDecoration: InputDecoration(
+              fillColor: AppColors.boldContainerColor,
+              filled: true,
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 15,
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: const BorderSide(
+                  width: 1,
+                  color: AppColors.transparent,
+                ),
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: const BorderSide(
+                  width: 1,
+                  color: AppColors.transparent,
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: const BorderSide(
+                  width: 1,
+                  color: AppColors.palePrimary,
+                ),
+              ),
+              focusedErrorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: const BorderSide(
+                  width: 1,
+                  color: AppColors.red,
+                ),
+              ),
+              errorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: const BorderSide(
+                  width: 1,
+                  color: AppColors.red,
+                ),
+              ),
+              hintText: 'InputType',
+              hintStyle: const TextStyle(
+                color: AppColors.accentContainerColor,
+                fontWeight: FontWeight.w400,
+                fontSize: 14,
+                fontFamily: AppConstance.appFontName,
+              ),
+              errorStyle: const TextStyle(
+                color: AppColors.red,
+                fontWeight: FontWeight.w400,
+                fontSize: 12,
+                fontFamily: AppConstance.appFontName,
+              ),
             ),
+            clearOption: true,
+            clearIconProperty: IconProperty(color: Colors.green),
+            onChanged: (value) {
+              if (value is DropDownValueModel && value.name == 'select') {
+                context.read<SettingsCubit>().selectOption();
+                print(context.read<SettingsCubit>().isCustomerOptions);
+              } else {
+                context.read<SettingsCubit>().unSelectOption();
+              }
+            },
+            dropDownList: const [
+              DropDownValueModel(name: 'number', value: "value1"),
+              DropDownValueModel(name: 'date', value: "value2"),
+              DropDownValueModel(name: 'text', value: "value3"),
+              DropDownValueModel(name: 'bool', value: "value4"),
+              DropDownValueModel(name: 'select', value: "value5"),
+            ],
           ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(
-              width: 1,
-              color: AppColors.palePrimary,
-            ),
-          ),
-          focusedErrorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(
-              width: 1,
-              color: AppColors.red,
-            ),
-          ),
-          errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(
-              width: 1,
-              color: AppColors.red,
-            ),
-          ),
-          hintText: 'InputType',
-          hintStyle: const TextStyle(
-            color: AppColors.accentContainerColor,
-            fontWeight: FontWeight.w400,
-            fontSize: 14,
-            fontFamily: AppConstance.appFontName,
-          ),
-          errorStyle: const TextStyle(
-            color: AppColors.red,
-            fontWeight: FontWeight.w400,
-            fontSize: 12,
-            fontFamily: AppConstance.appFontName,
-          ),
-        ),
-        clearOption: true,
-        clearIconProperty: IconProperty(color: Colors.green),
-        dropDownList: const [
-          DropDownValueModel(name: 'number', value: "value1"),
-          DropDownValueModel(name: 'date', value: "value2"),
-          DropDownValueModel(name: 'text', value: "value3"),
-          DropDownValueModel(name: 'bool', value: "value4"),
-          DropDownValueModel(name: 'select', value: "value5"),
-        ],
-      ),
+        );
+      },
     );
   }
 }

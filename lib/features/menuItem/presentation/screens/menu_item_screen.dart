@@ -49,19 +49,14 @@ class _MenuItemBodyState extends State<MenuItemBody> {
   void initState() {
     context.read<CategoriesCubit>().getSuperCategoriesData().whenComplete(() {
       if (context.read<CategoriesCubit>().superCategories.isNotEmpty) {
-        context
-            .read<CategoriesCubit>()
-            .getCategoriesDataForMenu(
-                parent: context.read<CategoriesCubit>().superCategories[0].sId!)
-            .whenComplete(() {
+        context.read<CategoriesCubit>().getCategoriesDataForMenu(parent: context.read<CategoriesCubit>().superCategories[0].sId!).whenComplete(() {
           if (context.read<CategoriesCubit>().categoriesMenu.isNotEmpty) {
-            context.read<MenuCubit>().getItemsData(
-                id: context.read<CategoriesCubit>().categoriesMenu[0].sId!,
-                items: 'subCategory');
+            context.read<MenuCubit>().getItemsData(id: context.read<CategoriesCubit>().categoriesMenu[0].sId!, items: 'subCategory');
           }
         });
       }
     });
+
     super.initState();
   }
 
@@ -122,6 +117,10 @@ class _MenuItemBodyState extends State<MenuItemBody> {
                         width: 200,
                         child: CustomTextFormField(
                           borderColor: AppColors.containerColor,
+                          controller: context.read<MenuCubit>().searchController,
+                          onFieldSubmitted: (value) {
+                            context.read<MenuCubit>().getItemsData(items: 'subCategory', id: context.read<CategoriesCubit>().selectedCategory);
+                          },
                           hintText: 'Search',
                           hintFontSize: 14,
                           filledColor: AppColors.boldContainerColor,
@@ -153,10 +152,7 @@ class _MenuItemBodyState extends State<MenuItemBody> {
                       SizedBox(
                         width: 5,
                       ),
-                      Flexible(
-                          child: FittedBox(
-                              child: CustomText(
-                                  text: 'New Item', color: Colors.white)))
+                      Flexible(child: FittedBox(child: CustomText(text: 'New Item', color: Colors.white)))
                     ],
                   ),
                   onTap: context.screenWidth > 600
@@ -165,8 +161,7 @@ class _MenuItemBodyState extends State<MenuItemBody> {
                               context: context,
                               builder: (c) {
                                 return AddMenuItemDialog(
-                                  categoriesCubit:
-                                      context.read<CategoriesCubit>(),
+                                  categoriesCubit: context.read<CategoriesCubit>(),
                                   menuCubit: context.read<MenuCubit>(),
                                 );
                               });
@@ -197,9 +192,7 @@ class _MenuItemBodyState extends State<MenuItemBody> {
                 );
               } else {
                 return SingleChildScrollView(
-                  child: context.screenWidth < 500
-                      ? const MenuItemColumn()
-                      : const MenuItemRow(),
+                  child: context.screenWidth < 500 ? const MenuItemColumn() : const MenuItemRow(),
                 );
               }
             },
@@ -272,26 +265,20 @@ class _ItemsMenuListState extends State<ItemsMenuList> {
   Widget build(BuildContext context) {
     return BlocBuilder<CategoriesCubit, CategoriesState>(
       builder: (context, state) {
-        List<CategoriesEntity> categories =
-            context.read<CategoriesCubit>().categoriesMenu;
+        List<CategoriesEntity> categories = context.read<CategoriesCubit>().categoriesMenu;
         return Row(
           children: [
             ...List.generate(
                 categories.length,
                 (index) => GestureDetector(
                     onTap: () {
-                      context
-                          .read<CategoriesCubit>()
-                          .changeSelectedIndex(index);
-                      context.read<MenuCubit>().getItemsData(
-                          items: 'subCategory', id: categories[index].sId!);
+                      context.read<CategoriesCubit>().changeSelectedIndex(index);
+                      context.read<CategoriesCubit>().selectedCategory = categories[index].sId!;
+                      context.read<MenuCubit>().getItemsData(items: 'subCategory', id: context.read<CategoriesCubit>().selectedCategory);
                     },
                     child: MenuItemContainer(
                       text: categories[index].name!,
-                      isSelected:
-                          context.read<CategoriesCubit>().selectedIndex == index
-                              ? true
-                              : false,
+                      isSelected: context.read<CategoriesCubit>().selectedIndex == index ? true : false,
                     )))
           ],
         );

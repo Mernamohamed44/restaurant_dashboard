@@ -14,8 +14,7 @@ class CategoriesRepository extends BaseCategoriesRepository {
   CategoriesRepository(this.dataSource);
 
   @override
-  Future<Either<ServerError, List<CategoriesEntity>>>
-      getSuperCategoriesData() async {
+  Future<Either<ServerError, List<CategoriesEntity>>> getSuperCategoriesData() async {
     try {
       final result = await dataSource.superCategoriesData();
       return Right(result);
@@ -29,8 +28,7 @@ class CategoriesRepository extends BaseCategoriesRepository {
   }
 
   @override
-  Future<Either<ServerError, List<CategoriesEntity>>> getCategoriesData(
-      {required String parent}) async {
+  Future<Either<ServerError, List<CategoriesEntity>>> getCategoriesData({required String parent}) async {
     try {
       final result = await dataSource.getCategoriesData(parent: parent);
       return Right(result);
@@ -44,8 +42,9 @@ class CategoriesRepository extends BaseCategoriesRepository {
   }
 
   @override
-  Future<Either<ServerError, List<CategoriesEntity>>> getCategoriesDataForMenu(
-      {required String parent}) async {
+  Future<Either<ServerError, List<CategoriesEntity>>> getCategoriesDataForMenu({
+    required String? parent,
+  }) async {
     try {
       final result = await dataSource.getCategoriesDataForMenu(parent: parent);
       return Right(result);
@@ -59,11 +58,9 @@ class CategoriesRepository extends BaseCategoriesRepository {
   }
 
   @override
-  Future<Either<ServerError, void>> addCategory(
-      {String? parent, required String image, required String name}) async {
+  Future<Either<ServerError, void>> addCategory({String? parent, required String image, required String name}) async {
     try {
-      final result = await dataSource.addCategory(
-          parent: parent, name: name, image: image);
+      final result = await dataSource.addCategory(parent: parent, name: name, image: image);
       return Right(result);
     } on DioException catch (fail) {
       return Left(ServerFailure.fromDiorError(fail));
@@ -80,8 +77,7 @@ class CategoriesRepository extends BaseCategoriesRepository {
     required String? myImage,
   }) async {
     try {
-      final result = await dataSource.uploadImage(
-          myImage: myImage!, fileBytes: fileBytes!);
+      final result = await dataSource.uploadImage(myImage: myImage!, fileBytes: fileBytes!);
       return Right(result);
     } on ServerError catch (fail) {
       return Left(fail);
@@ -93,10 +89,37 @@ class CategoriesRepository extends BaseCategoriesRepository {
   }
 
   @override
-  Future<Either<ServerError, List<CategoriesChildrenEntity>>>
-      getItemsSuperCategoriesData() async {
+  Future<Either<ServerError, List<CategoriesChildrenEntity>>> getItemsSuperCategoriesData() async {
     try {
       final result = await dataSource.getItemsSuperCategoriesData();
+      return Right(result);
+    } on DioException catch (fail) {
+      return Left(ServerFailure.fromDiorError(fail));
+    } catch (error) {
+      return Left(
+        ServerFailure(error.toString()),
+      );
+    }
+  }
+
+  @override
+  Future<Either<ServerError, void>> editSuperCategoriesData({required String? parent, required String image, required String name, required String id}) async {
+    try {
+      final result = await dataSource.editSuperCategoriesData(image: image, name: name, id: id, parent: parent);
+      return Right(result);
+    } on DioException catch (fail) {
+      return Left(ServerFailure.fromDiorError(fail));
+    } catch (error) {
+      return Left(
+        ServerFailure(error.toString()),
+      );
+    }
+  }
+
+  @override
+  Future<Either<ServerError, void>> deleteSuperCategoriesData({required String id}) async {
+    try {
+      final result = await dataSource.deleteSuperCategoriesData(id: id);
       return Right(result);
     } on DioException catch (fail) {
       return Left(ServerFailure.fromDiorError(fail));

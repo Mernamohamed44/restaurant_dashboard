@@ -16,6 +16,7 @@ import 'package:restaurant_dashboard/app/utils/image_manager.dart';
 import 'package:restaurant_dashboard/app/widget/custom_text_form_field.dart';
 import 'package:restaurant_dashboard/app/widget/phone_number_input.dart';
 import 'package:restaurant_dashboard/features/settings/domain/repository/base_settings_repository.dart';
+import 'package:restaurant_dashboard/features/settings/presentation/widgets/reviews.dart';
 
 part 'settings_state.dart';
 
@@ -276,18 +277,34 @@ class SettingsCubit extends Cubit<SettingsState> {
   void addCustomInput() {
     if (settingsFormKey.currentState!.validate()) {
       if (inputTypeController.dropDownValue!.name == 'select') {
-        isCustomerOptions = true;
         customerInput.add(customInputController.text);
         customerInputValue.add(inputTypeController.dropDownValue!.name);
+        addCustomInputs(optionsControllersString);
+        customInputController.clear();
+        inputTypeController.clearDropDown();
+        optionsControllers.forEach((element) {
+          element.clear();
+        });
       } else {
         customerInput.add(customInputController.text);
         customerInputValue.add(inputTypeController.dropDownValue!.name);
         addCustomInputs([]);
         customInputController.clear();
         inputTypeController.clearDropDown();
+        isCustomerOptions = false;
       }
       emit(AddWordsState());
     }
+  }
+
+  selectOption() {
+    isCustomerOptions = true;
+    emit(AddWordsState());
+  }
+
+  unSelectOption() {
+    isCustomerOptions = false;
+    emit(AddWordsState());
   }
 
   void clearCustomInput(index) {
@@ -397,6 +414,10 @@ class SettingsCubit extends Cubit<SettingsState> {
 
   Future createAboutUs() async {
     if (settingsFormKey.currentState!.validate()) {
+      if (tags.isEmpty) {
+        emit(AboutUsFailState(message: "please enter tags"));
+        return;
+      }
       emit(AboutUsLoadingState());
       final response = await repo.createAboutUs(
           name: nameController.text,
@@ -426,67 +447,67 @@ class SettingsCubit extends Cubit<SettingsState> {
         if (optionsControllers[index].text.isNotEmpty) {
           optionsControllersString =
               optionsControllers.map((e) => e.text).toList();
-          print('optionsControllersString :$optionsControllersString');
-          // customInputs.add({
-          //   "inputType": inputTypeController.dropDownValue!.name,
-          //   "label": customInputController.text,
-          //   "required": '$requiredValue',
-          //   "options": optionsControllersString
-          // });
-          addCustomInputs(optionsControllersString);
-          print('vvvvvvvvvv');
-          customInputController.clear();
-          inputTypeController.clearDropDown();
-          //optionsControllers[index].clear();
         }
       }
     });
   }
 
   Widget buildOptionsTextField(int index) {
-    return Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(
-          width: 350,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 5),
-            child: CustomTextFormField(
-              controller: optionsControllers[index],
-              focusNode: focusNodesOptions[index],
-              titleFontSize: 14,
-              hintText: 'Add Option',
-              validator: (value) {
-                if (value!.isEmpty) {
-                  return "please enter Option";
-                }
-                return null;
-              },
+        Row(
+          children: [
+            Flexible(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 5),
+                child: CustomTextFormField(
+                  controller: optionsControllers[index],
+                  focusNode: focusNodesOptions[index],
+                  titleFontSize: 14,
+                  hintText: 'Add Option',
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return "please enter Option";
+                    }
+                    return null;
+                  },
+                ),
+              ),
             ),
-          ),
+            const SizedBox(
+              width: 10,
+            ),
+            InkWell(
+              onTap: () {
+                int newIndex = optionsControllers.length;
+                optionsControllers.insert(newIndex, TextEditingController());
+                focusNodesOptions.insert(newIndex, FocusNode());
+                addListenerFocusNodeOptions(newIndex);
+                optionsTextField.add(buildOptionsTextField(newIndex));
+
+                // print(optionsControllers.map((e) => e.text).toList());
+                emit(AddWordsState());
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                    border: Border.all(color: AppColors.primary),
+                    borderRadius: BorderRadius.circular(10)),
+                child: const Icon(
+                  Icons.add,
+                  color: AppColors.primary,
+                ),
+              ),
+            ),
+            const SizedBox(
+              width: 10,
+            ),
+            index == 0 ? const SizedBox() : const AddButton()
+          ],
         ),
         const SizedBox(
-          width: 10,
+          height: 10,
         ),
-        InkWell(
-          onTap: () {
-            int newIndex = optionsControllers.length;
-            optionsControllers.insert(newIndex, TextEditingController());
-            focusNodesOptions.insert(newIndex, FocusNode());
-            optionsTextField.add(buildOptionsTextField(newIndex));
-            addListenerFocusNodeOptions(newIndex);
-            // print(optionsControllers.map((e) => e.text).toList());
-            emit(AddWordsState());
-          },
-          child: Container(
-            decoration: BoxDecoration(
-                border: Border.all(color: AppColors.primary),
-                borderRadius: BorderRadius.circular(10)),
-            child: const Icon(
-              Icons.add,
-              color: AppColors.primary,
-            ),
-          ),
-        )
       ],
     );
   }
@@ -500,7 +521,9 @@ class SettingsCubit extends Cubit<SettingsState> {
       "required": '$requiredValue',
       "options": optionsControllersString
     });
+    print('customInputs :$customInputs');
     emit(AddWordsState());
+
     // if (settingsFormKey.currentState!.validate()) {
     //   customInputs.add({
     //     "inputType": inputTypeController.dropDownValue!.name,
@@ -514,8 +537,12 @@ class SettingsCubit extends Cubit<SettingsState> {
   }
 
   Future createReviews() async {
-    // print('customInputs : $customInputs');
 
+      if (customInputs.isEmpty) {
+        emit(CreateReviewsFailState(message: "please enter tags"));
+        return;
+      }
+      //addCustomInputs(optionsControllersString);
       emit(CreateReviewsLoadingState());
       final response = await repo.createReviews(
           user: Caching.get(key: 'user'),

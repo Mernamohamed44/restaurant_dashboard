@@ -14,6 +14,7 @@ class UploadImageFailedState extends MenuState {
 class UploadImageLoadingState extends MenuState {}
 class GetItemCategoriesDataLoadingState extends MenuState {}
 class LoadingMoreItemCategoriesDataState extends MenuState {}
+class ClearImageState extends MenuState {}
 
 class GetItemCategoriesDataSuccessState extends MenuState {}
 class NoItemCategoriesDataState extends MenuState {}
@@ -31,4 +32,21 @@ class AddItemFailState extends MenuState {
   final String message;
 
   AddItemFailState({required this.message});
+}
+class EditItemLoadingState extends MenuState {}
+
+class EditItemSuccessState extends MenuState {}
+
+class EditItemFailState extends MenuState {
+  final String message;
+
+  EditItemFailState({required this.message});
+}class DeleteItemLoadingState extends MenuState {}
+
+class DeleteItemSuccessState extends MenuState {}
+
+class DeleteItemFailState extends MenuState {
+  final String message;
+
+  DeleteItemFailState({required this.message});
 }

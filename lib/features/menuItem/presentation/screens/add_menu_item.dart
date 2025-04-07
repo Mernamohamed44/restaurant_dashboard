@@ -15,23 +15,37 @@ import 'package:restaurant_dashboard/features/menuItem/presentation/widgets/item
 import 'package:restaurant_dashboard/features/menuItem/presentation/widgets/menu_item_button_save.dart';
 import 'package:restaurant_dashboard/features/menuItem/presentation/widgets/name_item_text_field.dart';
 
-class AddMenuItem extends StatelessWidget {
+class AddMenuItem extends StatefulWidget {
   const AddMenuItem({super.key, required this.categoriesCubit, required this.menuCubit});
   final CategoriesCubit categoriesCubit;
   final MenuCubit menuCubit;
+
+  @override
+  State<AddMenuItem> createState() => _AddMenuItemState();
+}
+
+class _AddMenuItemState extends State<AddMenuItem> {
+  @override
+  void initState() {
+// dispose controller
+    widget.menuCubit.priceController.clear();
+    widget.menuCubit.nameController.clear();
+    widget.menuCubit.descriptionController.clear();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
         BlocProvider.value(
-          value: categoriesCubit,
+          value: widget.categoriesCubit,
         ),
         BlocProvider.value(
-            value: menuCubit
+            value: widget.menuCubit
         ),
       ],
       child: Form(
-        key: menuCubit.formKey,
+        key: widget.menuCubit.formKey,
         child: Scaffold(
           backgroundColor: AppColors.white,
           appBar: AppBar(
@@ -80,7 +94,7 @@ class AddMenuItem extends StatelessWidget {
                 const SizedBox(
                   height: 10,
                 ),
-                const CategoriesDropDown(),
+                 CategoriesDropDown(),
                 const SizedBox(
                   height: 10,
                 ),

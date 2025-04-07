@@ -1,11 +1,16 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl_phone_field/phone_number.dart';
 import 'package:restaurant_dashboard/app/caching/shared_prefs.dart';
 import 'package:restaurant_dashboard/app/dependancy_injection/dependancy_injection.dart';
 import 'package:restaurant_dashboard/app/flutter_admin_scaffold/admin_scaffold.dart';
 import 'package:restaurant_dashboard/app/helper/extension.dart';
+import 'package:restaurant_dashboard/app/network/end_points.dart';
 import 'package:restaurant_dashboard/app/routing/routes.dart';
 import 'package:restaurant_dashboard/app/utils/colors.dart';
 import 'package:restaurant_dashboard/app/utils/image_manager.dart';
@@ -125,9 +130,7 @@ class AccountBody extends StatelessWidget {
                 ));
               }
               return SingleChildScrollView(
-                child: context.screenWidth > 600
-                    ? const AccountWeb()
-                    : const AccountMobile(),
+                child: context.screenWidth > 600 ? const AccountWeb() : const AccountMobile(),
               );
             },
           ),
@@ -197,6 +200,10 @@ class _ProfileTextFieldState extends State<ProfileTextField> {
 
   @override
   void initState() {
+    widget.cubit.nameController.text = widget.cubit.user!.displayName!;
+    widget.cubit.emailController.text = widget.cubit.user!.username!;
+    widget.cubit.phoneNumber = widget.cubit.user!.phone!;
+
     _focusNode.addListener(() {
       if (!_focusNode.hasFocus) {
         if (widget.cubit.emailController.text.isNotEmpty) {
@@ -215,199 +222,217 @@ class _ProfileTextFieldState extends State<ProfileTextField> {
       builder: (context, state) {
         return Padding(
           padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              CustomTextFormField(
-                title: 'Full Name',
-                controller: context.read<AccountCubit>().nameController,
-                titleFontSize: 14,
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Please enter  Full Name ';
-                  }
-                  return null;
-                },
-              ),
-              10.verticalSpace,
-              BlocBuilder<AccountCubit, AccountState>(
-                builder: (context, state) {
-                  return CustomTextFormField(
-                    title: 'Email Address',
-                    focusNode: _focusNode,
-                    controller: context.read<AccountCubit>().emailController,
-                    titleFontSize: 14,
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Please enter valid Email Address ';
-                      } else if (value ==
-                          context.read<AccountCubit>().user!.username) {
+          child: Form(
+            key: widget.cubit.formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CustomTextFormField(
+                  title: 'Full Name',
+                  controller: context.read<AccountCubit>().nameController,
+                  titleFontSize: 14,
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Please enter  Full Name ';
+                    }
+                    return null;
+                  },
+                ),
+                10.verticalSpace,
+                BlocBuilder<AccountCubit, AccountState>(
+                  builder: (context, state) {
+                    return CustomTextFormField(
+                      title: 'Email Address',
+                      focusNode: _focusNode,
+                      controller: context.read<AccountCubit>().emailController,
+                      titleFontSize: 14,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Please enter valid Email Address ';
+                        } else if (value == context.read<AccountCubit>().user!.username) {
+                          return null;
+                        } else if (widget.cubit.isUsernameAvailable) {
+                          return "Email Address is available!";
+                        }
                         return null;
-                      } else if (widget.cubit.isUsernameAvailable) {
-                        return "Email Address is available!";
-                      }
-                      return null;
-                    },
-                  );
-                },
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              BlocBuilder<AccountCubit, AccountState>(
-                builder: (context, state) {
-                  final cubit = context.read<AccountCubit>();
-                  return PhoneNumberInput(
-                    controller: cubit.phoneController,
-                    isoCode: cubit.isoCode,
-                    title: 'Phone Number',
-                    onInputChanged: (PhoneNumber number) {
-                      cubit.onInputChanged(number);
-                    },
-                  );
-                },
-              ),
-              10.verticalSpace,
-              BlocBuilder<AccountCubit, AccountState>(
-                builder: (context, state) {
-                  final cubit = context.read<AccountCubit>();
-                  return CustomTextFormField(
-                    maxLines: 1,
-                    title: 'Old Password',
-                    controller: cubit.oldPasswordController,
-                    titleFontSize: 14,
-                    suffixIcon: SizedBox(
-                      height: 0.02.sh,
-                      child: GestureDetector(
-                        onTap: () {
-                          cubit.changeVisibility();
-                        },
-                        child: Icon(
-                          cubit.isObscure
-                              ? Icons.visibility_off_outlined
-                              : Icons.visibility_outlined,
-                          color: AppColors.grey73818D99,
+                      },
+                    );
+                  },
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                BlocBuilder<AccountCubit, AccountState>(
+                  builder: (context, state) {
+                    final cubit = context.read<AccountCubit>();
+                    return PhoneNumberInput(
+                      controller: cubit.phoneController,
+                      isoCode: cubit.isoCode,
+                      title: 'Phone Number',
+                      onInputChanged: (PhoneNumber number) {
+                        cubit.onInputChanged(number);
+                      },
+                    );
+                  },
+                ),
+                10.verticalSpace,
+                BlocBuilder<AccountCubit, AccountState>(
+                  builder: (context, state) {
+                    final cubit = context.read<AccountCubit>();
+                    return CustomTextFormField(
+                      maxLines: 1,
+                      title: 'Old Password',
+                      controller: cubit.oldPasswordController,
+                      titleFontSize: 14,
+                      suffixIcon: SizedBox(
+                        height: 0.02.sh,
+                        child: GestureDetector(
+                          onTap: () {
+                            cubit.changeVisibility();
+                          },
+                          child: Icon(
+                            cubit.isObscure ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                            color: AppColors.grey73818D99,
+                          ),
                         ),
                       ),
-                    ),
-                    obscureText: cubit.isObscure,
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Please enter Password';
-                      }
-                      return null;
-                    },
-                  );
-                },
-              ),
-              10.verticalSpace,
-              BlocBuilder<AccountCubit, AccountState>(
-                builder: (context, state) {
-                  final cubit = context.read<AccountCubit>();
-                  return CustomTextFormField(
-                    maxLines: 1,
-                    title: 'New Password',
-                    controller: cubit.newPasswordController,
-                    titleFontSize: 14,
-                    suffixIcon: SizedBox(
-                      height: 0.02.sh,
-                      child: GestureDetector(
-                        onTap: () {
-                          cubit.changeNewPasswordVisibility();
-                        },
-                        child: Icon(
-                          cubit.isObscure2
-                              ? Icons.visibility_off_outlined
-                              : Icons.visibility_outlined,
-                          color: AppColors.grey73818D99,
+                      obscureText: cubit.isObscure,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Please enter Password';
+                        }
+                        return null;
+                      },
+                    );
+                  },
+                ),
+                10.verticalSpace,
+                BlocBuilder<AccountCubit, AccountState>(
+                  builder: (context, state) {
+                    final cubit = context.read<AccountCubit>();
+                    return CustomTextFormField(
+                      maxLines: 1,
+                      title: 'New Password',
+                      controller: cubit.newPasswordController,
+                      titleFontSize: 14,
+                      suffixIcon: SizedBox(
+                        height: 0.02.sh,
+                        child: GestureDetector(
+                          onTap: () {
+                            cubit.changeNewPasswordVisibility();
+                          },
+                          child: Icon(
+                            cubit.isObscure2 ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                            color: AppColors.grey73818D99,
+                          ),
                         ),
                       ),
-                    ),
-                    obscureText: cubit.isObscure,
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Please enter Password';
-                      }
-                      return null;
-                    },
-                  );
-                },
-              ),
-              10.verticalSpace,
-              BlocBuilder<AccountCubit, AccountState>(
-                builder: (context, state) {
-                  final cubit = context.read<AccountCubit>();
+                      obscureText: cubit.isObscure,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Please enter Password';
+                        }
+                        return null;
+                      },
+                    );
+                  },
+                ),
+                10.verticalSpace,
+                BlocBuilder<AccountCubit, AccountState>(
+                  builder: (context, state) {
+                    final cubit = context.read<AccountCubit>();
 
-                  return CustomTextFormField(
-                    maxLines: 1,
-                    title: 'Enter New Password Again',
-                    controller: cubit.confirmPasswordController,
-                    titleFontSize: 14,
-                    suffixIcon: SizedBox(
-                      height: 0.02.sh,
-                      child: GestureDetector(
-                        onTap: () {
-                          cubit.changeConfirmVisibility();
-                        },
-                        child: Icon(
-                          cubit.isObscure1
-                              ? Icons.visibility_off_outlined
-                              : Icons.visibility_outlined,
-                          color: AppColors.grey73818D99,
+                    return CustomTextFormField(
+                      maxLines: 1,
+                      title: 'Enter New Password Again',
+                      controller: cubit.confirmPasswordController,
+                      titleFontSize: 14,
+                      suffixIcon: SizedBox(
+                        height: 0.02.sh,
+                        child: GestureDetector(
+                          onTap: () {
+                            cubit.changeConfirmVisibility();
+                          },
+                          child: Icon(
+                            cubit.isObscure1 ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                            color: AppColors.grey73818D99,
+                          ),
                         ),
                       ),
-                    ),
-                    obscureText: cubit.isObscure1,
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Please enter Password';
-                      }
-                      return null;
-                    },
-                  );
-                },
-              ),
-              25.verticalSpace,
-              BlocConsumer<AccountCubit, AccountState>(
-                listener: (context, state) {
-                  if (state is ChangePasswordSuccessState) {
-                    showToastificationWidget(
-                      message: 'Password changed Successfully',
-                      context: context,
+                      obscureText: cubit.isObscure1,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Please enter Password';
+                        }
+                        return null;
+                      },
                     );
-                  } else if (state is ChangePasswordFailState) {
-                    showToastificationWidget(
-                      message: state.message,
-                      context: context,
+                  },
+                ),
+                25.verticalSpace,
+                BlocConsumer<AccountCubit, AccountState>(
+                  listener: (context, state) {
+                    if (state is ChangePasswordSuccessState) {
+                      showToastificationWidget(
+                        message: 'Password changed Successfully',
+                        context: context,
+                      );
+                    } else if (state is ChangePasswordFailState) {
+                      showToastificationWidget(
+                        message: state.message,
+                        context: context,
+                      );
+                    }
+                    if (state is EditProfileSuccessState) {
+                      showToastificationWidget(
+                        message: 'Profile changed Successfully',
+                        context: context,
+                      );
+                    } else if (state is EditProfileFailState) {
+                      showToastificationWidget(
+                        message: state.message,
+                        context: context,
+                      );
+                    }
+                  },
+                  builder: (context, state) {
+                    final cubit = context.read<AccountCubit>();
+                    if (state is ChangePasswordLoadingState) {
+                      return const Center(
+                        child: CircularProgressIndicator(
+                          color: AppColors.primary,
+                        ),
+                      );
+                    }
+                    if (state is EditProfileLoadingState) {
+                      return const Center(
+                        child: CircularProgressIndicator(
+                          color: AppColors.primary,
+                        ),
+                      );
+                    }
+                    return CustomButton(
+                      onTap: () {
+                        if (cubit.oldPasswordController.text.isNotEmpty) {
+                          cubit.changePassword();
+                        } else {
+                          cubit.editProfile(context);
+                        }
+                      },
+                      text: 'save',
+                      fontColor: Colors.white,
+                      fontSize: 16,
+                      isGradient: true,
+                      borderColor: AppColors.transparent,
+                      borderRadius: 50,
                     );
-                  }
-                },
-                builder: (context, state) {
-                  final cubit = context.read<AccountCubit>();
-                  if (state is ChangePasswordLoadingState) {
-                    return const Center(
-                      child: CircularProgressIndicator(
-                        color: AppColors.primary,
-                      ),
-                    );
-                  }
-                  return CustomButton(
-                    onTap: () {
-                      cubit.changePassword();
-                    },
-                    text: 'save',
-                    fontColor: Colors.white,
-                    fontSize: 16,
-                    isGradient: true,
-                    borderColor: AppColors.transparent,
-                    borderRadius: 50,
-                  );
-                },
-              ),
-              const SizedBox(
-                height: 40,
-              ),
-            ],
+                  },
+                ),
+                const SizedBox(
+                  height: 40,
+                ),
+              ],
+            ),
           ),
         );
       },
@@ -420,37 +445,59 @@ class ProfileImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      alignment: Alignment.topCenter,
-      children: [
-        Image.asset(
-          ImageManager.account,
-          fit: BoxFit.cover,
-          height: 200,
-          width: double.infinity,
-        ),
-        Positioned(
-          bottom: 0,
-          child: Container(
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
+    return BlocBuilder<AccountCubit, AccountState>(
+      builder: (context, state) {
+        return Stack(
+          alignment: Alignment.topCenter,
+          children: [
+            Image.asset(
+              ImageManager.account,
+              fit: BoxFit.cover,
+              height: 200,
+              width: double.infinity,
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(3),
-              child: ClipOval(
-                child: SizedBox.fromSize(
-                  size: const Size.fromRadius(40),
-                  child: const CustomCachedImage(
-                    image: ImageManager.logo,
-                    fit: BoxFit.cover,
+            Positioned(
+              bottom: 0,
+              child: InkWell(
+                onTap: () {
+                  context.read<AccountCubit>().pickMemberImageFile(context: context, source: ImageSource.gallery);
+                },
+                child: Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(3),
+                    child: ClipOval(
+                      child: SizedBox.fromSize(
+                        size: const Size.fromRadius(40),
+                        child: context.read<AccountCubit>().myImage != null
+                            ? kIsWeb
+                                ? Image.network(
+                                    context.read<AccountCubit>().myImage!.path,
+                                    height: 70,
+                                    width: 70,
+                                  )
+                                : Image.file(
+                                    File(context.read<AccountCubit>().myImage!.path),
+                                    fit: BoxFit.cover,
+                                    height: 70,
+                                    width: 70,
+                                  )
+                            : CustomCachedImage(
+                                image: '${ApiConstants.baseImagesUrl}/${context.read<AccountCubit>().user!.image!}',
+                                fit: BoxFit.cover,
+                              ),
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
-          ),
-        )
-      ],
+            )
+          ],
+        );
+      },
     );
   }
 }

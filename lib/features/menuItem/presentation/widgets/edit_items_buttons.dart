@@ -6,23 +6,24 @@ import 'package:restaurant_dashboard/app/utils/colors.dart';
 import 'package:restaurant_dashboard/app/widget/custom_button.dart';
 import 'package:restaurant_dashboard/app/widget/toastification_widget.dart';
 import 'package:restaurant_dashboard/features/categories/presentaion/cubit/categories_cubit.dart';
+import 'package:restaurant_dashboard/features/menuItem/presentation/cubit/menu_cubit.dart';
 import 'package:toastification/toastification.dart';
 
-class CategoriesButtonSave extends StatelessWidget {
-  const CategoriesButtonSave({super.key});
-
+class MenuButtonEdit extends StatelessWidget {
+  const MenuButtonEdit({super.key, required this.id});
+  final String id;
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<CategoriesCubit, CategoriesState>(
+    return BlocConsumer<MenuCubit, MenuState>(
       listener: (context, state) {
-        if (state is AddCategorySuccessState) {
+        if (state is EditItemSuccessState) {
           showToastificationWidget(
-            message: 'Category Added successfully',
+            message: 'Item Edited successfully',
             context: context,
             notificationType: ToastificationType.success,
           );
-          context.pushReplacementNamed(Routes.category);
-        } else if (state is AddCategoryFailedState) {
+          context.pushReplacementNamed(Routes.menuItem);
+        } else if (state is EditItemFailState) {
           showToastificationWidget(
             message: state.message,
             context: context,
@@ -30,7 +31,7 @@ class CategoriesButtonSave extends StatelessWidget {
         }
       },
       builder: (context, state) {
-        if (state is AddCategoryLoadingState) {
+        if (state is EditItemLoadingState) {
           return const CircularProgressIndicator(
             color: AppColors.primary,
           );
@@ -38,17 +39,12 @@ class CategoriesButtonSave extends StatelessWidget {
         return CustomButton(
           height: 40,
           onTap: () {
-            context.read<CategoriesCubit>().addCategory(
-              context: context,
-                name: context
-                    .read<CategoriesCubit>()
-                    .categoryNameController
-                    .text);
+            context.read<MenuCubit>().editItem(id: id);
           },
           fontSize: 16,
           isGradient: true,
           borderColor: AppColors.transparent,
-          text: 'save',
+          text: 'Edit',
         );
       },
     );

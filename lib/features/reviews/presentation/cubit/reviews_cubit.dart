@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:logger/logger.dart';
 import 'package:meta/meta.dart';
 import 'package:restaurant_dashboard/features/reviews/domain/entities/reviews_count_entity.dart';
@@ -10,11 +11,12 @@ part 'reviews_state.dart';
 class ReviewsCubit extends Cubit<ReviewsState> {
   ReviewsCubit(this.repo) : super(ReviewsInitial());
   final BaseReviewsRepository repo;
-
+  TextEditingController searchController = TextEditingController();
   List<ReviewsEntities> reviews = [];
   int currentPage = 1;
   bool isLoadingMore = false;
   bool hasMore = true;
+  String ratingFilter = '';
   Future getReviews({
     bool loadMore = false,
   }) async {
@@ -25,19 +27,27 @@ class ReviewsCubit extends Cubit<ReviewsState> {
     } else {
       emit(ReviewsDataLoadingState());
     }
-    final response = await repo.getReviews(page: currentPage);
+    final response = await repo.getReviews(
+        page: currentPage,
+        ratingFilter: ratingFilter,
+        search: searchController.text);
     response.fold(
       (l) {
         emit(ReviewsDataFailedState(message: l.message));
         Logger().e(l.message);
       },
       (r) async {
-        reviews.addAll(r);
+        if (currentPage == 1) {
+          reviews = r;
+        } else {
+          reviews.addAll(r);
+        }
         emit(ReviewsDataSuccessState());
       },
     );
   }
-  List<ReviewsCountEntities> reviewsCount=[];
+
+  List<ReviewsCountEntities> reviewsCount = [];
   Future countReviews() async {
     emit(ReviewsDataLoadingState());
 
@@ -48,7 +58,7 @@ class ReviewsCubit extends Cubit<ReviewsState> {
         Logger().e(l.message);
       },
       (r) async {
-        reviewsCount=r;
+        reviewsCount = r;
         emit(ReviewsDataSuccessState());
       },
     );

@@ -23,9 +23,7 @@ class CategoryViews extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-          color: AppColors.containerColor,
-          borderRadius: BorderRadius.circular(12)),
+      decoration: BoxDecoration(color: AppColors.containerColor, borderRadius: BorderRadius.circular(12)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -42,6 +40,7 @@ class CategoryViews extends StatelessWidget {
               category: categories[index].name,
               rank: index + 1,
               views: categories[index].views.toDouble(),
+              image: categories[index].image,
             ),
           )
         ],

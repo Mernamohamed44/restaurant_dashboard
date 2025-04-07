@@ -4,15 +4,28 @@ import 'package:restaurant_dashboard/app/dependancy_injection/dependancy_injecti
 import 'package:restaurant_dashboard/app/helper/extension.dart';
 import 'package:restaurant_dashboard/app/widget/custom_text.dart';
 import 'package:restaurant_dashboard/features/categories/presentaion/cubit/categories_cubit.dart';
+import 'package:restaurant_dashboard/features/categories/presentaion/widgets/add_category_dialog.dart';
 import 'package:restaurant_dashboard/features/categories/presentaion/widgets/categories_save_button.dart';
 import 'package:restaurant_dashboard/features/categories/presentaion/widgets/category_name_text_feild.dart';
 import 'package:restaurant_dashboard/features/categories/presentaion/widgets/language_drop_down.dart';
 
 import '../../../../app/utils/colors.dart';
-import '../../../settings/presentation/screens/theme_setting.dart';
 
-class AddCategories extends StatelessWidget {
+class AddCategories extends StatefulWidget {
   const AddCategories({super.key});
+
+  @override
+  State<AddCategories> createState() => _AddCategoriesState();
+}
+
+class _AddCategoriesState extends State<AddCategories> {
+  @override
+  void initState() {
+// dispose controller
+    context.read<CategoriesCubit>().categoryNameController.clear();
+    context.read<CategoriesCubit>().myImage = null;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,23 +62,20 @@ class AddCategories extends StatelessWidget {
             focusColor: Colors.transparent,
             highlightColor: Colors.transparent,
           )),
-      body: BlocProvider(
-        create: (context) => getIt<CategoriesCubit>(),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Column(
-            children: [
-              const AddImageContainer(),
-              const SizedBox(
-                height: 10,
-              ),
-              CategoryNameTextField(),
-              const SizedBox(
-                height: 10,
-              ),
-              const CategoriesButtonSave()
-            ],
-          ),
+      body: const Padding(
+        padding: EdgeInsets.symmetric(horizontal: 20),
+        child: Column(
+          children: [
+            AddImageContainer(),
+            SizedBox(
+              height: 10,
+            ),
+            CategoryNameTextField(),
+            SizedBox(
+              height: 10,
+            ),
+            CategoriesButtonSave()
+          ],
         ),
       ),
     );

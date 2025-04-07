@@ -1,20 +1,18 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:restaurant_dashboard/app/network/end_points.dart';
 import 'package:restaurant_dashboard/app/utils/colors.dart';
 import 'package:restaurant_dashboard/app/utils/image_manager.dart';
+import 'package:restaurant_dashboard/app/widget/custom_cached_image.dart';
 import 'package:restaurant_dashboard/app/widget/custom_text.dart';
 
 class ViewsCategories extends StatelessWidget {
-  const ViewsCategories(
-      {super.key,
-      required this.category,
-      required this.views,
-      required this.rank,
-      this.isItem = false});
+  const ViewsCategories({super.key, required this.category, required this.views, required this.rank, this.isItem = false, required this.image});
 
   final String category;
-
+  final String image;
   final double views;
   final int rank;
   final bool isItem;
@@ -26,7 +24,12 @@ class ViewsCategories extends StatelessWidget {
       child: Row(
         children: [
           isItem
-              ? Image.asset(ImageManager.item)
+              ? CircleAvatar(
+                  radius: 20,
+                  child: ClipOval(
+                    child: CustomCachedImage(height: 50, fit: BoxFit.cover, image: '${ApiConstants.baseImagesUrl}/$image'),
+                  ),
+                )
               : Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
@@ -51,7 +54,7 @@ class ViewsCategories extends StatelessWidget {
                 LinearPercentIndicator(
                   barRadius: const Radius.circular(12),
                   lineHeight: 7,
-                  percent: views*.01 ,
+                  percent: views * .01,
                   padding: EdgeInsets.zero,
                   backgroundColor: AppColors.boldContainerColor,
                   progressColor: AppColors.primary,

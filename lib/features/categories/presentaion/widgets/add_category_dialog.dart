@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,23 +16,36 @@ import 'package:restaurant_dashboard/features/categories/presentaion/widgets/lan
 import 'package:restaurant_dashboard/features/menuItem/presentation/cubit/menu_cubit.dart';
 import 'package:restaurant_dashboard/features/menuItem/presentation/widgets/super_categories_drop_down.dart';
 
-class AddCategoryDialog extends StatelessWidget {
+class AddCategoryDialog extends StatefulWidget {
   const AddCategoryDialog({super.key, required this.categoriesCubit});
 
   final CategoriesCubit categoriesCubit;
 
   @override
+  State<AddCategoryDialog> createState() => _AddCategoryDialogState();
+}
+
+class _AddCategoryDialogState extends State<AddCategoryDialog> {
+  @override
+  void initState() {
+// dispose controller
+    widget.categoriesCubit.categoryNameController.clear();
+    widget.categoriesCubit.myImage=null;
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
-  providers: [
-    BlocProvider.value(
-      value: categoriesCubit,
-),
-    BlocProvider(
-      create: (context) => getIt<MenuCubit>(),
-    ),
-  ],
-  child: Dialog(
+      providers: [
+        BlocProvider.value(
+          value: widget.categoriesCubit,
+        ),
+        BlocProvider(
+          create: (context) => getIt<MenuCubit>(),
+        ),
+      ],
+      child: Dialog(
         backgroundColor: AppColors.white,
         child: Container(
           width: 500,
@@ -39,7 +53,7 @@ class AddCategoryDialog extends StatelessWidget {
             borderRadius: BorderRadius.circular(15),
             color: AppColors.white,
           ),
-          child: const Padding(
+          child:  const Padding(
             padding: EdgeInsets.all(20.0),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -83,7 +97,7 @@ class AddCategoryDialog extends StatelessWidget {
           ),
         ),
       ),
-);
+    );
   }
 }
 
@@ -93,78 +107,77 @@ class AddImageContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<CategoriesCubit, CategoriesState>(
-  builder: (context, state) {
-    return Container(
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          color: AppColors.primary.withOpacity(.05),
-          border: Border.all(color: AppColors.primary)),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          context.read<CategoriesCubit>().myImage == null
-          ? Image.asset(ImageManager.addImage)
-          : Image.memory(
-            height: 70,
-              width: 70,
-              context.read<CategoriesCubit>().fileBytes!
-
-          ),
-          const SizedBox(
-            width: 5,
-          ),
-          Flexible(
-            flex: 2,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const CustomText(
-                  text: 'Category Image',
-                  color: AppColors.textColor,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 14,
-                ),
-                RichText(
-                  maxLines: 4,
-                  text: TextSpan(
-                    children: [
-                      TextSpan(
-                        text: 'Click here',
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = () {
-                            context.read<CategoriesCubit>().chooseMyImage(
-                                );
-                            print("Clicked!");
-                          },
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          // Make it bold
-                          color: AppColors.primary,
-                          // Make it look like a link
-                          decoration: TextDecoration
-                              .underline, // Optional: underline effect
-                        ),
+      builder: (context, state) {
+        return Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(12), color: AppColors.primary.withOpacity(.05), border: Border.all(color: AppColors.primary)),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              context.read<CategoriesCubit>().myImage != null
+                  ? kIsWeb
+                      ? Image.network(
+                          context.read<CategoriesCubit>().myImage!.path,
+                          height: 70,
+                          width: 70,
+                        )
+                      : Image.file(
+                          File(context.read<CategoriesCubit>().myImage!.path),
+                          fit: BoxFit.cover,
+                          height: 70,
+                          width: 70,
+                        )
+                  : Image.asset(ImageManager.addImage),
+              const SizedBox(
+                width: 5,
+              ),
+              Flexible(
+                flex: 2,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const CustomText(
+                      text: 'Category Image',
+                      color: AppColors.textColor,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 14,
+                    ),
+                    RichText(
+                      maxLines: 4,
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: 'Click here',
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                context.read<CategoriesCubit>().pickMemberImageFile(context: context, source: ImageSource.gallery);
+                                print("Clicked!");
+                              },
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              // Make it bold
+                              color: AppColors.primary,
+                              // Make it look like a link
+                              decoration: TextDecoration.underline, // Optional: underline effect
+                            ),
+                          ),
+                          const TextSpan(
+                            text: ' to upload an image, min height 100px, these extensions are acceptable .svg, .png, .jpeg',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: AppColors.accentContainerColor, // Normal text color
+                            ),
+                          ),
+                        ],
                       ),
-                      const TextSpan(
-                        text:
-                            ' to upload an image, min height 100px, these extensions are acceptable .svg, .png, .jpeg',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: AppColors
-                              .accentContainerColor, // Normal text color
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          )
-        ],
-      ),
+              )
+            ],
+          ),
+        );
+      },
     );
-  },
-);
   }
 }

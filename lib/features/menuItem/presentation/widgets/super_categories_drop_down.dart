@@ -7,17 +7,31 @@ import 'package:restaurant_dashboard/features/categories/domin/entities/categori
 import 'package:restaurant_dashboard/features/categories/presentaion/cubit/categories_cubit.dart';
 import 'package:restaurant_dashboard/features/menuItem/presentation/cubit/menu_cubit.dart';
 
-class CategoriesDropDown extends StatelessWidget {
-  const CategoriesDropDown({super.key});
+class CategoriesDropDown extends StatefulWidget {
+  const CategoriesDropDown({super.key, this.isEdit = false, this.superCategoryName = ''});
+  final bool isEdit;
+  final String superCategoryName;
+
+  @override
+  State<CategoriesDropDown> createState() => _CategoriesDropDownState();
+}
+
+class _CategoriesDropDownState extends State<CategoriesDropDown> {
+  SingleValueDropDownController controller = SingleValueDropDownController();
+  @override
+  void initState() {
+    controller.setDropDown(DropDownValueModel(name: widget.superCategoryName, value: 'value'));
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<CategoriesCubit, CategoriesState>(
       builder: (context, state) {
-        List<CategoriesEntity> superCategories =
-            context.read<CategoriesCubit>().superCategories;
+        List<CategoriesEntity> superCategories = context.read<CategoriesCubit>().superCategories;
         return Flexible(
           child: DropDownTextField(
+            controller: controller,
             dropDownIconProperty: IconProperty(
               icon: Icons.keyboard_arrow_down,
               size: 24,
@@ -64,7 +78,7 @@ class CategoriesDropDown extends StatelessWidget {
                   color: AppColors.red,
                 ),
               ),
-              hintText: 'Choose category',
+              hintText: widget.isEdit ? widget.superCategoryName : 'Choose category',
               hintStyle: const TextStyle(
                 color: AppColors.textColor,
                 fontWeight: FontWeight.w700,
@@ -81,14 +95,15 @@ class CategoriesDropDown extends StatelessWidget {
             clearOption: true,
             onChanged: (value) {
               if (value is DropDownValueModel) {
-                print(value.value);
-                print('cccccccccccccccccccc');
-                context.read<MenuCubit>().category = value.value;
-                context
-                    .read<CategoriesCubit>().parent= value.value;
-                context
-                    .read<CategoriesCubit>()
-                    .getCategoriesData(parent: value.value);
+                if (widget.isEdit) {
+                  context.read<CategoriesCubit>().parent = value.value;
+                  print(context.read<CategoriesCubit>().parent);
+                } else {
+                  print(value.value);
+                  context.read<MenuCubit>().category = value.value;
+                  context.read<CategoriesCubit>().parent = value.value;
+                  context.read<CategoriesCubit>().getCategoriesData(parent: value.value);
+                }
                 //     .whenComplete(() {
                 //   print('xxxxxxxxxxxxx');
                 //   if (context.read<CategoriesCubit>().categoriesMenu.isNotEmpty) {
@@ -106,10 +121,7 @@ class CategoriesDropDown extends StatelessWidget {
               return null;
             },
             clearIconProperty: IconProperty(color: Colors.green),
-            dropDownList: superCategories
-                .map((category) => DropDownValueModel(
-                    name: category.name!, value: category.sId))
-                .toList(),
+            dropDownList: superCategories.map((category) => DropDownValueModel(name: category.name!, value: category.sId)).toList(),
           ),
         );
       },

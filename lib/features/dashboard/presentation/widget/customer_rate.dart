@@ -30,6 +30,7 @@ class CustomerRate extends StatelessWidget {
             children: [
               FittedBox(
                 child: RatingBar.builder(
+                  ignoreGestures: true,
                   initialRating: 3,
                   // minRating: 1,
                   itemSize: 15,

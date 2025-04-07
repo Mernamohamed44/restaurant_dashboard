@@ -13,11 +13,15 @@ class RemoteReviewsDataSource extends BaseRemoteReviewsDataSource {
   @override
   Future<List<ReviewsModel>> getReviews({
     required int page,
+    required String ratingFilter,
+    required String search,
   }) async {
     final Response response = await dioManager.get(
       queryParameters: {
         'page': page,
-        'limit':'5'
+        'limit': '20',
+        if (ratingFilter != 'ALL Reviews') 'rating': ratingFilter,
+        if (search.isNotEmpty) 'search': search
       },
       ApiConstants.allReviews,
     );
@@ -29,7 +33,7 @@ class RemoteReviewsDataSource extends BaseRemoteReviewsDataSource {
   Future<List<ReviewsCountModel>> countReviews() async {
     final Response response = await dioManager.get(
       queryParameters: {
-        'stars':'true',
+        'stars': 'true',
         'reviewSettings': '67c9ed3b6ff17c0d349a6640',
       },
       ApiConstants.reviewsCount,

@@ -3,10 +3,13 @@ import 'dart:typed_data';
 
 import 'package:bloc/bloc.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
+import 'package:restaurant_dashboard/app/helper/image_services.dart';
+import 'package:restaurant_dashboard/app/widget/toastification_widget.dart';
 import 'package:restaurant_dashboard/features/categories/domin/entities/categories_entities.dart';
 import 'package:restaurant_dashboard/features/categories/domin/repository/base_categories_repository.dart';
 
@@ -14,38 +17,14 @@ part 'categories_state.dart';
 
 class CategoriesCubit extends Cubit<CategoriesState> {
   CategoriesCubit(this.repo) : super(CategoriesInitial());
-  String? myImage;
+  XFile? myImage;
   String imageUploaded = "";
-  Uint8List? fileBytes;
-  Future<void> chooseMyImage() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['jpg', 'jpeg', 'png'],
-    );
-
-    if (result != null) {
-      fileBytes = result.files.single.bytes;
-      myImage = result.files.single.name;
-      emit(ChooseImageState());
-    }
-  }
-
-  Future<void> uploadImage() async {
-    emit(UploadImageLoadingState());
-    final response =
-        await repo.uploadImage(myImage: myImage, fileBytes: fileBytes);
-    response.fold(
-      (l) => emit(UploadImageFailedState(message: l.message)),
-      (r) {
-        imageUploaded = r;
-        print(imageUploaded);
-        emit(UploadImageSuccessState());
-      },
-    );
-  }
+  //Uint8List? fileBytes;
 
   final BaseCategoriesRepository repo;
   List<CategoriesEntity> superCategories = [];
+  TextEditingController superCategoryNameController = TextEditingController();
+
   Future getSuperCategoriesData() async {
     emit(SuperCategoriesDataLoadingState());
     final response = await repo.getSuperCategoriesData();
@@ -56,15 +35,16 @@ class CategoriesCubit extends Cubit<CategoriesState> {
       },
       (r) async {
         superCategories = r;
-        if(superCategories.isEmpty){
+        if (superCategories.isEmpty) {
           emit(NoItemSuperCategoriesDataState());
-        }
-        else {
+        } else {
           emit(SuperCategoriesDataSuccessState());
         }
       },
     );
-  }List<CategoriesChildrenEntity> itemSuperCategories = [];
+  }
+
+  List<CategoriesChildrenEntity> itemSuperCategories = [];
   Future getItemSuperCategoriesData() async {
     emit(SuperCategoriesDataLoadingState());
     final response = await repo.getItemsSuperCategoriesData();
@@ -97,9 +77,9 @@ class CategoriesCubit extends Cubit<CategoriesState> {
   }
 
   List<CategoriesEntity> categoriesMenu = [];
-  Future getCategoriesDataForMenu({required String parent}) async {
+  Future getCategoriesDataForMenu({ String ?parent}) async {
     emit(CategoriesDataForMenuLoadingState());
-    final response = await repo.getCategoriesDataForMenu(parent: parent);
+    final response = await repo.getCategoriesDataForMenu(parent: parent!);
     response.fold(
       (l) {
         emit(CategoriesDataForMenuFailedState(message: l.message));
@@ -115,27 +95,93 @@ class CategoriesCubit extends Cubit<CategoriesState> {
   TextEditingController categoryNameController = TextEditingController();
 
   String? parent;
-  Future addCategory({required String name}) async {
-    emit(AddCategoryLoadingState());
-    if (fileBytes != null) {
-      await uploadImage();
+  Future addCategory({required String name, required BuildContext context}) async {
+    if (myImage != null && name.isNotEmpty) {
+      emit(AddCategoryLoadingState());
+      try {
+        if (myImage != null) {
+          if (kIsWeb) {
+            imageUploaded = await ImagesService.uploadImageWeb(myImage!);
+          } else {
+            imageUploaded = await ImagesService.uploadImage(myImage!.path);
+          }
+        }
+      } on Exception catch (e) {
+        emit(AddCategoryFailedState(message: e.toString()));
+        return;
+      }
+      // if (imageUploaded.isEmpty) return;
+      final response = await repo.addCategory(parent: parent, image: imageUploaded.isEmpty ? ' ' : imageUploaded, name: name);
+      response.fold(
+        (l) {
+          emit(AddCategoryFailedState(message: l.message));
+          Logger().e(l.message);
+        },
+        (r) async {
+          emit(AddCategorySuccessState());
+        },
+      );
+    } else {
+      showToastificationWidget(message: 'All field required', context: context);
+      //AddCategoryFailedState(message: 'All field required');
     }
-    // if (imageUploaded.isEmpty) return;
-    final response = await repo.addCategory(
-        parent: parent,
-        image: imageUploaded.isEmpty ? ' ' : imageUploaded,
-        name: name);
+  }
+
+  final formKey = GlobalKey<FormState>();
+
+  Future editCategory({required String name, required String id, required BuildContext context}) async {
+    if (formKey.currentState!.validate()) {
+      emit(EditCategoryLoadingState());
+      try {
+        if (myImage != null) {
+          if (kIsWeb) {
+            imageUploaded = await ImagesService.uploadImageWeb(myImage!);
+          } else {
+            imageUploaded = await ImagesService.uploadImage(myImage!.path);
+          }
+        }
+      } on Exception catch (e) {
+        emit(EditCategoryFailedState(message: e.toString()));
+        return;
+      }
+
+      final response = await repo.editSuperCategoriesData(parent: parent, image: imageUploaded, name: name, id: id);
+      response.fold(
+        (l) {
+          emit(EditCategoryFailedState(message: l.message));
+          Logger().e(l.message);
+        },
+        (r) async {
+          emit(EditCategorySuccessState());
+        },
+      );
+    }
+  }
+
+  void pickMemberImageFile({
+    required BuildContext context,
+    required ImageSource source,
+  }) async {
+    myImage = await ImagesService.pickFile(context: context, source: source);
+    emit(ChooseImageState());
+  }
+
+  Future deleteCategory({required String id}) async {
+    emit(DeleteCategoryLoadingState());
+
+    final response = await repo.deleteSuperCategoriesData(id: id);
     response.fold(
       (l) {
-        emit(AddCategoryFailedState(message: l.message));
+        emit(DeleteCategoryFailedState(message: l.message));
         Logger().e(l.message);
       },
       (r) async {
-        emit(AddCategorySuccessState());
+        emit(DeleteCategorySuccessState());
       },
     );
   }
 
+  String selectedCategory = "";
   int selectedIndex = 0;
   changeSelectedIndex(int index) {
     selectedIndex = index;

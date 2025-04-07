@@ -159,21 +159,15 @@ class ReviewListContainer extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              RatingBar.builder(
-                initialRating: reviews.rating.toDouble(),
-                // minRating: 1,
-                itemSize: 20,
-                direction: Axis.horizontal,
-                allowHalfRating: true,
-                itemCount: 5,
-                itemPadding: const EdgeInsets.symmetric(horizontal: 2),
-                itemBuilder: (context, _) => const Icon(
+              RatingBarIndicator(
+                rating: reviews.rating.toDouble(),
+                itemBuilder: (context, index) => const Icon(
                   Icons.star_rounded,
                   color: AppColors.primary,
                 ),
-                onRatingUpdate: (rating) {
-                  print(rating);
-                },
+                itemCount: 5,
+                itemSize: 20.0,
+                direction: Axis.horizontal,
               ),
               Flexible(
                 child: CustomText(

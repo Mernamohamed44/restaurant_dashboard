@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
@@ -18,26 +19,38 @@ import 'package:restaurant_dashboard/features/menuItem/presentation/widgets/item
 import 'package:restaurant_dashboard/features/menuItem/presentation/widgets/menu_item_button_save.dart';
 import 'package:restaurant_dashboard/features/menuItem/presentation/widgets/name_item_text_field.dart';
 
-class AddMenuItemDialog extends StatelessWidget {
+class AddMenuItemDialog extends StatefulWidget {
   const AddMenuItemDialog({super.key, required this.categoriesCubit, required this.menuCubit});
 
   final CategoriesCubit categoriesCubit;
   final MenuCubit menuCubit;
 
   @override
+  State<AddMenuItemDialog> createState() => _AddMenuItemDialogState();
+}
+
+class _AddMenuItemDialogState extends State<AddMenuItemDialog> {
+  @override
+  void initState() {
+// dispose controller
+    widget.menuCubit.priceController.clear();
+    widget.menuCubit.nameController.clear();
+    widget.menuCubit.descriptionController.clear();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
         BlocProvider.value(
-      value: categoriesCubit,
-    ),
-        BlocProvider.value(
-    value: menuCubit
+          value: widget.categoriesCubit,
         ),
+        BlocProvider.value(value: widget.menuCubit),
       ],
-      child: Form(
-        key: menuCubit.formKey,
-        child: Dialog(
+      child: Dialog(
+        child: Form(
+          key: widget.menuCubit.formKey,
           child: Container(
             width: 500,
             decoration: BoxDecoration(
@@ -81,7 +94,7 @@ class AddMenuItemDialog extends StatelessWidget {
                     const SizedBox(
                       height: 10,
                     ),
-                    const Row(
+                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         CategoriesDropDown(),
@@ -98,9 +111,7 @@ class AddMenuItemDialog extends StatelessWidget {
                     const SizedBox(
                       height: 12,
                     ),
-                    const ItemPriceTextField(
-
-                    ),
+                    const ItemPriceTextField(),
                     const SizedBox(
                       height: 10,
                     ),
@@ -116,33 +127,42 @@ class AddMenuItemDialog extends StatelessWidget {
   }
 }
 
-class AddImageContainer extends StatelessWidget {
+class AddImageContainer extends StatefulWidget {
   const AddImageContainer({super.key});
 
+  @override
+  State<AddImageContainer> createState() => _AddImageContainerState();
+}
+
+class _AddImageContainerState extends State<AddImageContainer> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<MenuCubit, MenuState>(
       builder: (context, state) {
         return Container(
             padding: const EdgeInsets.all(15),
-            decoration: BoxDecoration(
-                color: AppColors.containerColor,
-                borderRadius: BorderRadius.circular(12)),
+            decoration: BoxDecoration(color: AppColors.containerColor, borderRadius: BorderRadius.circular(12)),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 InkWell(
                     onTap: () async {
-                      await context.read<MenuCubit>().chooseMyImage(
-                         );
+                      context.read<MenuCubit>().pickMemberImageFile(context: context, source: ImageSource.gallery);
                     },
-                    child: context.read<MenuCubit>().fileBytes == null
-                        ? Image.asset(ImageManager.addImage)
-                        : Image.memory(
-                      context.read<MenuCubit>().fileBytes!,
-                            height: 70,
-                            width: 70,
-                           ),
-                ),
+                    child: context.read<MenuCubit>().myImage != null
+                        ? kIsWeb
+                            ? Image.network(
+                                context.read<MenuCubit>().myImage!.path,
+                                height: 70,
+                                width: 70,
+                              )
+                            : Image.file(
+                                File(context.read<MenuCubit>().myImage!.path),
+                                fit: BoxFit.cover,
+                                height: 70,
+                                width: 70,
+                              )
+                        : Image.asset(ImageManager.addImage)),
                 const SizedBox(
                   width: 5,
                 ),
@@ -151,9 +171,7 @@ class AddImageContainer extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       CustomText(
-                        text: context.read<MenuCubit>().imageUploaded == ''
-                            ? 'Image Name'
-                            : context.read<MenuCubit>().imageUploaded,
+                        text: context.read<MenuCubit>().imageUploaded == '' ? 'Image Name' : context.read<MenuCubit>().imageUploaded,
                         color: AppColors.textColor,
                         fontWeight: FontWeight.w700,
                         fontSize: 14,
@@ -163,14 +181,23 @@ class AddImageContainer extends StatelessWidget {
                   ),
                 ),
                 const Spacer(),
-                const CircleAvatar(
-                    radius: 20,
-                    backgroundColor: AppColors.white,
-                    child: SvgIcon(
-                      icon: ImageManager.clear,
-                      color: AppColors.red,
-                      height: 25,
-                    )),
+                BlocBuilder<MenuCubit, MenuState>(
+                  builder: (context, state) {
+                    return InkWell(
+                      onTap: () {
+                        context.read<MenuCubit>().clearImage();
+                      },
+                      child: const CircleAvatar(
+                          radius: 20,
+                          backgroundColor: AppColors.white,
+                          child: SvgIcon(
+                            icon: ImageManager.clear,
+                            color: AppColors.red,
+                            height: 25,
+                          )),
+                    );
+                  },
+                ),
               ],
             ));
       },

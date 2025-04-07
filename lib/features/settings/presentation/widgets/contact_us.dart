@@ -16,6 +16,7 @@ import 'package:restaurant_dashboard/app/widget/custom_text_form_field.dart';
 import 'package:restaurant_dashboard/app/widget/phone_number_input.dart';
 import 'package:restaurant_dashboard/app/widget/toastification_widget.dart';
 import 'package:restaurant_dashboard/features/settings/presentation/cubit/settings_cubit.dart';
+import 'package:toastification/toastification.dart';
 
 class ContactUs extends StatefulWidget {
   const ContactUs({super.key});
@@ -133,7 +134,6 @@ class _ContactUsState extends State<ContactUs> {
                           )
                         ],
                       ),
-
                 ...List.generate(
                     cubit.platformList.length,
                     (index) => SocialMediaLinksRow(
@@ -149,6 +149,7 @@ class _ContactUsState extends State<ContactUs> {
                       showToastificationWidget(
                         message: 'Contacts Create successfully',
                         context: context,
+                        notificationType: ToastificationType.success,
                       );
                       context.pushReplacementNamed(Routes.dashboard);
                     } else if (state is ContactsFailState) {

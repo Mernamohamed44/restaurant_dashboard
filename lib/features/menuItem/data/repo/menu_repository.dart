@@ -20,12 +20,14 @@ class MenuRepository extends BaseMenuRepository {
     required String items,
     required String id,
     required int page,
+    required String search,
   }) async {
     try {
       final result = await dataSource.getCategoriesItem(
         id: id,
         items: items,
         page: page,
+        search: search,
       );
       return Right(result);
     } on DioException catch (fail) {
@@ -69,14 +71,55 @@ class MenuRepository extends BaseMenuRepository {
     required String? myImage,
   }) async {
     try {
-      final result =
-      await dataSource.uploadImage(myImage: myImage!, fileBytes: fileBytes!);
+      final result = await dataSource.uploadImage(
+          myImage: myImage!, fileBytes: fileBytes!);
       return Right(result);
     } on ServerError catch (fail) {
       return Left(fail);
     } catch (e) {
       return Left(
         ServerFailure(e.toString()),
+      );
+    }
+  }
+
+  @override
+  Future<Either<ServerError, void>> editItem(
+      {required String name,
+      required String description,
+      required String image,
+      required String subCategory,
+      required String id,
+      required String price}) async {
+    try {
+      final result = await dataSource.editItem(
+          name: name,
+          description: description,
+          image: image,
+          subCategory: subCategory,
+          price: price,
+          id: id);
+      return Right(result);
+    } on DioException catch (fail) {
+      return Left(ServerFailure.fromDiorError(fail));
+    } catch (error) {
+      return Left(
+        ServerFailure(error.toString()),
+      );
+    }
+  }
+
+  @override
+  Future<Either<ServerError, void>> deleteItem({required String id}) async {
+    try {
+      final result = await dataSource.deleteItems(
+          id: id);
+      return Right(result);
+    } on DioException catch (fail) {
+      return Left(ServerFailure.fromDiorError(fail));
+    } catch (error) {
+      return Left(
+        ServerFailure(error.toString()),
       );
     }
   }

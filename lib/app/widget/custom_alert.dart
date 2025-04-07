@@ -20,17 +20,18 @@ class CustomAlert extends StatelessWidget {
     return AlertDialog(
       title: CustomText(
         text: title,
-        color: Colors.black,
-        fontSize: 22,
-        fontWeight: FontWeight.w500,
+        color: AppColors.textColor,
+        fontWeight: FontWeight.w700,
+        fontSize: 20,
       ),
       content: CustomText(
         text: body,
-        color: Colors.black,
+        color: AppColors.textColor,
+        fontWeight: FontWeight.w400,
         fontSize: 16,
-        fontWeight: FontWeight.normal,
         maxLines: 5,
       ),
+      actionsAlignment: MainAxisAlignment.spaceBetween,
       actions: [
         TextButton(
           onPressed: () {
@@ -46,7 +47,7 @@ class CustomAlert extends StatelessWidget {
             ),
           ),
         ),
-        SizedBox(width: 10.w),
+        SizedBox(width: 10),
         submitWidget,
       ],
     );

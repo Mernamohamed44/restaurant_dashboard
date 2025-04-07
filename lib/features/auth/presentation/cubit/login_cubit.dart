@@ -35,6 +35,8 @@ class LogInCubit extends Cubit<LogInStates> {
         },
         (r) {
           Caching.put(key: "access_token", value: r.accessToken);
+          Caching.put(key: "user_name", value: userNameController.text);
+          Caching.put(key: "display_name", value: r.displayName);
           Caching.put(key: "refresh_token", value: r.refreshToken);
           Caching.put(key: "user", value: r.id);
           emit(LogInSuccessState());

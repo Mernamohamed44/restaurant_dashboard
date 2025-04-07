@@ -8,7 +8,7 @@ import 'package:restaurant_dashboard/features/reviews/domain/entities/reviews_co
 import 'package:restaurant_dashboard/features/reviews/domain/entities/reviews_entities.dart';
 
 class ReviewsContainer extends StatelessWidget {
-   ReviewsContainer({super.key, required this.reviewsCount});
+  ReviewsContainer({super.key, required this.reviewsCount});
   final List<ReviewsCountEntities> reviewsCount;
   @override
   Widget build(BuildContext context) {
@@ -22,8 +22,8 @@ class ReviewsContainer extends StatelessWidget {
           ...List.generate(
               reviewsCount.length,
               (index) => ReviewsRow(
-                star: index+1,
-                reviewsCount: reviewsCount[index],
+                    star: index + 1,
+                    reviewsCount: reviewsCount[index],
                   ))
         ],
       ),
@@ -32,9 +32,9 @@ class ReviewsContainer extends StatelessWidget {
 }
 
 class ReviewsRow extends StatelessWidget {
-  const ReviewsRow({super.key,required this.reviewsCount, required this.star});
+  const ReviewsRow({super.key, required this.reviewsCount, required this.star});
   final ReviewsCountEntities reviewsCount;
- final int star;
+  final int star;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -50,6 +50,7 @@ class ReviewsRow extends StatelessWidget {
                 itemSize: 20,
                 direction: Axis.horizontal,
                 allowHalfRating: true,
+                ignoreGestures: true,
                 itemCount: 5,
                 itemPadding: const EdgeInsets.symmetric(horizontal: 2),
                 itemBuilder: (context, _) => const Icon(

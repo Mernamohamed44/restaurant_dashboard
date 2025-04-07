@@ -15,6 +15,11 @@ abstract class BaseAuthRepository {
     required String username,
     required String password,
     required String phone,
+  }); Future<Either<ServerError, void>> editProfile({
+    required String displayName,
+    required String username,
+    required String image,
+    required String phone,
   });
 
   Future<Either<ServerError, String?>> sendCode({

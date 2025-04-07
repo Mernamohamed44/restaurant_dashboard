@@ -1,15 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:restaurant_dashboard/app/helper/extension.dart';
+import 'package:restaurant_dashboard/app/routing/routes.dart';
 import 'package:restaurant_dashboard/app/utils/colors.dart';
 import 'package:restaurant_dashboard/app/utils/image_manager.dart';
+import 'package:restaurant_dashboard/app/widget/custom_alert.dart';
 import 'package:restaurant_dashboard/app/widget/custom_button.dart';
 import 'package:restaurant_dashboard/app/widget/custom_text.dart';
 import 'package:restaurant_dashboard/app/widget/custom_text_form_field.dart';
 import 'package:restaurant_dashboard/app/widget/svg_icons.dart';
+import 'package:restaurant_dashboard/app/widget/toastification_widget.dart';
 import 'package:restaurant_dashboard/features/categories/domin/entities/categories_entities.dart';
 import 'package:restaurant_dashboard/features/categories/presentaion/cubit/categories_cubit.dart';
+import 'package:restaurant_dashboard/features/categories/presentaion/widgets/edit_categories_button.dart';
+import 'package:restaurant_dashboard/features/categories/presentaion/widgets/edit_dialog_super_category.dart';
+import 'package:restaurant_dashboard/features/categories/presentaion/widgets/language_drop_down.dart';
 import 'package:restaurant_dashboard/features/menuItem/presentation/cubit/menu_cubit.dart';
+import 'package:toastification/toastification.dart';
 
 class SuperCategories extends StatefulWidget {
   const SuperCategories({super.key});
@@ -58,9 +65,10 @@ class _SuperCategoriesState extends State<SuperCategories> {
                             ...List.generate(
                                 superCategories.length,
                                 (index) => CategoriesContainer(
-                                      number:
-                                          superCategories[index].itemsCount!,
+                                  categoriesCubit:cubit ,
+                                      number: superCategories[index].itemsCount!,
                                       text: superCategories[index].name!,
+                                      id: superCategories[index].sId!,
                                     )),
                             isClicked ? buildTextField() : const SizedBox(),
                             const SizedBox(
@@ -76,8 +84,10 @@ class _SuperCategoriesState extends State<SuperCategories> {
                           ...List.generate(
                               superCategories.length,
                               (index) => CategoriesContainer(
+                                categoriesCubit: cubit,
                                     number: superCategories[index].itemsCount!,
                                     text: superCategories[index].name!,
+                                    id: superCategories[index].sId!,
                                   )),
                           const SizedBox(
                             height: 10,
@@ -119,12 +129,7 @@ class _SuperCategoriesState extends State<SuperCategories> {
           SizedBox(
             width: 5,
           ),
-          Flexible(
-              child: FittedBox(
-                  child: CustomText(
-                      fontWeight: FontWeight.w700,
-                      text: 'New',
-                      color: AppColors.primary)))
+          Flexible(child: FittedBox(child: CustomText(fontWeight: FontWeight.w700, text: 'New', color: AppColors.primary)))
         ],
       ),
     );
@@ -148,20 +153,14 @@ class _SuperCategoriesState extends State<SuperCategories> {
               listener: (context, state) {
                 if (state is AddCategorySuccessState) {
                   context.read<CategoriesCubit>().getSuperCategoriesData();
+                  context.read<CategoriesCubit>().getItemSuperCategoriesData();
                 }
               },
               builder: (BuildContext context, CategoriesState state) {
                 return GestureDetector(
                   onTap: () {
                     print(superController.text);
-                    context
-                        .read<CategoriesCubit>()
-                        .addCategory(name: superController.text);
-                    // setState(() {
-                    //   categories.add(CategoriesContainer(
-                    //       text: itemController.text, number: '4'));
-                    //   itemController.clear();
-                    // });
+                    context.read<CategoriesCubit>().addCategory(name: superController.text, context: context);
                   },
                   child: const CustomText(
                     text: 'save',
@@ -181,26 +180,30 @@ class _SuperCategoriesState extends State<SuperCategories> {
   }
 }
 
-class CategoriesContainer extends StatelessWidget {
-  const CategoriesContainer(
-      {super.key, required this.text, required this.number});
+class CategoriesContainer extends StatefulWidget {
+  const CategoriesContainer({super.key, required this.text, required this.number, required this.id, required this.categoriesCubit});
 
   final String text;
+  final CategoriesCubit categoriesCubit;
   final int number;
+  final String id;
 
+  @override
+  State<CategoriesContainer> createState() => _CategoriesContainerState();
+}
+
+class _CategoriesContainerState extends State<CategoriesContainer> {
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
       child: Container(
         padding: const EdgeInsets.all(10),
-        decoration: BoxDecoration(
-            color: AppColors.containerColor,
-            borderRadius: BorderRadius.circular(12)),
+        decoration: BoxDecoration(color: AppColors.containerColor, borderRadius: BorderRadius.circular(12)),
         child: Row(
           children: [
             CustomText(
-              text: text,
+              text: widget.text,
               color: AppColors.textColor,
               fontWeight: FontWeight.w600,
               fontSize: 12,
@@ -212,7 +215,7 @@ class CategoriesContainer extends StatelessWidget {
               radius: 8,
               backgroundColor: AppColors.palePrimary,
               child: CustomText(
-                text: '$number',
+                text: '${widget.number}',
                 color: AppColors.white,
                 fontWeight: FontWeight.w400,
                 fontSize: 10,
@@ -223,10 +226,87 @@ class CategoriesContainer extends StatelessWidget {
                     width: 5,
                   )
                 : const Spacer(),
-            const SvgIcon(
-              icon: ImageManager.dots,
-              color: AppColors.textColor,
-              height: 15,
+            PopupMenuButton(
+              color: AppColors.white,
+              itemBuilder: (context) {
+                return [
+                  PopupMenuItem(
+                    onTap: () {
+                      showDialog(
+                          context: context,
+                          builder: (c) {
+                            return BlocProvider.value(
+                              value: widget.categoriesCubit,
+                              child: EditSuperCategory(
+                                categoryId: widget.id,
+                                text: widget.text,
+                              ),
+                            );
+                          });
+                    },
+                    child: const CustomText(
+                      text: 'Edit',
+                      fontWeight: FontWeight.w500,
+                      fontSize: 16,
+                      color: AppColors.black,
+                    ),
+                  ),
+                  PopupMenuItem(
+                    child: const CustomText(
+                      text: 'Delete',
+                      fontWeight: FontWeight.w500,
+                      fontSize: 16,
+                      color: AppColors.red,
+                    ),
+                    onTap: () {
+                      showDialog(
+                          context: context,
+                          builder: (c) {
+                            return BlocProvider.value(
+                              value: widget.categoriesCubit,
+                              child: CustomAlert(
+                                title: ' Delete  Super Category',
+                                body: 'Do You sure delete this Super Category?',
+                                submitWidget: BlocConsumer<CategoriesCubit, CategoriesState>(
+                                  listener: (context, state) {
+                                    if (state is DeleteCategorySuccessState) {
+                                      showToastificationWidget(
+                                        message: 'Super Category Deleted successfully',
+                                        context: context,
+                                        notificationType: ToastificationType.success,
+                                      );
+                                      context.pushReplacementNamed(Routes.category);
+                                    }
+                                  },
+                                  builder: (context, state) {
+                                    return TextButton(
+                                      onPressed: () {
+                                        context.read<CategoriesCubit>().deleteCategory(id: widget.id);
+                                      },
+                                      child: const Padding(
+                                        padding: EdgeInsets.symmetric(horizontal: 10),
+                                        child: CustomText(
+                                          text: "delete",
+                                          color: AppColors.red,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            );
+                          });
+                    },
+                  ),
+                ];
+              },
+              child: const SvgIcon(
+                icon: ImageManager.dots,
+                color: AppColors.textColor,
+                height: 15,
+              ),
             )
           ],
         ),

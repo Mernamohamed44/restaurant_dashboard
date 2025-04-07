@@ -42,7 +42,7 @@ class ItemViews extends StatelessWidget {
               isItem: true,
               category: items[index].name,
               rank: index + 1,
-              views: items[index].views.toDouble(),
+              views: items[index].views.toDouble(), image: items[index].image,
             ),
           )
         ],

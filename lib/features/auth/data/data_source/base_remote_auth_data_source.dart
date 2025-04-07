@@ -23,7 +23,12 @@ abstract class BaseRemoteAuthDataSource {
   });
 
   Future<UserDataModel> getUserData();
-
+  Future<void> editProfile({
+    required String image,
+    required String name,
+    required String phone,
+    required String userName,
+  });
   Future<String?> sendCode({
     required String phone,
   });

@@ -34,9 +34,18 @@ class CheckUserFailState extends AccountState {
 class ChangePasswordLoadingState extends AccountState {}
 
 class ChangePasswordSuccessState extends AccountState {}
+class ChooseImageState extends AccountState {}
 
 class ChangePasswordFailState extends AccountState {
   final String message;
 
   ChangePasswordFailState({required this.message});
+}class EditProfileLoadingState extends AccountState {}
+
+class EditProfileSuccessState extends AccountState {}
+
+class EditProfileFailState extends AccountState {
+  final String message;
+
+  EditProfileFailState({required this.message});
 }

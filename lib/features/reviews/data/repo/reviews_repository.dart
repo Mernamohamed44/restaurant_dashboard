@@ -17,16 +17,16 @@ class ReviewsRepository extends BaseReviewsRepository {
   @override
   Future<Either<ServerError, List<ReviewsEntities>>> getReviews({
     required int page,
+    required String ratingFilter,
+    required String search,
   }) async {
     try {
-      final result = await dataSource.getReviews(
-        page: page
-      );
+      final result =
+          await dataSource.getReviews(page: page, ratingFilter: ratingFilter, search: search);
       return Right(result);
     } on DioException catch (fail) {
       return Left(ServerFailure.fromDiorError(fail));
-    }
-    catch (error) {
+    } catch (error) {
       return Left(
         ServerFailure(error.toString()),
       );
@@ -36,13 +36,11 @@ class ReviewsRepository extends BaseReviewsRepository {
   @override
   Future<Either<ServerError, List<ReviewsCountEntities>>> countReviews() async {
     try {
-      final result = await dataSource.countReviews(
-      );
+      final result = await dataSource.countReviews();
       return Right(result);
     } on DioException catch (fail) {
       return Left(ServerFailure.fromDiorError(fail));
-    }
-    catch (error) {
+    } catch (error) {
       return Left(
         ServerFailure(error.toString()),
       );

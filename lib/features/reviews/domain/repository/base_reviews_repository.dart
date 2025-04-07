@@ -4,8 +4,10 @@ import 'package:restaurant_dashboard/features/reviews/domain/entities/reviews_co
 import 'package:restaurant_dashboard/features/reviews/domain/entities/reviews_entities.dart';
 
 abstract class BaseReviewsRepository {
-  Future<Either<ServerError, List<ReviewsEntities>>> getReviews({required int page,});
+  Future<Either<ServerError, List<ReviewsEntities>>> getReviews({
+    required int page,
+    required String ratingFilter,
+    required String search,
+  });
   Future<Either<ServerError, List<ReviewsCountEntities>>> countReviews();
-
-
 }

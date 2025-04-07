@@ -91,10 +91,7 @@ class CategoriesBody extends StatelessWidget {
                       SizedBox(
                         width: 5,
                       ),
-                      Flexible(
-                          child: FittedBox(
-                              child: CustomText(
-                                  text: 'New Category', color: Colors.white)))
+                      Flexible(child: FittedBox(child: CustomText(text: 'New Category', color: Colors.white)))
                     ],
                   ),
                 ),
@@ -104,12 +101,15 @@ class CategoriesBody extends StatelessWidget {
                             context: context,
                             builder: (c) {
                               return AddCategoryDialog(
-                                categoriesCubit:
-                                    context.read<CategoriesCubit>(),
+                                categoriesCubit: context.read<CategoriesCubit>(),
                               );
                             });
                       }
-                    : () => MagicRouter.navigateTo(page: const AddCategories()),
+                    : () => MagicRouter.navigateTo(
+                            page: BlocProvider(
+                          create: (context) => getIt<CategoriesCubit>(),
+                          child: AddCategories(),
+                        )),
               ),
             )
           ],
@@ -121,9 +121,7 @@ class CategoriesBody extends StatelessWidget {
             ),
           ),
         ),
-        body: context.screenWidth < 500
-            ? const CategoriesColumn()
-            : const CategoriesRow(),
+        body: context.screenWidth < 500 ? const CategoriesColumn() : const CategoriesRow(),
       ),
     );
   }
@@ -144,9 +142,12 @@ class CategoriesRow extends StatelessWidget {
           );
         } else if (state is SuperCategoriesDataFailedState) {
           return CustomText(text: state.message, color: AppColors.primary);
-        }
-        else if (state is NoItemSuperCategoriesDataState) {
-          return const CustomText(text: 'No Categories', color: AppColors.primary,fontSize: 20,);
+        } else if (state is NoItemSuperCategoriesDataState) {
+          return const CustomText(
+            text: 'No Categories',
+            color: AppColors.primary,
+            fontSize: 20,
+          );
         }
         return const Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -162,11 +163,20 @@ class CategoriesColumn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<CategoriesCubit, CategoriesState>(
-        builder: (context, state) {
+    return BlocBuilder<CategoriesCubit, CategoriesState>(builder: (context, state) {
       if (state is SuperCategoriesDataLoadingState) {
-        return const CircularProgressIndicator(
+        return const Center(
+          child: CircularProgressIndicator(
+            color: AppColors.primary,
+          ),
+        );
+      } else if (state is SuperCategoriesDataFailedState) {
+        return CustomText(text: state.message, color: AppColors.primary);
+      } else if (state is NoItemSuperCategoriesDataState) {
+        return const CustomText(
+          text: 'No Categories',
           color: AppColors.primary,
+          fontSize: 20,
         );
       }
       return const Column(

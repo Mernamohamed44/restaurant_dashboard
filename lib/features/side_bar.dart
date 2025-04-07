@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:restaurant_dashboard/app/caching/shared_prefs.dart';
 import 'package:restaurant_dashboard/app/flutter_admin_scaffold/admin_menu_item.dart';
 import 'package:restaurant_dashboard/app/flutter_admin_scaffold/side_bar.dart';
 import 'package:restaurant_dashboard/app/helper/extension.dart';
@@ -245,6 +246,12 @@ class SideBarWidget {
                         ? MainAxisAlignment.start
                         : MainAxisAlignment.center,
                     children: [
+                      // CircleAvatar(
+                      //   radius: 15,
+                      //   child: CustomCachedImage(
+                      //     image: Caching.get(key: 'image'),
+                      //   ),
+                      // ),
                       CircleAvatar(
                           radius: 15, child: Image.asset(ImageManager.logo)),
                       context.screenWidth > 900
@@ -256,8 +263,8 @@ class SideBarWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           context.screenWidth > 900
-                              ? const CustomText(
-                                  text: "Abu Shahab",
+                              ? CustomText(
+                                  text: "${Caching.get(key: 'display_name')}",
                                   color: AppColors.textColor,
                                   fontSize: 14,
                                   fontWeight: FontWeight.w400,
@@ -267,8 +274,8 @@ class SideBarWidget {
                             height: 2,
                           ),
                           context.screenWidth > 900
-                              ? const CustomText(
-                                  text: "admin@abu-shahab.com",
+                              ? CustomText(
+                                  text: "${Caching.get(key: 'user_name')}",
                                   color: AppColors.accentContainerColor,
                                   fontSize: 12,
                                   fontWeight: FontWeight.w400,

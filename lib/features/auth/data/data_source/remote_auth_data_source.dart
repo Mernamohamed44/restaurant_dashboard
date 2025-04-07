@@ -93,16 +93,26 @@ class RemoteAuthDataSource extends BaseRemoteAuthDataSource {
   }
 
   @override
-  changePassword(
-      {required String oldPassword,
-      required String newPassword,
-      required String confirmPassword}) async {
+  changePassword({required String oldPassword, required String newPassword, required String confirmPassword}) async {
     await dioManager.post(
       ApiConstants.changePassword,
       data: {
         "oldPassword": oldPassword,
         "newPassword": newPassword,
         "confirmPassword": confirmPassword,
+      },
+    );
+  }
+
+  @override
+  Future<void> editProfile({required String image, required String name, required String phone, required String userName}) async {
+    await dioManager.put(
+      ApiConstants.editProfile,
+      data: {
+        "image": image,
+        "displayName": name,
+        "phone": phone,
+        "username": userName,
       },
     );
   }

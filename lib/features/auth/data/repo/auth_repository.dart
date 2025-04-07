@@ -40,11 +40,7 @@ class AuthRepository extends BaseAuthRepository {
     required String phone,
   }) async {
     try {
-      final result = await dataSource.register(
-          displayName: displayName,
-          username: username,
-          password: password,
-          phone: phone);
+      final result = await dataSource.register(displayName: displayName, username: username, password: password, phone: phone);
       return Right(result);
     } on DioException catch (fail) {
       return Left(ServerFailure.fromDiorError(fail));
@@ -124,15 +120,40 @@ class AuthRepository extends BaseAuthRepository {
   }
 
   @override
-  Future<Either<ServerError, void>> changePassword(
-      {required String oldPassword,
-      required String newPassword,
-      required String confirmPassword}) async {
+  Future<Either<ServerError, void>> changePassword({
+    required String oldPassword,
+    required String newPassword,
+    required String confirmPassword,
+  }) async {
     try {
       final result = await dataSource.changePassword(
         oldPassword: oldPassword,
         newPassword: newPassword,
         confirmPassword: confirmPassword,
+      );
+      return Right(result);
+    } on DioException catch (fail) {
+      return Left(ServerFailure.fromDiorError(fail));
+    } catch (error) {
+      return Left(
+        ServerFailure(error.toString()),
+      );
+    }
+  }
+
+  @override
+  Future<Either<ServerError, void>> editProfile({
+    required String displayName,
+    required String username,
+    required String image,
+    required String phone,
+  }) async {
+    try {
+      final result = await dataSource.editProfile(
+        userName: username,
+        name: displayName,
+        image: image,
+        phone: phone,
       );
       return Right(result);
     } on DioException catch (fail) {

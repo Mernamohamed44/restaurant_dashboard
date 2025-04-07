@@ -13,8 +13,7 @@ class ItemsCategoriesList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<CategoriesCubit, CategoriesState>(
-        builder: (context, state) {
+    return BlocBuilder<CategoriesCubit, CategoriesState>(builder: (context, state) {
       final itemsList = context.read<CategoriesCubit>().itemSuperCategories;
       if (state is SuperCategoriesDataFailedState) {
         return CustomText(text: state.message, color: AppColors.primary);
@@ -125,8 +124,9 @@ class _ItemCategoriesState extends State<ItemCategories> {
                                 );
                               }
                               return CategoryListItem(
-                                itemSuperCategories:
-                                    widget.itemSuperCategories.children[index],
+                                categoriesCubit: context.read<CategoriesCubit>(),
+                                itemSuperCategories: widget.itemSuperCategories.children[index],
+                                superCategoryName: widget.itemSuperCategories.name!,
                               );
                             },
                           );

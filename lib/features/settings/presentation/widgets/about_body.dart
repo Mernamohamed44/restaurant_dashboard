@@ -10,6 +10,7 @@ import 'package:restaurant_dashboard/app/widget/custom_text.dart';
 import 'package:restaurant_dashboard/app/widget/custom_text_form_field.dart';
 import 'package:restaurant_dashboard/app/widget/toastification_widget.dart';
 import 'package:restaurant_dashboard/features/settings/presentation/cubit/settings_cubit.dart';
+import 'package:toastification/toastification.dart';
 
 class AboutBody extends StatelessWidget {
   const AboutBody({super.key});
@@ -149,9 +150,6 @@ class AboutBody extends StatelessWidget {
                       titleFontSize: 14,
                       hintText: 'Add keywords to help the seo...',
                       validator: (value) {
-                        if (value!.isEmpty) {
-                          return "please enter keywords";
-                        }
                         return null;
                       },
                     ),
@@ -161,7 +159,13 @@ class AboutBody extends StatelessWidget {
                   ),
                   InkWell(
                     onTap: () {
-                      cubit.addKeyWords();
+                      if (context
+                          .read<SettingsCubit>()
+                          .keyWordsController
+                          .text
+                          .isNotEmpty) {
+                        cubit.addKeyWords();
+                      }
                     },
                     child: Container(
                       padding: const EdgeInsets.all(8),
@@ -194,8 +198,6 @@ class AboutBody extends StatelessWidget {
                                 text: cubit.tags[index],
                                 index: index,
                               ))),
-
-
                 ],
               ),
               const SizedBox(
@@ -207,6 +209,7 @@ class AboutBody extends StatelessWidget {
                     showToastificationWidget(
                       message: 'AboutUs Create successfully',
                       context: context,
+                        notificationType: ToastificationType.success
                     );
                     context.pushReplacementNamed(Routes.dashboard);
                   } else if (state is AboutUsFailState) {
